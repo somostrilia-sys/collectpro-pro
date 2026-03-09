@@ -127,13 +127,27 @@ const Boletos = () => {
   const [boletos, setBoletos] = useState(mockBoletos);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("todos");
+  const [qtdBoletosFilter, setQtdBoletosFilter] = useState("todos");
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const { toast } = useToast();
+
+  // Conta boletos em aberto (não pagos) por associado
+  const boletosAbertosPorAssociado = boletos.reduce<Record<string, number>>((acc, b) => {
+    if (b.status !== "Pago") {
+      acc[b.associado] = (acc[b.associado] || 0) + 1;
+    }
+    return acc;
+  }, {});
 
   const filteredBoletos = boletos.filter((b) => {
     const matchesSearch = b.associado.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === "todos" || b.status === statusFilter;
-    return matchesSearch && matchesStatus;
+    const matchesQtd =
+      qtdBoletosFilter === "todos" ||
+      (qtdBoletosFilter === "4+"
+        ? (boletosAbertosPorAssociado[b.associado] || 0) >= 4
+        : (boletosAbertosPorAssociado[b.associado] || 0) === Number(qtdBoletosFilter));
+    return matchesSearch && matchesStatus && matchesQtd;
   });
 
   const handleSendWhatsApp = (boleto: typeof mockBoletos[0]) => {

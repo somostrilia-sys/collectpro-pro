@@ -4,14 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -30,6 +22,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { DataTable } from "@/components/ui/data-table";
 
 // Mock data
 const mockAssociados = [
@@ -69,47 +62,23 @@ const mockAssociados = [
     score: "Bom",
     valorAberto: 0,
   },
-  {
-    id: "4",
-    nome: "Ana Beatriz Lima",
-    cpf: "789.123.456-00",
-    placa: "GHI-3456",
-    plano: "Standard",
-    status: "Inadimplente",
-    telefone: "(41) 96543-2109",
-    email: "ana.lima@email.com",
-    score: "Crítico",
-    valorAberto: 1250.0,
-  },
-  {
-    id: "5",
-    nome: "Carlos Eduardo Ferreira",
-    cpf: "321.654.987-00",
-    placa: "JKL-7890",
-    plano: "Premium",
-    status: "Ativo",
-    telefone: "(51) 95432-1098",
-    email: "carlos.ferreira@email.com",
-    score: "Bom",
-    valorAberto: 0,
-  },
-  {
-    id: "6",
-    nome: "Fernanda Cristina Souza",
-    cpf: "654.987.321-00",
-    placa: "MNO-1234",
-    plano: "Básico",
-    status: "Pendente",
-    telefone: "(61) 94321-0987",
-    email: "fernanda.souza@email.com",
-    score: "Regular",
-    valorAberto: 320.0,
-  },
 ];
+
+const getScoreColor = (score: string) => {
+  switch (score) {
+    case "Bom":
+      return "bg-success/10 text-success";
+    case "Regular":
+      return "bg-warning/10 text-warning";
+    case "Crítico":
+      return "bg-destructive/10 text-destructive";
+    default:
+      return "bg-muted text-muted-foreground";
+  }
+};
 
 const Associados = () => {
   const [associados, setAssociados] = useState(mockAssociados);
-  const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("todos");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
@@ -123,14 +92,84 @@ const Associados = () => {
     email: "",
   });
 
-  const filteredAssociados = associados.filter((a) => {
-    const matchesSearch =
-      a.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      a.cpf.includes(searchTerm) ||
-      a.placa.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === "todos" || a.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
+  const handleDelete = (id: string) => {
+    setAssociados(associados.filter((a) => a.id !== id));
+  };
+
+  const columns = [
+    {
+      accessorKey: "nome",
+      header: "Nome",
+    },
+    {
+      accessorKey: "cpf",
+      header: "CPF",
+    },
+    {
+      accessorKey: "placa",
+      header: "Placa",
+    },
+    {
+      accessorKey: "plano",
+      header: "Plano",
+      cell: ({ row }: any) => <Badge variant="outline">{row.original.plano}</Badge>,
+    },
+    {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ row }: any) => <StatusBadge status={row.original.status} />,
+    },
+    {
+      accessorKey: "score",
+      header: "Score",
+      cell: ({ row }: any) => (
+        <Badge className={getScoreColor(row.original.score)}>{row.original.score}</Badge>
+      ),
+    },
+    {
+      accessorKey: "valorAberto",
+      header: "Valor Aberto",
+      cell: ({ row }: any) => {
+        const valor = row.original.valorAberto;
+        return valor > 0 ? (
+          <span className="text-destructive font-medium">R$ {valor.toFixed(2)}</span>
+        ) : (
+          <span className="text-success">-</span>
+        );
+      },
+    },
+    {
+      id: "actions",
+      header: () => <div className="text-right">Ações</div>,
+      cell: ({ row }: any) => {
+        const associado = row.original;
+        return (
+          <div className="flex justify-end gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => {
+                setSelectedAssociado(associado);
+                setIsViewModalOpen(true);
+              }}
+            >
+              <Eye className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="icon">
+              <Edit className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => handleDelete(associado.id)}
+            >
+              <Trash2 className="h-4 w-4 text-destructive" />
+            </Button>
+          </div>
+        );
+      },
+    },
+  ];
 
   const handleAddAssociado = () => {
     const novo = {
@@ -145,22 +184,9 @@ const Associados = () => {
     setNewAssociado({ nome: "", cpf: "", placa: "", plano: "Básico", telefone: "", email: "" });
   };
 
-  const handleDelete = (id: string) => {
-    setAssociados(associados.filter((a) => a.id !== id));
-  };
-
-  const getScoreColor = (score: string) => {
-    switch (score) {
-      case "Bom":
-        return "bg-success/10 text-success";
-      case "Regular":
-        return "bg-warning/10 text-warning";
-      case "Crítico":
-        return "bg-destructive/10 text-destructive";
-      default:
-        return "bg-muted text-muted-foreground";
-    }
-  };
+  const filteredAssociados = associados.filter((a) => {
+    return statusFilter === "todos" || a.status === statusFilter;
+  });
 
   return (
     <div className="space-y-6">
@@ -261,19 +287,9 @@ const Associados = () => {
         </Dialog>
       </div>
 
-      {/* Filters */}
       <Card>
         <CardContent className="pt-6">
-          <div className="flex gap-4 flex-wrap">
-            <div className="relative flex-1 min-w-[200px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Buscar por nome, CPF ou placa..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
+          <div className="flex gap-4 flex-wrap mb-4">
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-[180px]">
                 <Filter className="h-4 w-4 mr-2" />
@@ -287,87 +303,16 @@ const Associados = () => {
               </SelectContent>
             </Select>
           </div>
+          
+          <DataTable
+            columns={columns}
+            data={filteredAssociados}
+            searchColumn="nome"
+            searchPlaceholder="Buscar por nome..."
+          />
         </CardContent>
       </Card>
 
-      {/* Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Lista de Associados</CardTitle>
-          <CardDescription>
-            {filteredAssociados.length} associado(s) encontrado(s)
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nome</TableHead>
-                <TableHead>CPF</TableHead>
-                <TableHead>Placa</TableHead>
-                <TableHead>Plano</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Score</TableHead>
-                <TableHead>Valor Aberto</TableHead>
-                <TableHead className="text-right">Ações</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredAssociados.map((associado) => (
-                <TableRow key={associado.id}>
-                  <TableCell className="font-medium">{associado.nome}</TableCell>
-                  <TableCell>{associado.cpf}</TableCell>
-                  <TableCell>{associado.placa}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline">{associado.plano}</Badge>
-                  </TableCell>
-                  <TableCell>
-                    <StatusBadge status={associado.status} />
-                  </TableCell>
-                  <TableCell>
-                    <Badge className={getScoreColor(associado.score)}>{associado.score}</Badge>
-                  </TableCell>
-                  <TableCell>
-                    {associado.valorAberto > 0 ? (
-                      <span className="text-destructive font-medium">
-                        R$ {associado.valorAberto.toFixed(2)}
-                      </span>
-                    ) : (
-                      <span className="text-success">-</span>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => {
-                          setSelectedAssociado(associado);
-                          setIsViewModalOpen(true);
-                        }}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon">
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleDelete(associado.id)}
-                      >
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-
-      {/* View Modal */}
       <Dialog open={isViewModalOpen} onOpenChange={setIsViewModalOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>

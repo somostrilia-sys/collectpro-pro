@@ -86,8 +86,43 @@ const mockBoletos = [
     parcela: "4/12",
     dataEmissao: "2024-01-10",
   },
+  {
+    id: "7",
+    associado: "Maria Aparecida Santos",
+    vencimento: "2024-02-10",
+    valor: 129.90,
+    status: "Pendente",
+    parcela: "4/12",
+    dataEmissao: "2024-01-26",
+  },
+  {
+    id: "8",
+    associado: "Ana Beatriz Lima",
+    vencimento: "2024-02-05",
+    valor: 159.90,
+    status: "Pendente",
+    parcela: "6/12",
+    dataEmissao: "2024-01-21",
+  },
+  {
+    id: "9",
+    associado: "Ana Beatriz Lima",
+    vencimento: "2024-03-05",
+    valor: 159.90,
+    status: "Vencido",
+    parcela: "7/12",
+    dataEmissao: "2024-02-21",
+  },
+  {
+    id: "10",
+    associado: "Pedro Henrique Oliveira",
+    vencimento: "2024-02-20",
+    valor: 249.90,
+    status: "Vencido",
+    parcela: "3/12",
+    dataEmissao: "2024-02-05",
+  },
 ];
-
 const Boletos = () => {
   const [boletos, setBoletos] = useState(mockBoletos);
   const [searchTerm, setSearchTerm] = useState("");

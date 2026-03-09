@@ -55,6 +55,10 @@ const App = () => (
                       <Route path="/negativacoes" element={<Negativacoes />} />
                       <Route path="/metricas" element={<Metricas />} />
                       <Route path="/tickets" element={<Tickets />} />
+                      <Route path="/notificacoes" element={<NotificacoesInternas />} />
+                      <Route path="/log-auditoria" element={<LogAuditoria />} />
+                      <Route path="/exportacao" element={<ExportacaoRelatorios />} />
+                      <Route path="/controle-acesso" element={<ControleAcesso />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </AppLayout>

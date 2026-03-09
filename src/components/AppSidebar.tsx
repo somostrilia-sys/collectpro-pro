@@ -44,6 +44,10 @@ const items = [
   { title: "Negativações", url: "/negativacoes", icon: AlertTriangle },
   { title: "Métricas Mensais", url: "/metricas", icon: TrendingUp },
   { title: "Tickets Desk", url: "/tickets", icon: Ticket },
+  { title: "Notificações", url: "/notificacoes", icon: Bell },
+  { title: "Log de Auditoria", url: "/log-auditoria", icon: History },
+  { title: "Exportação", url: "/exportacao", icon: Download },
+  { title: "Controle de Acesso", url: "/controle-acesso", icon: Shield },
 ];
 
 export function AppSidebar() {

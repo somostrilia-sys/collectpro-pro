@@ -19,6 +19,10 @@ import Acordos from "./pages/Acordos";
 import Negativacoes from "./pages/Negativacoes";
 import Metricas from "./pages/Metricas";
 import Tickets from "./pages/Tickets";
+import NotificacoesInternas from "./pages/NotificacoesInternas";
+import LogAuditoria from "./pages/LogAuditoria";
+import ExportacaoRelatorios from "./pages/ExportacaoRelatorios";
+import ControleAcesso from "./pages/ControleAcesso";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 
@@ -51,6 +55,10 @@ const App = () => (
                       <Route path="/negativacoes" element={<Negativacoes />} />
                       <Route path="/metricas" element={<Metricas />} />
                       <Route path="/tickets" element={<Tickets />} />
+                      <Route path="/notificacoes" element={<NotificacoesInternas />} />
+                      <Route path="/log-auditoria" element={<LogAuditoria />} />
+                      <Route path="/exportacao" element={<ExportacaoRelatorios />} />
+                      <Route path="/controle-acesso" element={<ControleAcesso />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </AppLayout>

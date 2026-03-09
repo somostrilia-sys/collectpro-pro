@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
+  const { user, signOut } = useAuth();
+
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background">
@@ -23,12 +25,17 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             </div>
             <div className="flex items-center gap-4">
               <div className="text-right">
-                <p className="text-sm font-medium">Usuário Admin</p>
+                <p className="text-sm font-medium">{user?.email ?? 'Usuário'}</p>
                 <p className="text-xs text-muted-foreground">Colaborador</p>
               </div>
               <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
-                <span className="text-primary-foreground font-medium text-sm">U</span>
+                <span className="text-primary-foreground font-medium text-sm">
+                  {user?.email?.charAt(0).toUpperCase() ?? 'U'}
+                </span>
               </div>
+              <Button variant="ghost" size="icon" onClick={signOut} title="Sair">
+                <LogOut className="h-4 w-4" />
+              </Button>
             </div>
           </header>
 

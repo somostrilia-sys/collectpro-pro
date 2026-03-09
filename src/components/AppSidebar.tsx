@@ -68,7 +68,7 @@ export function AppSidebar() {
           </div>
         </div>
 
-        <SidebarGroup open={isExpanded} onOpenChange={() => {}}>
+        <SidebarGroup>
           <SidebarGroupLabel>Sistema</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>

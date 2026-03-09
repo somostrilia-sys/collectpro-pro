@@ -1,5 +1,8 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
+import { LogOut } from "lucide-react";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   return (

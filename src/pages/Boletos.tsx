@@ -285,6 +285,19 @@ const Boletos = () => {
                 <SelectItem value="Vencido">Vencido</SelectItem>
               </SelectContent>
             </Select>
+            <Select value={qtdBoletosFilter} onValueChange={setQtdBoletosFilter}>
+              <SelectTrigger className="w-[220px]">
+                <Filter className="h-4 w-4 mr-2" />
+                <SelectValue placeholder="Qtd. Boletos em Aberto" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="todos">Todas as quantidades</SelectItem>
+                <SelectItem value="1">1 boleto em aberto</SelectItem>
+                <SelectItem value="2">2 boletos em aberto</SelectItem>
+                <SelectItem value="3">3 boletos em aberto</SelectItem>
+                <SelectItem value="4+">4+ boletos em aberto</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </CardContent>
       </Card>

@@ -156,7 +156,7 @@ const Dashboard = () => {
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
               <RechartsPieChart>
-              <RechartsPieChart.Pie
+                <Pie
                   data={statusData}
                   cx="50%"
                   cy="50%"
@@ -167,7 +167,7 @@ const Dashboard = () => {
                   {statusData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
-                </RechartsPieChart.Pie>
+                </Pie>
                 <Tooltip />
               </RechartsPieChart>
             </ResponsiveContainer>

@@ -208,7 +208,7 @@ const Colaboradores = () => {
       {/* Ranking Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {sortedByRecovery.slice(0, 3).map((c, index) => (
-          <Card key={c.id} className={index === 0 ? "border-yellow-500 border-2" : ""}>
+          <Card key={c.id} className={index === 0 ? "border-warning border-2" : ""}>
             <CardContent className="pt-6">
               <div className="flex items-center gap-4">
                 <Avatar className="h-12 w-12">

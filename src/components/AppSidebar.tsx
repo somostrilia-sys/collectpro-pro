@@ -11,6 +11,10 @@ import {
   AlertTriangle,
   TrendingUp,
   Ticket,
+  Bell,
+  History,
+  Download,
+  Shield,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";

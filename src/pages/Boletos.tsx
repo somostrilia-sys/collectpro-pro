@@ -86,19 +86,68 @@ const mockBoletos = [
     parcela: "4/12",
     dataEmissao: "2024-01-10",
   },
+  {
+    id: "7",
+    associado: "Maria Aparecida Santos",
+    vencimento: "2024-02-10",
+    valor: 129.90,
+    status: "Pendente",
+    parcela: "4/12",
+    dataEmissao: "2024-01-26",
+  },
+  {
+    id: "8",
+    associado: "Ana Beatriz Lima",
+    vencimento: "2024-02-05",
+    valor: 159.90,
+    status: "Pendente",
+    parcela: "6/12",
+    dataEmissao: "2024-01-21",
+  },
+  {
+    id: "9",
+    associado: "Ana Beatriz Lima",
+    vencimento: "2024-03-05",
+    valor: 159.90,
+    status: "Vencido",
+    parcela: "7/12",
+    dataEmissao: "2024-02-21",
+  },
+  {
+    id: "10",
+    associado: "Pedro Henrique Oliveira",
+    vencimento: "2024-02-20",
+    valor: 249.90,
+    status: "Vencido",
+    parcela: "3/12",
+    dataEmissao: "2024-02-05",
+  },
 ];
-
 const Boletos = () => {
   const [boletos, setBoletos] = useState(mockBoletos);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("todos");
+  const [qtdBoletosFilter, setQtdBoletosFilter] = useState("todos");
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const { toast } = useToast();
+
+  // Conta boletos em aberto (não pagos) por associado
+  const boletosAbertosPorAssociado = boletos.reduce<Record<string, number>>((acc, b) => {
+    if (b.status !== "Pago") {
+      acc[b.associado] = (acc[b.associado] || 0) + 1;
+    }
+    return acc;
+  }, {});
 
   const filteredBoletos = boletos.filter((b) => {
     const matchesSearch = b.associado.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === "todos" || b.status === statusFilter;
-    return matchesSearch && matchesStatus;
+    const matchesQtd =
+      qtdBoletosFilter === "todos" ||
+      (qtdBoletosFilter === "4+"
+        ? (boletosAbertosPorAssociado[b.associado] || 0) >= 4
+        : (boletosAbertosPorAssociado[b.associado] || 0) === Number(qtdBoletosFilter));
+    return matchesSearch && matchesStatus && matchesQtd;
   });
 
   const handleSendWhatsApp = (boleto: typeof mockBoletos[0]) => {
@@ -234,6 +283,19 @@ const Boletos = () => {
                 <SelectItem value="Pago">Pago</SelectItem>
                 <SelectItem value="Pendente">Pendente</SelectItem>
                 <SelectItem value="Vencido">Vencido</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={qtdBoletosFilter} onValueChange={setQtdBoletosFilter}>
+              <SelectTrigger className="w-[220px]">
+                <Filter className="h-4 w-4 mr-2" />
+                <SelectValue placeholder="Qtd. Boletos em Aberto" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="todos">Todas as quantidades</SelectItem>
+                <SelectItem value="1">1 boleto em aberto</SelectItem>
+                <SelectItem value="2">2 boletos em aberto</SelectItem>
+                <SelectItem value="3">3 boletos em aberto</SelectItem>
+                <SelectItem value="4+">4+ boletos em aberto</SelectItem>
               </SelectContent>
             </Select>
           </div>

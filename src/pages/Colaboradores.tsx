@@ -120,11 +120,11 @@ const Colaboradores = () => {
   const getRankingBadge = (index: number) => {
     switch (index) {
       case 0:
-        return <Badge className="bg-yellow-500">🥇 1º</Badge>;
+        return <Badge className="bg-warning text-warning-foreground">🥇 1º</Badge>;
       case 1:
-        return <Badge className="bg-gray-400">🥈 2º</Badge>;
+        return <Badge className="bg-muted-foreground text-secondary">🥈 2º</Badge>;
       case 2:
-        return <Badge className="bg-orange-600">🥉 3º</Badge>;
+        return <Badge className="bg-destructive text-destructive-foreground">🥉 3º</Badge>;
       default:
         return <Badge variant="outline">{index + 1}º</Badge>;
     }

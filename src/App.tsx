@@ -3,9 +3,10 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AppLayout } from "./components/AppLayout";
 
-// Import all pages
 import Dashboard from "./pages/Dashboard";
 import Associados from "./pages/Associados";
 import Boletos from "./pages/Boletos";
@@ -18,6 +19,7 @@ import Acordos from "./pages/Acordos";
 import Negativacoes from "./pages/Negativacoes";
 import Metricas from "./pages/Metricas";
 import Tickets from "./pages/Tickets";
+import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,24 +30,35 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <AppLayout>
+        <AuthProvider>
           <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/associados" element={<Associados />} />
-            <Route path="/boletos" element={<Boletos />} />
-            <Route path="/colaboradores" element={<Colaboradores />} />
-            <Route path="/ligacoes" element={<Ligacoes />} />
-            <Route path="/acoes-cobranca" element={<AcoesCobranca />} />
-            <Route path="/regua-cobranca" element={<ReguaCobranca />} />
-            <Route path="/templates" element={<Templates />} />
-            <Route path="/acordos" element={<Acordos />} />
-            <Route path="/negativacoes" element={<Negativacoes />} />
-            <Route path="/metricas" element={<Metricas />} />
-            <Route path="/tickets" element={<Tickets />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
+            <Route path="/login" element={<Login />} />
+            <Route
+              path="/*"
+              element={
+                <ProtectedRoute>
+                  <AppLayout>
+                    <Routes>
+                      <Route path="/" element={<Dashboard />} />
+                      <Route path="/associados" element={<Associados />} />
+                      <Route path="/boletos" element={<Boletos />} />
+                      <Route path="/colaboradores" element={<Colaboradores />} />
+                      <Route path="/ligacoes" element={<Ligacoes />} />
+                      <Route path="/acoes-cobranca" element={<AcoesCobranca />} />
+                      <Route path="/regua-cobranca" element={<ReguaCobranca />} />
+                      <Route path="/templates" element={<Templates />} />
+                      <Route path="/acordos" element={<Acordos />} />
+                      <Route path="/negativacoes" element={<Negativacoes />} />
+                      <Route path="/metricas" element={<Metricas />} />
+                      <Route path="/tickets" element={<Tickets />} />
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </AppLayout>
+                </ProtectedRoute>
+              }
+            />
           </Routes>
-        </AppLayout>
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

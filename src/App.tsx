@@ -17,6 +17,7 @@ import ReguaCobranca from "./pages/ReguaCobranca";
 import Templates from "./pages/Templates";
 import Acordos from "./pages/Acordos";
 import Negativacoes from "./pages/Negativacoes";
+import Cancelamentos from "./pages/Cancelamentos";
 import Metricas from "./pages/Metricas";
 import Tickets from "./pages/Tickets";
 import NotificacoesInternas from "./pages/NotificacoesInternas";
@@ -53,6 +54,7 @@ const App = () => (
                       <Route path="/templates" element={<Templates />} />
                       <Route path="/acordos" element={<Acordos />} />
                       <Route path="/negativacoes" element={<Negativacoes />} />
+                      <Route path="/cancelamentos" element={<Cancelamentos />} />
                       <Route path="/metricas" element={<Metricas />} />
                       <Route path="/tickets" element={<Tickets />} />
                       <Route path="/notificacoes" element={<NotificacoesInternas />} />

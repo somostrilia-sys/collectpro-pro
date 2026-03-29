@@ -70,6 +70,7 @@ interface Cooperativa {
   voluntario: string;
   voluntarioTelefone: string;
   voluntarioEmail: string;
+  diaVencimento: number; // 1, 10 ou 20
 }
 
 interface Inadimplente {
@@ -80,14 +81,14 @@ interface Inadimplente {
 }
 
 const mockCooperativas: Cooperativa[] = [
-  { id: "1", nome: "Central SP", cnpj: "12.345.678/0001-90", uf: "SP", cidade: "São Paulo", responsavel: "Carlos Eduardo Mendes", telefone: "(11) 3456-7890", email: "contato@centralsp.coop.br", associados: 1250, faturamento: 187500, arrecadado: 168750, acordosAtivos: 12, cancelamentos: 3, voluntario: "Ricardo Menezes", voluntarioTelefone: "(11) 98765-4321", voluntarioEmail: "ricardo@centralsp.coop.br" },
-  { id: "2", nome: "Central RJ", cnpj: "23.456.789/0001-01", uf: "RJ", cidade: "Rio de Janeiro", responsavel: "Ana Paula Ferreira", telefone: "(21) 2345-6789", email: "contato@centralrj.coop.br", associados: 980, faturamento: 147000, arrecadado: 117600, acordosAtivos: 18, cancelamentos: 7, voluntario: "Beatriz Carvalho", voluntarioTelefone: "(21) 98765-4321", voluntarioEmail: "beatriz@centralrj.coop.br" },
-  { id: "3", nome: "Minas Proteção", cnpj: "34.567.890/0001-12", uf: "MG", cidade: "Belo Horizonte", responsavel: "Roberto Alves Costa", telefone: "(31) 3456-7890", email: "contato@minasprotecao.coop.br", associados: 750, faturamento: 112500, arrecadado: 84375, acordosAtivos: 15, cancelamentos: 5, voluntario: "Gustavo Pereira", voluntarioTelefone: "(31) 98765-4321", voluntarioEmail: "gustavo@minasprotecao.coop.br" },
-  { id: "4", nome: "Sul Proteção", cnpj: "45.678.901/0001-23", uf: "PR", cidade: "Curitiba", responsavel: "Fernanda Lima Souza", telefone: "(41) 3456-7890", email: "contato@sulprotecao.coop.br", associados: 520, faturamento: 78000, arrecadado: 70200, acordosAtivos: 5, cancelamentos: 2, voluntario: "Daniela Campos", voluntarioTelefone: "(41) 98765-4321", voluntarioEmail: "daniela@sulprotecao.coop.br" },
-  { id: "5", nome: "Nordeste", cnpj: "56.789.012/0001-34", uf: "PE", cidade: "Recife", responsavel: "Marcelo Santos Oliveira", telefone: "(81) 3456-7890", email: "contato@nordeste.coop.br", associados: 480, faturamento: 72000, arrecadado: 50400, acordosAtivos: 22, cancelamentos: 10, voluntario: "Thiago Monteiro", voluntarioTelefone: "(81) 98765-4321", voluntarioEmail: "thiago@nordeste.coop.br" },
-  { id: "6", nome: "Centro-Oeste", cnpj: "67.890.123/0001-45", uf: "GO", cidade: "Goiânia", responsavel: "Juliana Ramos Pereira", telefone: "(62) 3456-7890", email: "contato@centrooeste.coop.br", associados: 350, faturamento: 52500, arrecadado: 44625, acordosAtivos: 8, cancelamentos: 3, voluntario: "Larissa Duarte", voluntarioTelefone: "(62) 98765-4321", voluntarioEmail: "larissa@centrooeste.coop.br" },
-  { id: "7", nome: "Norte", cnpj: "78.901.234/0001-56", uf: "PA", cidade: "Belém", responsavel: "Paulo Henrique Dias", telefone: "(91) 3456-7890", email: "contato@norte.coop.br", associados: 280, faturamento: 42000, arrecadado: 29400, acordosAtivos: 12, cancelamentos: 6, voluntario: "André Nascimento", voluntarioTelefone: "(91) 98765-4321", voluntarioEmail: "andre@norte.coop.br" },
-  { id: "8", nome: "Litoral", cnpj: "89.012.345/0001-67", uf: "SC", cidade: "Florianópolis", responsavel: "Tatiana Rocha Vieira", telefone: "(48) 3456-7890", email: "contato@litoral.coop.br", associados: 320, faturamento: 48000, arrecadado: 43200, acordosAtivos: 4, cancelamentos: 1, voluntario: "Vanessa Ribas", voluntarioTelefone: "(48) 98765-4321", voluntarioEmail: "vanessa@litoral.coop.br" },
+  { id: "1", nome: "Central SP", cnpj: "12.345.678/0001-90", uf: "SP", cidade: "São Paulo", responsavel: "Carlos Eduardo Mendes", telefone: "(11) 3456-7890", email: "contato@centralsp.coop.br", associados: 1250, faturamento: 187500, arrecadado: 168750, acordosAtivos: 12, cancelamentos: 3, voluntario: "Ricardo Menezes", voluntarioTelefone: "(11) 98765-4321", voluntarioEmail: "ricardo@centralsp.coop.br", diaVencimento: 1 },
+  { id: "2", nome: "Central RJ", cnpj: "23.456.789/0001-01", uf: "RJ", cidade: "Rio de Janeiro", responsavel: "Ana Paula Ferreira", telefone: "(21) 2345-6789", email: "contato@centralrj.coop.br", associados: 980, faturamento: 147000, arrecadado: 117600, acordosAtivos: 18, cancelamentos: 7, voluntario: "Beatriz Carvalho", voluntarioTelefone: "(21) 98765-4321", voluntarioEmail: "beatriz@centralrj.coop.br", diaVencimento: 10 },
+  { id: "3", nome: "Minas Proteção", cnpj: "34.567.890/0001-12", uf: "MG", cidade: "Belo Horizonte", responsavel: "Roberto Alves Costa", telefone: "(31) 3456-7890", email: "contato@minasprotecao.coop.br", associados: 750, faturamento: 112500, arrecadado: 84375, acordosAtivos: 15, cancelamentos: 5, voluntario: "Gustavo Pereira", voluntarioTelefone: "(31) 98765-4321", voluntarioEmail: "gustavo@minasprotecao.coop.br", diaVencimento: 20 },
+  { id: "4", nome: "Sul Proteção", cnpj: "45.678.901/0001-23", uf: "PR", cidade: "Curitiba", responsavel: "Fernanda Lima Souza", telefone: "(41) 3456-7890", email: "contato@sulprotecao.coop.br", associados: 520, faturamento: 78000, arrecadado: 70200, acordosAtivos: 5, cancelamentos: 2, voluntario: "Daniela Campos", voluntarioTelefone: "(41) 98765-4321", voluntarioEmail: "daniela@sulprotecao.coop.br", diaVencimento: 1 },
+  { id: "5", nome: "Nordeste", cnpj: "56.789.012/0001-34", uf: "PE", cidade: "Recife", responsavel: "Marcelo Santos Oliveira", telefone: "(81) 3456-7890", email: "contato@nordeste.coop.br", associados: 480, faturamento: 72000, arrecadado: 50400, acordosAtivos: 22, cancelamentos: 10, voluntario: "Thiago Monteiro", voluntarioTelefone: "(81) 98765-4321", voluntarioEmail: "thiago@nordeste.coop.br", diaVencimento: 10 },
+  { id: "6", nome: "Centro-Oeste", cnpj: "67.890.123/0001-45", uf: "GO", cidade: "Goiânia", responsavel: "Juliana Ramos Pereira", telefone: "(62) 3456-7890", email: "contato@centrooeste.coop.br", associados: 350, faturamento: 52500, arrecadado: 44625, acordosAtivos: 8, cancelamentos: 3, voluntario: "Larissa Duarte", voluntarioTelefone: "(62) 98765-4321", voluntarioEmail: "larissa@centrooeste.coop.br", diaVencimento: 20 },
+  { id: "7", nome: "Norte", cnpj: "78.901.234/0001-56", uf: "PA", cidade: "Belém", responsavel: "Paulo Henrique Dias", telefone: "(91) 3456-7890", email: "contato@norte.coop.br", associados: 280, faturamento: 42000, arrecadado: 29400, acordosAtivos: 12, cancelamentos: 6, voluntario: "André Nascimento", voluntarioTelefone: "(91) 98765-4321", voluntarioEmail: "andre@norte.coop.br", diaVencimento: 1 },
+  { id: "8", nome: "Litoral", cnpj: "89.012.345/0001-67", uf: "SC", cidade: "Florianópolis", responsavel: "Tatiana Rocha Vieira", telefone: "(48) 3456-7890", email: "contato@litoral.coop.br", associados: 320, faturamento: 48000, arrecadado: 43200, acordosAtivos: 4, cancelamentos: 1, voluntario: "Vanessa Ribas", voluntarioTelefone: "(48) 98765-4321", voluntarioEmail: "vanessa@litoral.coop.br", diaVencimento: 10 },
 ];
 
 const mockInadimplentes: Record<string, Inadimplente[]> = {
@@ -546,9 +547,15 @@ const DetalheDialog = ({
                 <Phone className="h-3.5 w-3.5 text-muted-foreground" />
                 <span className="font-medium">{coop.telefone}</span>
               </div>
-              <div className="flex items-center gap-1.5 sm:col-span-2">
+              <div className="flex items-center gap-1.5">
                 <Mail className="h-3.5 w-3.5 text-muted-foreground" />
                 <span className="font-medium">{coop.email}</span>
+              </div>
+              <div className="flex flex-col gap-0.5">
+                <span className="text-xs text-muted-foreground uppercase tracking-wide">Dia de Vencimento</span>
+                <Badge variant="outline" className="w-fit bg-blue-500/10 text-blue-600 border-blue-500/30">
+                  Dia {String(coop.diaVencimento).padStart(2, "0")}
+                </Badge>
               </div>
             </div>
 
@@ -705,6 +712,8 @@ const Cooperativas = () => {
   const [filtroPerf, setFiltroPerf] = useState("todas");
   const [filtroInad, setFiltroInad] = useState("todas");
   const [filtroAssoc, setFiltroAssoc] = useState("todos");
+  const [filtroVenc, setFiltroVenc] = useState("todos");
+  const [filtroVoluntario, setFiltroVoluntario] = useState("todos");
 
   const withPerf = mockCooperativas.map((c) => ({
     ...c,
@@ -739,7 +748,10 @@ const Cooperativas = () => {
       return true;
     })();
 
-    return matchSearch && matchUF && matchPerf && matchInad && matchAssoc;
+    const matchVenc = filtroVenc === "todos" || c.diaVencimento === Number(filtroVenc);
+    const matchVoluntario = filtroVoluntario === "todos" || c.voluntario === filtroVoluntario;
+
+    return matchSearch && matchUF && matchPerf && matchInad && matchAssoc && matchVenc && matchVoluntario;
   });
 
   const hasActiveFilters =
@@ -747,6 +759,8 @@ const Cooperativas = () => {
     filtroPerf !== "todas" ||
     filtroInad !== "todas" ||
     filtroAssoc !== "todos" ||
+    filtroVenc !== "todos" ||
+    filtroVoluntario !== "todos" ||
     searchTerm !== "";
 
   const clearFilters = () => {
@@ -755,7 +769,11 @@ const Cooperativas = () => {
     setFiltroPerf("todas");
     setFiltroInad("todas");
     setFiltroAssoc("todos");
+    setFiltroVenc("todos");
+    setFiltroVoluntario("todos");
   };
+
+  const voluntarios = Array.from(new Set(mockCooperativas.map((c) => c.voluntario))).sort();
 
   const sorted = [...withPerf].sort(
     (a, b) => b.arrecadado / b.faturamento - a.arrecadado / a.faturamento
@@ -904,6 +922,28 @@ const Cooperativas = () => {
               <SelectItem value="acima1000">Acima de 1.000</SelectItem>
             </SelectContent>
           </Select>
+          <Select value={filtroVenc} onValueChange={setFiltroVenc}>
+            <SelectTrigger className="w-[160px]">
+              <SelectValue placeholder="Vencimento" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="todos">Todos venc.</SelectItem>
+              <SelectItem value="1">Dia 01</SelectItem>
+              <SelectItem value="10">Dia 10</SelectItem>
+              <SelectItem value="20">Dia 20</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={filtroVoluntario} onValueChange={setFiltroVoluntario}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Voluntário" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="todos">Todos voluntários</SelectItem>
+              {voluntarios.map((v) => (
+                <SelectItem key={v} value={v}>{v}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           {hasActiveFilters && (
             <Button variant="ghost" size="sm" onClick={clearFilters} className="text-muted-foreground hover:text-foreground">
               <X className="h-4 w-4 mr-1.5" />
@@ -929,6 +969,7 @@ const Cooperativas = () => {
                   <TableHead>Cooperativa</TableHead>
                   <TableHead className="text-center">UF</TableHead>
                   <TableHead>Voluntário</TableHead>
+                  <TableHead className="text-center">Vencimento</TableHead>
                   <TableHead className="text-right">Associados</TableHead>
                   <TableHead className="text-right">Faturamento</TableHead>
                   <TableHead className="text-right">Arrecadado</TableHead>
@@ -942,7 +983,7 @@ const Cooperativas = () => {
               <TableBody>
                 {filtered.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={11} className="text-center text-muted-foreground py-10">
+                    <TableCell colSpan={12} className="text-center text-muted-foreground py-10">
                       Nenhuma cooperativa encontrada
                     </TableCell>
                   </TableRow>
@@ -954,6 +995,11 @@ const Cooperativas = () => {
                         <Badge variant="secondary">{c.uf}</Badge>
                       </TableCell>
                       <TableCell className="text-sm text-muted-foreground">{c.voluntario}</TableCell>
+                      <TableCell className="text-center">
+                        <Badge variant="outline" className="bg-blue-500/10 text-blue-600 border-blue-500/30">
+                          Dia {String(c.diaVencimento).padStart(2, "0")}
+                        </Badge>
+                      </TableCell>
                       <TableCell className="text-right">{fmtNum(c.associados)}</TableCell>
                       <TableCell className="text-right">{fmt(c.faturamento)}</TableCell>
                       <TableCell className="text-right text-emerald-600 font-medium">{fmt(c.arrecadado)}</TableCell>

@@ -32,19 +32,19 @@ interface Recebimento {
 }
 
 const mockRec: Recebimento[] = [
-  { id:"1",  dataHora:"29/03 08:15", associado:"João Carlos da Silva", cpf:"123.456.789-00", cooperativa:"Central SP",     valor:189.90, forma:"PIX QR Code",             codigoTransacao:"PIX-2026032908150001", referenciaBoleto:"—",                                                              status:"Confirmado" },
+  { id:"1",  dataHora:"29/03 08:15", associado:"João Carlos da Silva", cpf:"123.456.789-00", cooperativa:"Central SP",     valor:189.90, forma:"PIX QR Code",             codigoTransacao:"PIX-2026032908150001", referenciaBoleto:"—", status:"Confirmado" },
   { id:"2",  dataHora:"29/03 08:22", associado:"Maria Santos",          cpf:"987.654.321-00", cooperativa:"Central RJ",     valor:129.90, forma:"Boleto Código de Barras", codigoTransacao:"—",                   referenciaBoleto:"23793.38128 60000.000018 23456.789012 1 92650000012990", status:"Confirmado" },
-  { id:"3",  dataHora:"29/03 08:45", associado:"Pedro Oliveira",        cpf:"456.789.123-00", cooperativa:"Central SP",     valor:249.90, forma:"PIX QR Code",             codigoTransacao:"PIX-2026032908450002", referenciaBoleto:"—",                                                              status:"Confirmado" },
+  { id:"3",  dataHora:"29/03 08:45", associado:"Pedro Oliveira",        cpf:"456.789.123-00", cooperativa:"Central SP",     valor:249.90, forma:"PIX QR Code",             codigoTransacao:"PIX-2026032908450002", referenciaBoleto:"—", status:"Confirmado" },
   { id:"4",  dataHora:"29/03 09:10", associado:"Ana Lima",              cpf:"321.654.987-00", cooperativa:"Minas Proteção", valor:159.90, forma:"Boleto Código de Barras", codigoTransacao:"—",                   referenciaBoleto:"23793.38128 60000.000024 34567.890123 2 92650000015990", status:"Confirmado" },
-  { id:"5",  dataHora:"29/03 09:30", associado:"Carlos Ferreira",       cpf:"789.123.456-00", cooperativa:"Sul Proteção",   valor:199.90, forma:"PIX QR Code",             codigoTransacao:"PIX-2026032909300003", referenciaBoleto:"—",                                                              status:"Confirmado" },
+  { id:"5",  dataHora:"29/03 09:30", associado:"Carlos Ferreira",       cpf:"789.123.456-00", cooperativa:"Sul Proteção",   valor:199.90, forma:"PIX QR Code",             codigoTransacao:"PIX-2026032909300003", referenciaBoleto:"—", status:"Confirmado" },
   { id:"6",  dataHora:"29/03 09:55", associado:"Fernanda Costa",        cpf:"654.321.789-00", cooperativa:"Central SP",     valor:179.90, forma:"Boleto Código de Barras", codigoTransacao:"—",                   referenciaBoleto:"23793.38128 60000.000036 45678.901234 3 92650000017990", status:"Pendente"   },
-  { id:"7",  dataHora:"29/03 10:12", associado:"Roberto Almeida",       cpf:"147.258.369-00", cooperativa:"Centro-Oeste",   valor:219.90, forma:"PIX QR Code",             codigoTransacao:"PIX-2026032910120004", referenciaBoleto:"—",                                                              status:"Confirmado" },
-  { id:"8",  dataHora:"29/03 10:40", associado:"Luciana Martins",       cpf:"963.852.741-00", cooperativa:"Litoral",        valor:149.90, forma:"PIX QR Code",             codigoTransacao:"PIX-2026032910400005", referenciaBoleto:"—",                                                              status:"Confirmado" },
+  { id:"7",  dataHora:"29/03 10:12", associado:"Roberto Almeida",       cpf:"147.258.369-00", cooperativa:"Centro-Oeste",   valor:219.90, forma:"PIX QR Code",             codigoTransacao:"PIX-2026032910120004", referenciaBoleto:"—", status:"Confirmado" },
+  { id:"8",  dataHora:"29/03 10:40", associado:"Luciana Martins",       cpf:"963.852.741-00", cooperativa:"Litoral",        valor:149.90, forma:"PIX QR Code",             codigoTransacao:"PIX-2026032910400005", referenciaBoleto:"—", status:"Confirmado" },
   { id:"9",  dataHora:"29/03 11:05", associado:"Marcos Ribeiro",        cpf:"258.147.369-00", cooperativa:"Nordeste",       valor:209.90, forma:"Boleto Código de Barras", codigoTransacao:"—",                   referenciaBoleto:"23793.38128 60000.000048 56789.012345 4 92650000020990", status:"Confirmado" },
-  { id:"10", dataHora:"29/03 11:30", associado:"Patrícia Souza",        cpf:"369.258.147-00", cooperativa:"Central RJ",     valor:169.90, forma:"PIX QR Code",             codigoTransacao:"PIX-2026032911300006", referenciaBoleto:"—",                                                              status:"Confirmado" },
-  { id:"11", dataHora:"29/03 12:00", associado:"Não identificado",      cpf:"—",              cooperativa:"—",              valor:189.90, forma:"PIX QR Code",             codigoTransacao:"PIX-2026032912000007", referenciaBoleto:"—",                                                              status:"Pendente"   },
-  { id:"12", dataHora:"29/03 12:25", associado:"Ricardo Santos",        cpf:"741.852.963-00", cooperativa:"Norte",          valor:239.90, forma:"Transferência",           codigoTransacao:"TED-2026032912250001", referenciaBoleto:"—",                                                              status:"Confirmado" },
-  { id:"13", dataHora:"29/03 13:00", associado:"Não identificado",      cpf:"—",              cooperativa:"—",              valor:159.90, forma:"PIX QR Code",             codigoTransacao:"PIX-2026032913000008", referenciaBoleto:"—",                                                              status:"Pendente"   },
+  { id:"10", dataHora:"29/03 11:30", associado:"Patrícia Souza",        cpf:"369.258.147-00", cooperativa:"Central RJ",     valor:169.90, forma:"PIX QR Code",             codigoTransacao:"PIX-2026032911300006", referenciaBoleto:"—", status:"Confirmado" },
+  { id:"11", dataHora:"29/03 12:00", associado:"Não identificado",      cpf:"—",              cooperativa:"—",              valor:189.90, forma:"PIX QR Code",             codigoTransacao:"PIX-2026032912000007", referenciaBoleto:"—", status:"Pendente"   },
+  { id:"12", dataHora:"29/03 12:25", associado:"Ricardo Santos",        cpf:"741.852.963-00", cooperativa:"Norte",          valor:239.90, forma:"Transferência",           codigoTransacao:"TED-2026032912250001", referenciaBoleto:"—", status:"Confirmado" },
+  { id:"13", dataHora:"29/03 13:00", associado:"Não identificado",      cpf:"—",              cooperativa:"—",              valor:159.90, forma:"PIX QR Code",             codigoTransacao:"PIX-2026032913000008", referenciaBoleto:"—", status:"Pendente"   },
 ];
 
 const mockConc = [
@@ -87,22 +87,19 @@ function ConcBadge({ status }: { status: string }) {
 
 export default function Financeiro() {
   const { toast } = useToast();
-
-  const [search, setSearch]     = useState("");
-  const [formaF, setFormaF]     = useState("Todos");
-  const [dataF, setDataF]       = useState("2026-03-29");
-  const [detalhe, setDetalhe]   = useState<Recebimento | null>(null);
-  const [estorno, setEstorno]   = useState<Recebimento | null>(null);
-  const [vincBusca, setVinc]    = useState("");
-  const [dataCon, setDataCon]   = useState("2026-03-29");
-  const [exIni, setExIni]       = useState("2026-03-23");
-  const [exFim, setExFim]       = useState("2026-03-29");
+  const [search, setSearch]   = useState("");
+  const [formaF, setFormaF]   = useState("Todos");
+  const [dataF, setDataF]     = useState("2026-03-29");
+  const [detalhe, setDetalhe] = useState<Recebimento | null>(null);
+  const [estorno, setEstorno] = useState<Recebimento | null>(null);
+  const [vincBusca, setVinc]  = useState("");
+  const [dataCon, setDataCon] = useState("2026-03-29");
 
   const filtered = mockRec.filter(r => {
     const s = search.toLowerCase();
-    const matchS = !search || r.associado.toLowerCase().includes(s) || r.cpf.includes(s) || r.codigoTransacao.toLowerCase().includes(s);
-    const matchF = formaF === "Todos" || r.forma === formaF;
-    return matchS && matchF;
+    const mS = !search || r.associado.toLowerCase().includes(s) || r.cpf.includes(s) || r.codigoTransacao.toLowerCase().includes(s);
+    const mF = formaF === "Todos" || r.forma === formaF;
+    return mS && mF;
   });
 
   const totalHoje   = mockRec.filter(r => r.status !== "Estornado").reduce((s,r) => s+r.valor, 0);
@@ -110,18 +107,17 @@ export default function Financeiro() {
   const totalBoleto = mockRec.filter(r => r.forma === "Boleto Código de Barras" && r.status !== "Estornado").reduce((s,r) => s+r.valor, 0);
   const pendId      = mockRec.filter(r => r.associado === "Não identificado").length;
 
-  // Extrato
   const extratoRaw = [
-    { id:"e1",  dataHora:"29/03 13:00", desc:"Não identificado — PIX",         cod:"PIX-2026032913000008", valor:159.90, tipo:"entrada" as const },
-    { id:"e2",  dataHora:"29/03 12:25", desc:"Ricardo Santos — Transferência", cod:"TED-2026032912250001", valor:239.90, tipo:"entrada" as const },
-    { id:"e3",  dataHora:"29/03 12:00", desc:"Não identificado — PIX",         cod:"PIX-2026032912000007", valor:189.90, tipo:"entrada" as const },
-    { id:"e4",  dataHora:"29/03 11:30", desc:"Patrícia Souza — PIX",           cod:"PIX-2026032911300006", valor:169.90, tipo:"entrada" as const },
-    { id:"e5",  dataHora:"29/03 11:05", desc:"Marcos Ribeiro — Boleto",        cod:"BOL-20260329110500",   valor:209.90, tipo:"entrada" as const },
-    { id:"e6",  dataHora:"28/03 14:10", desc:"Fernanda Costa — Boleto Estorno",cod:"BOL-20260328141000",   valor:179.90, tipo:"estorno" as const },
-    { id:"e7",  dataHora:"28/03 10:00", desc:"Carlos Ferreira — PIX",          cod:"PIX-2026032810000001", valor:199.90, tipo:"entrada" as const },
-    { id:"e8",  dataHora:"27/03 09:30", desc:"Luciana Martins — PIX",          cod:"PIX-2026032709300001", valor:149.90, tipo:"entrada" as const },
-    { id:"e9",  dataHora:"26/03 16:00", desc:"João Carlos — PIX",              cod:"PIX-2026032616000001", valor:189.90, tipo:"entrada" as const },
-    { id:"e10", dataHora:"25/03 11:00", desc:"Pedro Oliveira — PIX",           cod:"PIX-2026032511000001", valor:249.90, tipo:"entrada" as const },
+    { id:"e1",  dataHora:"29/03 13:00", desc:"Não identificado — PIX",          cod:"PIX-2026032913000008", valor:159.90, tipo:"entrada" as const },
+    { id:"e2",  dataHora:"29/03 12:25", desc:"Ricardo Santos — Transferência",  cod:"TED-2026032912250001", valor:239.90, tipo:"entrada" as const },
+    { id:"e3",  dataHora:"29/03 12:00", desc:"Não identificado — PIX",          cod:"PIX-2026032912000007", valor:189.90, tipo:"entrada" as const },
+    { id:"e4",  dataHora:"29/03 11:30", desc:"Patrícia Souza — PIX",            cod:"PIX-2026032911300006", valor:169.90, tipo:"entrada" as const },
+    { id:"e5",  dataHora:"29/03 11:05", desc:"Marcos Ribeiro — Boleto",         cod:"BOL-20260329110500",   valor:209.90, tipo:"entrada" as const },
+    { id:"e6",  dataHora:"28/03 14:10", desc:"Fernanda Costa — Boleto (Estorno)",cod:"BOL-20260328141000",  valor:179.90, tipo:"estorno" as const },
+    { id:"e7",  dataHora:"28/03 10:00", desc:"Carlos Ferreira — PIX",           cod:"PIX-2026032810000001", valor:199.90, tipo:"entrada" as const },
+    { id:"e8",  dataHora:"27/03 09:30", desc:"Luciana Martins — PIX",           cod:"PIX-2026032709300001", valor:149.90, tipo:"entrada" as const },
+    { id:"e9",  dataHora:"26/03 16:00", desc:"João Carlos — PIX",               cod:"PIX-2026032616000001", valor:189.90, tipo:"entrada" as const },
+    { id:"e10", dataHora:"25/03 11:00", desc:"Pedro Oliveira — PIX",            cod:"PIX-2026032511000001", valor:249.90, tipo:"entrada" as const },
   ];
   let acc = 0;
   const extrato = extratoRaw.slice().reverse().map(e => {
@@ -131,7 +127,6 @@ export default function Financeiro() {
   const totEntradas = extratoRaw.filter(e => e.tipo === "entrada").reduce((s,e) => s+e.valor, 0);
   const totEstornos = extratoRaw.filter(e => e.tipo === "estorno").reduce((s,e) => s+e.valor, 0);
 
-  // Relatórios
   const porForma = [
     { forma:"PIX QR Code",             qtd:8, total:7230.00, pct:58.1 },
     { forma:"Boleto Código de Barras", qtd:4, total:5220.00, pct:41.9 },
@@ -149,13 +144,13 @@ export default function Financeiro() {
     { coop:"Litoral",        rec:1, total:149.90,  ticket:149.90 },
   ];
   const evolucao = [
-    { data:"23/03", rec:18, valor:3210.00, comp:"+4,2%"  },
-    { data:"24/03", rec:22, valor:3890.00, comp:"+21,2%" },
-    { data:"25/03", rec:20, valor:3540.00, comp:"-9,0%"  },
-    { data:"26/03", rec:25, valor:4350.00, comp:"+22,9%" },
-    { data:"27/03", rec:19, valor:3210.00, comp:"-26,2%" },
-    { data:"28/03", rec:28, valor:4980.00, comp:"+55,1%" },
-    { data:"29/03", rec:13, valor:2669.70, comp:"-46,4%" },
+    { data:"23/03", rec:18, valor:3210.00, comp:"+4,2%",  neg:false },
+    { data:"24/03", rec:22, valor:3890.00, comp:"+21,2%", neg:false },
+    { data:"25/03", rec:20, valor:3540.00, comp:"-9,0%",  neg:true  },
+    { data:"26/03", rec:25, valor:4350.00, comp:"+22,9%", neg:false },
+    { data:"27/03", rec:19, valor:3210.00, comp:"-26,2%", neg:true  },
+    { data:"28/03", rec:28, valor:4980.00, comp:"+55,1%", neg:false },
+    { data:"29/03", rec:13, valor:2669.70, comp:"-46,4%", neg:true  },
   ];
   const horarios = [
     { faixa:"08h–10h", qtd:5, valor:929.50  },
@@ -173,7 +168,7 @@ export default function Financeiro() {
   }
   function confirmarEstorno() {
     setEstorno(null);
-    toast({ title:"Estorno solicitado", description:"O recebimento foi estornado.", variant:"destructive" });
+    toast({ title:"Estorno solicitado", description:"Recebimento estornado com sucesso.", variant:"destructive" });
   }
   function exportar(tipo: string) {
     toast({ title:`Exportando ${tipo}…`, description:"O arquivo será baixado em instantes." });
@@ -196,25 +191,16 @@ export default function Financeiro() {
           <TabsTrigger value="relatorios">Relatórios</TabsTrigger>
         </TabsList>
 
-        {/* ── TAB 1: RECEBIMENTOS ─────────────────────────────────────── */}
+        {/* ══ TAB 1: RECEBIMENTOS ══════════════════════════════════════════ */}
         <TabsContent value="recebimentos" className="space-y-4">
-          {/* KPI Cards */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             <Card>
-              <CardHeader className="pb-1 pt-4 px-4">
-                <CardTitle className="text-xs text-muted-foreground">Recebido Hoje</CardTitle>
-              </CardHeader>
-              <CardContent className="px-4 pb-4">
-                <p className="text-xl font-bold text-green-600">{fmt(totalHoje)}</p>
-              </CardContent>
+              <CardHeader className="pb-1 pt-4 px-4"><CardTitle className="text-xs text-muted-foreground">Recebido Hoje</CardTitle></CardHeader>
+              <CardContent className="px-4 pb-4"><p className="text-xl font-bold text-green-600">{fmt(totalHoje)}</p></CardContent>
             </Card>
             <Card>
-              <CardHeader className="pb-1 pt-4 px-4">
-                <CardTitle className="text-xs text-muted-foreground">Recebido no Mês</CardTitle>
-              </CardHeader>
-              <CardContent className="px-4 pb-4">
-                <p className="text-xl font-bold">{fmt(285620)}</p>
-              </CardContent>
+              <CardHeader className="pb-1 pt-4 px-4"><CardTitle className="text-xs text-muted-foreground">Recebido no Mês</CardTitle></CardHeader>
+              <CardContent className="px-4 pb-4"><p className="text-xl font-bold">{fmt(285620)}</p></CardContent>
             </Card>
             <Card>
               <CardHeader className="pb-1 pt-4 px-4">
@@ -241,16 +227,13 @@ export default function Financeiro() {
             <Card>
               <CardHeader className="pb-1 pt-4 px-4">
                 <CardTitle className="text-xs text-muted-foreground flex items-center gap-1">
-                  <AlertCircle className="h-3 w-3 text-yellow-500" />Pendentes Identificação
+                  <AlertCircle className="h-3 w-3 text-yellow-500" />Pendentes ID
                 </CardTitle>
               </CardHeader>
-              <CardContent className="px-4 pb-4">
-                <p className="text-xl font-bold text-yellow-600">{pendId}</p>
-              </CardContent>
+              <CardContent className="px-4 pb-4"><p className="text-xl font-bold text-yellow-600">{pendId}</p></CardContent>
             </Card>
           </div>
 
-          {/* Filters */}
           <Card>
             <CardContent className="pt-4 pb-4">
               <div className="flex flex-wrap gap-3 items-end">
@@ -279,7 +262,7 @@ export default function Financeiro() {
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="min-w-[170px]">
+                <div className="min-w-[160px]">
                   <Label className="text-xs mb-1 block">Cooperativa</Label>
                   <Select defaultValue="Todas">
                     <SelectTrigger><SelectValue /></SelectTrigger>
@@ -304,7 +287,6 @@ export default function Financeiro() {
             </CardContent>
           </Card>
 
-          {/* Table */}
           <Card>
             <CardContent className="p-0">
               <div className="overflow-x-auto">
@@ -332,8 +314,8 @@ export default function Financeiro() {
                         <TableCell className="text-sm">{r.cooperativa}</TableCell>
                         <TableCell className="font-semibold text-sm">{fmt(r.valor)}</TableCell>
                         <TableCell><FormaBadge forma={r.forma} /></TableCell>
-                        <TableCell className="text-xs font-mono max-w-[140px] truncate">{r.codigoTransacao}</TableCell>
-                        <TableCell className="text-xs font-mono max-w-[120px] truncate">{r.referenciaBoleto}</TableCell>
+                        <TableCell className="text-xs font-mono max-w-[130px] truncate">{r.codigoTransacao}</TableCell>
+                        <TableCell className="text-xs font-mono max-w-[110px] truncate">{r.referenciaBoleto}</TableCell>
                         <TableCell><StatusBadge status={r.status} /></TableCell>
                         <TableCell>
                           <div className="flex gap-1">
@@ -354,43 +336,358 @@ export default function Financeiro() {
           </Card>
         </TabsContent>
 
-        {/* ── TAB 2: CONCILIAÇÃO DIÁRIA ────────────────────────────────── */}
+        {/* ══ TAB 2: CONCILIAÇÃO DIÁRIA ══════════════════════════════════ */}
         <TabsContent value="conciliacao" className="space-y-4">
           <div className="flex items-center gap-3">
             <Label className="text-sm font-medium">Data da Conciliação:</Label>
             <Input type="date" value={dataCon} onChange={e => setDataCon(e.target.value)} className="w-40" />
           </div>
 
-          {/* Summary Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Card>
-              <CardHeader className="pb-1 pt-4 px-4">
-                <CardTitle className="text-xs text-muted-foreground">Total Esperado</CardTitle>
-              </CardHeader>
+              <CardHeader className="pb-1 pt-4 px-4"><CardTitle className="text-xs text-muted-foreground">Total Esperado</CardTitle></CardHeader>
               <CardContent className="px-4 pb-4">
                 <p className="text-xl font-bold">{fmt(18500)}</p>
                 <p className="text-xs text-muted-foreground">boletos vencidos</p>
               </CardContent>
             </Card>
             <Card>
-              <CardHeader className="pb-1 pt-4 px-4">
-                <CardTitle className="text-xs text-muted-foreground">Total Recebido</CardTitle>
-              </CardHeader>
-              <CardContent className="px-4 pb-4">
-                <p className="text-xl font-bold text-green-600">{fmt(12450)}</p>
-              </CardContent>
+              <CardHeader className="pb-1 pt-4 px-4"><CardTitle className="text-xs text-muted-foreground">Total Recebido</CardTitle></CardHeader>
+              <CardContent className="px-4 pb-4"><p className="text-xl font-bold text-green-600">{fmt(12450)}</p></CardContent>
             </Card>
             <Card>
-              <CardHeader className="pb-1 pt-4 px-4">
-                <CardTitle className="text-xs text-muted-foreground">Diferença</CardTitle>
-              </CardHeader>
-              <CardContent className="px-4 pb-4">
-                <p className="text-xl font-bold text-red-600">−{fmt(6050)}</p>
-              </CardContent>
+              <CardHeader className="pb-1 pt-4 px-4"><CardTitle className="text-xs text-muted-foreground">Diferença</CardTitle></CardHeader>
+              <CardContent className="px-4 pb-4"><p className="text-xl font-bold text-red-600">−{fmt(6050)}</p></CardContent>
             </Card>
             <Card>
-              <CardHeader className="pb-1 pt-4 px-4">
-                <CardTitle className="text-xs text-muted-foreground">Taxa de Recebimento</CardTitle>
+              <CardHeader className="pb-1 pt-4 px-4"><CardTitle className="text-xs text-muted-foreground">Taxa de Recebimento</CardTitle></CardHeader>
+              <CardContent className="px-4 pb-4"><p className="text-xl font-bold text-blue-600">67,3%</p></CardContent>
+            </Card>
+          </div>
+
+          <Card>
+            <CardHeader className="pb-2 pt-4 px-4">
+              <CardTitle className="text-sm">Recebido vs Esperado</CardTitle>
+            </CardHeader>
+            <CardContent className="px-4 pb-4 space-y-1">
+              <Progress value={67.3} className="h-4" />
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>{fmt(12450)} recebido</span>
+                <span>67,3%</span>
+                <span>{fmt(18500)} esperado</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-0">
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Associado</TableHead>
+                      <TableHead>Valor Esperado</TableHead>
+                      <TableHead>Valor Recebido</TableHead>
+                      <TableHead>Diferença</TableHead>
+                      <TableHead>Status Conciliação</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {mockConc.map(c => (
+                      <TableRow key={c.id}>
+                        <TableCell className="font-medium text-sm">{c.associado}</TableCell>
+                        <TableCell className="text-sm">{fmt(c.esperado)}</TableCell>
+                        <TableCell className="text-sm">{c.recebido > 0 ? fmt(c.recebido) : "—"}</TableCell>
+                        <TableCell className={`text-sm font-medium ${c.recebido >= c.esperado ? "text-green-600" : "text-red-600"}`}>
+                          {c.recebido >= c.esperado ? "+" : ""}{fmt(c.recebido - c.esperado)}
+                        </TableCell>
+                        <TableCell><ConcBadge status={c.status} /></TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* TAB 3: EXTRATO */}
+        <TabsContent value="extrato" className="space-y-4">
+          <div className="flex flex-wrap items-end gap-3">
+            <div>
+              <Label className="text-xs mb-1 block">De</Label>
+              <Input type="date" defaultValue="2026-03-23" className="w-36" />
+            </div>
+            <div>
+              <Label className="text-xs mb-1 block">Até</Label>
+              <Input type="date" defaultValue="2026-03-29" className="w-36" />
+            </div>
+            <Button variant="outline" className="gap-2" onClick={() => exportar("CSV")}>
+              <Download className="h-4 w-4" />Exportar CSV
+            </Button>
+            <Button variant="outline" className="gap-2" onClick={() => exportar("PDF")}>
+              <FileText className="h-4 w-4" />Exportar PDF
+            </Button>
+          </div>
+
+          <Card>
+            <CardContent className="p-0">
+              <div className="divide-y">
+                {extrato.map(e => (
+                  <div key={e.id} className="flex items-center justify-between px-4 py-3 hover:bg-muted/30">
+                    <div className="flex items-start gap-3">
+                      <div className={`mt-0.5 h-8 w-8 rounded-full flex items-center justify-center ${e.tipo === "entrada" ? "bg-green-100" : "bg-red-100"}`}>
+                        <ArrowDownCircle className={`h-4 w-4 ${e.tipo === "entrada" ? "text-green-600" : "text-red-600 rotate-180"}`} />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium">{e.desc}</p>
+                        <p className="text-xs text-muted-foreground font-mono">{e.cod}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className={`font-semibold text-sm ${e.tipo === "entrada" ? "text-green-600" : "text-red-600"}`}>
+                        {e.tipo === "entrada" ? "+" : "−"}{fmt(e.valor)}
+                      </p>
+                      <p className="text-xs text-muted-foreground">{e.dataHora}</p>
+                      <p className="text-xs text-muted-foreground">Saldo: {fmt(e.saldo)}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="pt-4 pb-4">
+              <div className="flex flex-wrap gap-6">
+                <div>
+                  <p className="text-xs text-muted-foreground">Total de Entradas</p>
+                  <p className="text-lg font-bold text-green-600">+{fmt(totEntradas)}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Total de Estornos</p>
+                  <p className="text-lg font-bold text-red-600">−{fmt(totEstornos)}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Saldo Líquido</p>
+                  <p className="text-lg font-bold">{fmt(totEntradas - totEstornos)}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* TAB 4: RELATÓRIOS */}
+        <TabsContent value="relatorios" className="space-y-4">
+          <div className="grid md:grid-cols-2 gap-4">
+            <Card>
+              <CardHeader className="pb-2 pt-4 px-4">
+                <CardTitle className="text-sm">Por Forma de Pagamento</CardTitle>
               </CardHeader>
               <CardContent className="px-4 pb-4">
-                <p className
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="text-xs">Forma</TableHead>
+                      <TableHead className="text-xs">Qtd</TableHead>
+                      <TableHead className="text-xs">Total</TableHead>
+                      <TableHead className="text-xs">%</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {porForma.map(f => (
+                      <TableRow key={f.forma}>
+                        <TableCell className="text-xs">{f.forma}</TableCell>
+                        <TableCell className="text-xs">{f.qtd}</TableCell>
+                        <TableCell className="text-xs font-medium">{fmt(f.total)}</TableCell>
+                        <TableCell className="text-xs">{f.pct}%</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-2 pt-4 px-4">
+                <CardTitle className="text-sm">Por Cooperativa</CardTitle>
+              </CardHeader>
+              <CardContent className="px-4 pb-4">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="text-xs">Cooperativa</TableHead>
+                      <TableHead className="text-xs">Rec.</TableHead>
+                      <TableHead className="text-xs">Total</TableHead>
+                      <TableHead className="text-xs">Ticket Médio</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {porCoop.map(c => (
+                      <TableRow key={c.coop}>
+                        <TableCell className="text-xs">{c.coop}</TableCell>
+                        <TableCell className="text-xs">{c.rec}</TableCell>
+                        <TableCell className="text-xs font-medium">{fmt(c.total)}</TableCell>
+                        <TableCell className="text-xs">{fmt(c.ticket)}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-2 pt-4 px-4">
+                <CardTitle className="text-sm">Evolução Diária (últimos 7 dias)</CardTitle>
+              </CardHeader>
+              <CardContent className="px-4 pb-4">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="text-xs">Data</TableHead>
+                      <TableHead className="text-xs">Recebimentos</TableHead>
+                      <TableHead className="text-xs">Valor</TableHead>
+                      <TableHead className="text-xs">vs Dia Ant.</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {evolucao.map(e => (
+                      <TableRow key={e.data}>
+                        <TableCell className="text-xs font-medium">{e.data}</TableCell>
+                        <TableCell className="text-xs">{e.rec}</TableCell>
+                        <TableCell className="text-xs font-medium">{fmt(e.valor)}</TableCell>
+                        <TableCell className={`text-xs font-medium ${e.neg ? "text-red-600" : "text-green-600"}`}>{e.comp}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-2 pt-4 px-4">
+                <CardTitle className="text-sm">Horários de Pico</CardTitle>
+              </CardHeader>
+              <CardContent className="px-4 pb-4 space-y-3">
+                {horarios.map(h => (
+                  <div key={h.faixa}>
+                    <div className="flex justify-between text-xs mb-1">
+                      <span className="font-medium">{h.faixa}</span>
+                      <span className="text-muted-foreground">{h.qtd} pagamentos — {fmt(h.valor)}</span>
+                    </div>
+                    <Progress value={(h.qtd / maxH) * 100} className="h-2" />
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+      </Tabs>
+
+      {/* DIALOG: VER DETALHES */}
+      <Dialog open={!!detalhe} onOpenChange={o => { if (!o) { setDetalhe(null); setVinc(""); } }}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Detalhes do Recebimento</DialogTitle>
+            <DialogDescription>Informações completas da transação</DialogDescription>
+          </DialogHeader>
+          {detalhe && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div><p className="text-xs text-muted-foreground">Data/Hora</p><p className="font-medium">{detalhe.dataHora}</p></div>
+                <div><p className="text-xs text-muted-foreground">Status</p><StatusBadge status={detalhe.status} /></div>
+                <div><p className="text-xs text-muted-foreground">Associado</p><p className="font-medium">{detalhe.associado}</p></div>
+                <div><p className="text-xs text-muted-foreground">CPF</p><p className="font-medium">{detalhe.cpf}</p></div>
+                <div><p className="text-xs text-muted-foreground">Cooperativa</p><p className="font-medium">{detalhe.cooperativa}</p></div>
+                <div><p className="text-xs text-muted-foreground">Valor</p><p className="font-bold text-green-600">{fmt(detalhe.valor)}</p></div>
+                <div className="col-span-2"><p className="text-xs text-muted-foreground">Forma de Pagamento</p><FormaBadge forma={detalhe.forma} /></div>
+              </div>
+
+              {detalhe.codigoTransacao !== "—" && (
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Código da Transação</p>
+                  <div className="flex items-center gap-2 bg-muted rounded px-3 py-2">
+                    {detalhe.forma === "PIX QR Code" && (
+                      <QrCode className="h-8 w-8 text-purple-500 flex-shrink-0" />
+                    )}
+                    <code className="text-xs font-mono flex-1">{detalhe.codigoTransacao}</code>
+                    <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => copiar(detalhe.codigoTransacao, "Código da transação")}>
+                      <Copy className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {detalhe.referenciaBoleto !== "—" && (
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Código de Barras</p>
+                  <div className="flex items-start gap-2 bg-muted rounded px-3 py-2">
+                    <FileText className="h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" />
+                    <code className="text-xs font-mono flex-1 break-all">{detalhe.referenciaBoleto}</code>
+                    <Button size="icon" variant="ghost" className="h-7 w-7 flex-shrink-0" onClick={() => copiar(detalhe.referenciaBoleto, "Código de barras")}>
+                      <Copy className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {detalhe.associado === "Não identificado" && (
+                <div className="border border-yellow-200 rounded-lg p-3 bg-yellow-50 space-y-2">
+                  <p className="text-xs font-medium text-yellow-800">Recebimento pendente de identificação</p>
+                  <Label className="text-xs">Vincular a Associado (nome ou CPF)</Label>
+                  <Input
+                    placeholder="Buscar associado…"
+                    value={vincBusca}
+                    onChange={e => setVinc(e.target.value)}
+                    className="h-8 text-sm"
+                  />
+                  <Button size="sm" className="w-full" onClick={() => {
+                    if (vincBusca) {
+                      toast({ title:"Associado vinculado!", description:`Recebimento vinculado a: ${vincBusca}` });
+                      setVinc("");
+                      setDetalhe(null);
+                    }
+                  }}>
+                    Vincular
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button variant="outline" onClick={() => { toast({ title:"Gerando comprovante…", description:"O comprovante PDF será baixado em instantes." }); }}>
+              <Download className="h-4 w-4 mr-1" />Gerar Comprovante PDF
+            </Button>
+            <Button variant="outline" onClick={() => { setDetalhe(null); setVinc(""); }}>Fechar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* DIALOG: CONFIRMAR ESTORNO */}
+      <Dialog open={!!estorno} onOpenChange={o => { if (!o) setEstorno(null); }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Confirmar Estorno</DialogTitle>
+            <DialogDescription>
+              Tem certeza que deseja estornar este recebimento? Esta ação não pode ser desfeita.
+            </DialogDescription>
+          </DialogHeader>
+          {estorno && (
+            <div className="bg-muted rounded-lg p-3 space-y-1 text-sm">
+              <p><span className="text-muted-foreground">Associado:</span> <strong>{estorno.associado}</strong></p>
+              <p><span className="text-muted-foreground">Valor:</span> <strong className="text-green-600">{fmt(estorno.valor)}</strong></p>
+              <p><span className="text-muted-foreground">Data/Hora:</span> {estorno.dataHora}</p>
+              <p><span className="text-muted-foreground">Cód. Transação:</span> <code className="text-xs">{estorno.codigoTransacao}</code></p>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEstorno(null)}>Cancelar</Button>
+            <Button variant="destructive" onClick={confirmarEstorno}>
+              <RotateCcw className="h-4 w-4 mr-1" />Confirmar Estorno
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}

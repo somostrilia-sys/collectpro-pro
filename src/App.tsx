@@ -11,6 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import Associados from "./pages/Associados";
 import Cooperativas from "./pages/Cooperativas";
 import Boletos from "./pages/Boletos";
+import Financeiro from "./pages/Financeiro";
 import Colaboradores from "./pages/Colaboradores";
 import Ligacoes from "./pages/Ligacoes";
 import AcoesCobranca from "./pages/AcoesCobranca";
@@ -52,6 +53,7 @@ const App = () => (
                       <Route path="/associados" element={<Associados />} />
                       <Route path="/cooperativas" element={<Cooperativas />} />
                       <Route path="/boletos" element={<Boletos />} />
+                      <Route path="/financeiro" element={<Financeiro />} />
                       <Route path="/colaboradores" element={<Colaboradores />} />
                       <Route path="/ligacoes" element={<Ligacoes />} />
                       <Route path="/acoes-cobranca" element={<AcoesCobranca />} />

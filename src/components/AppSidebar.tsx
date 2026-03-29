@@ -20,6 +20,7 @@ import {
   Shield,
   Plug,
   ShieldAlert,
+  DollarSign,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -41,6 +42,7 @@ const items = [
   { title: "Associados", url: "/associados", icon: Users },
   { title: "Cooperativas", url: "/cooperativas", icon: Building2 },
   { title: "Boletos", url: "/boletos", icon: FileText },
+  { title: "Financeiro", url: "/financeiro", icon: DollarSign },
   { title: "Colaboradores", url: "/colaboradores", icon: UserCheck },
   { title: "Ligações", url: "/ligacoes", icon: Phone },
   { title: "Ações de Cobrança", url: "/acoes-cobranca", icon: Zap },

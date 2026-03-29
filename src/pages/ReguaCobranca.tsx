@@ -763,7 +763,10 @@ const ReguaCobranca = () => {
           </Card>
         </TabsContent>
 
-mt-6">
+        {/* ═══════════════════════════════════════════════════════
+            TAB: ASSOCIADOS NA RÉGUA
+        ════════════════════════════════════════════════════════ */}
+        <TabsContent value="associados" className="mt-6">
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between flex-wrap gap-4">

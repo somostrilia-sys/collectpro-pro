@@ -176,6 +176,7 @@ const RelatorioDialog = ({
   const [dataFim, setDataFim] = useState("2024-12-31");
   const [status, setStatus] = useState("todos");
   const [tipo, setTipo] = useState("faturamento");
+  const [vencimento, setVencimento] = useState("todos");
   const [generated, setGenerated] = useState(false);
 
   if (!coop) return null;
@@ -242,6 +243,22 @@ const RelatorioDialog = ({
                   <SelectItem value="cancelamentos">Cancelamentos</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs text-muted-foreground uppercase tracking-wide">Dia de Vencimento</label>
+              <Select value={vencimento} onValueChange={setVencimento}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">Todos</SelectItem>
+                  <SelectItem value="1">Dia 01</SelectItem>
+                  <SelectItem value="10">Dia 10</SelectItem>
+                  <SelectItem value="20">Dia 20</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs text-muted-foreground uppercase tracking-wide">Voluntário</label>
+              <Input value={coop.voluntario} disabled className="bg-muted/30" />
             </div>
           </div>
 
@@ -346,12 +363,18 @@ const RelatorioGeralDialog = ({
   const [dataInicio, setDataInicio] = useState("2024-01-01");
   const [dataFim, setDataFim] = useState("2024-12-31");
   const [coopFilter, setCoopFilter] = useState("todas");
+  const [vencFilter, setVencFilter] = useState("todos");
+  const [volFilter, setVolFilter] = useState("todos");
   const [generated, setGenerated] = useState(false);
 
-  const coopsToShow =
-    coopFilter === "todas"
-      ? mockCooperativas
-      : mockCooperativas.filter((c) => c.id === coopFilter);
+  const allVoluntarios = Array.from(new Set(mockCooperativas.map((c) => c.voluntario))).sort();
+
+  const coopsToShow = mockCooperativas.filter((c) => {
+    const matchCoop = coopFilter === "todas" || c.id === coopFilter;
+    const matchVenc = vencFilter === "todos" || c.diaVencimento === Number(vencFilter);
+    const matchVol = volFilter === "todos" || c.voluntario === volFilter;
+    return matchCoop && matchVenc && matchVol;
+  });
 
   const withPerf = coopsToShow.map((c) => ({
     ...c,
@@ -393,6 +416,30 @@ const RelatorioGeralDialog = ({
                   <SelectItem value="todas">Todas</SelectItem>
                   {mockCooperativas.map((c) => (
                     <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs text-muted-foreground uppercase tracking-wide">Dia de Vencimento</label>
+              <Select value={vencFilter} onValueChange={setVencFilter}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">Todos</SelectItem>
+                  <SelectItem value="1">Dia 01</SelectItem>
+                  <SelectItem value="10">Dia 10</SelectItem>
+                  <SelectItem value="20">Dia 20</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs text-muted-foreground uppercase tracking-wide">Voluntário</label>
+              <Select value={volFilter} onValueChange={setVolFilter}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">Todos</SelectItem>
+                  {allVoluntarios.map((v) => (
+                    <SelectItem key={v} value={v}>{v}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>

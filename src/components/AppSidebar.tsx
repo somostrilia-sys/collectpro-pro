@@ -16,6 +16,7 @@ import {
   History,
   Download,
   Shield,
+  Plug,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -49,6 +50,7 @@ const items = [
   { title: "Notificações", url: "/notificacoes", icon: Bell },
   { title: "Log de Auditoria", url: "/log-auditoria", icon: History },
   { title: "Exportação", url: "/exportacao", icon: Download },
+  { title: "Integrações", url: "/integracoes", icon: Plug },
   { title: "Controle de Acesso", url: "/controle-acesso", icon: Shield },
 ];
 

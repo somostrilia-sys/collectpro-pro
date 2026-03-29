@@ -24,6 +24,7 @@ import NotificacoesInternas from "./pages/NotificacoesInternas";
 import LogAuditoria from "./pages/LogAuditoria";
 import ExportacaoRelatorios from "./pages/ExportacaoRelatorios";
 import ControleAcesso from "./pages/ControleAcesso";
+import Integracoes from "./pages/Integracoes";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 
@@ -60,6 +61,7 @@ const App = () => (
                       <Route path="/notificacoes" element={<NotificacoesInternas />} />
                       <Route path="/log-auditoria" element={<LogAuditoria />} />
                       <Route path="/exportacao" element={<ExportacaoRelatorios />} />
+                      <Route path="/integracoes" element={<Integracoes />} />
                       <Route path="/controle-acesso" element={<ControleAcesso />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>

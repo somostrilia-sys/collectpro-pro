@@ -11,6 +11,7 @@ import {
   Handshake,
   AlertTriangle,
   UserMinus,
+  Snowflake,
   TrendingUp,
   Ticket,
   Bell,
@@ -18,6 +19,7 @@ import {
   Download,
   Shield,
   Plug,
+  ShieldAlert,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -47,6 +49,8 @@ const items = [
   { title: "Acordos", url: "/acordos", icon: Handshake },
   { title: "Negativações", url: "/negativacoes", icon: AlertTriangle },
   { title: "Cancelamentos", url: "/cancelamentos", icon: UserMinus },
+  { title: "Congelamentos", url: "/congelamentos", icon: Snowflake },
+  { title: "Veículos Indenizados", url: "/veiculos-indenizados", icon: ShieldAlert },
   { title: "Métricas Mensais", url: "/metricas", icon: TrendingUp },
   { title: "Tickets Desk", url: "/tickets", icon: Ticket },
   { title: "Notificações", url: "/notificacoes", icon: Bell },

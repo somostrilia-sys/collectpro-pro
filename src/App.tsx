@@ -19,6 +19,7 @@ import Templates from "./pages/Templates";
 import Acordos from "./pages/Acordos";
 import Negativacoes from "./pages/Negativacoes";
 import Cancelamentos from "./pages/Cancelamentos";
+import Congelamentos from "./pages/Congelamentos";
 import Metricas from "./pages/Metricas";
 import Tickets from "./pages/Tickets";
 import NotificacoesInternas from "./pages/NotificacoesInternas";
@@ -26,6 +27,7 @@ import LogAuditoria from "./pages/LogAuditoria";
 import ExportacaoRelatorios from "./pages/ExportacaoRelatorios";
 import ControleAcesso from "./pages/ControleAcesso";
 import Integracoes from "./pages/Integracoes";
+import VeiculosIndenizados from "./pages/VeiculosIndenizados";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 
@@ -58,6 +60,8 @@ const App = () => (
                       <Route path="/acordos" element={<Acordos />} />
                       <Route path="/negativacoes" element={<Negativacoes />} />
                       <Route path="/cancelamentos" element={<Cancelamentos />} />
+                      <Route path="/congelamentos" element={<Congelamentos />} />
+                      <Route path="/veiculos-indenizados" element={<VeiculosIndenizados />} />
                       <Route path="/metricas" element={<Metricas />} />
                       <Route path="/tickets" element={<Tickets />} />
                       <Route path="/notificacoes" element={<NotificacoesInternas />} />

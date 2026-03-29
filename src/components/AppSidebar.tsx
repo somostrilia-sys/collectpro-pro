@@ -1,6 +1,7 @@
 import {
   BarChart3,
   Users,
+  Building2,
   FileText,
   UserCheck,
   Phone,
@@ -36,6 +37,7 @@ import {
 const items = [
   { title: "Dashboard", url: "/", icon: BarChart3 },
   { title: "Associados", url: "/associados", icon: Users },
+  { title: "Cooperativas", url: "/cooperativas", icon: Building2 },
   { title: "Boletos", url: "/boletos", icon: FileText },
   { title: "Colaboradores", url: "/colaboradores", icon: UserCheck },
   { title: "Ligações", url: "/ligacoes", icon: Phone },

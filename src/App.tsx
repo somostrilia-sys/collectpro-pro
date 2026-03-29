@@ -9,6 +9,7 @@ import { AppLayout } from "./components/AppLayout";
 
 import Dashboard from "./pages/Dashboard";
 import Associados from "./pages/Associados";
+import Cooperativas from "./pages/Cooperativas";
 import Boletos from "./pages/Boletos";
 import Colaboradores from "./pages/Colaboradores";
 import Ligacoes from "./pages/Ligacoes";
@@ -47,6 +48,7 @@ const App = () => (
                     <Routes>
                       <Route path="/" element={<Dashboard />} />
                       <Route path="/associados" element={<Associados />} />
+                      <Route path="/cooperativas" element={<Cooperativas />} />
                       <Route path="/boletos" element={<Boletos />} />
                       <Route path="/colaboradores" element={<Colaboradores />} />
                       <Route path="/ligacoes" element={<Ligacoes />} />

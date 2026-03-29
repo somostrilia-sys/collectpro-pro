@@ -258,7 +258,15 @@ const RelatorioDialog = ({
             </div>
             <div className="space-y-1">
               <label className="text-xs text-muted-foreground uppercase tracking-wide">Voluntário</label>
-              <Input value={coop.voluntario} disabled className="bg-muted/30" />
+              <Select defaultValue={coop.voluntario}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">Todos</SelectItem>
+                  {Array.from(new Set(mockCooperativas.map((c) => c.voluntario))).sort().map((v) => (
+                    <SelectItem key={v} value={v}>{v}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 

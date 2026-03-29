@@ -13,8 +13,10 @@ import {
   FileText,
   Download,
   Send,
-  Plus,
   Filter,
+  Settings,
+  Link,
+  MessageCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -39,6 +41,7 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 
 // ─── Types ─────────────────────────────────────────────────────────────────
@@ -65,6 +68,8 @@ interface SolicitacaoCancelamento {
   criadoEm: string;
   motivo: string;
   comentarios: Comentario[];
+  linkAssinatura?: string;
+  statusAssinatura?: "pendente" | "assinado" | "expirado";
 }
 
 // ─── Mock Data ──────────────────────────────────────────────────────────────
@@ -145,21 +150,20 @@ const mockSolicitacoes: SolicitacaoCancelamento[] = [
   },
 ];
 
+// ─── Status color helpers ────────────────────────────────────────────────────
+
+const statusConfig: Record<StatusCancelamento, { label: string; triggerClass: string; badgeClass: string }> = {
+  PENDENTE:        { label: "Pendente",       triggerClass: "border-yellow-400 text-yellow-700 bg-yellow-50 hover:bg-yellow-100",  badgeClass: "bg-warning/10 text-warning border-warning/30" },
+  "EM ATENDIMENTO":{ label: "Em Atendimento", triggerClass: "border-blue-400 text-blue-700 bg-blue-50 hover:bg-blue-100",          badgeClass: "bg-blue-500/10 text-blue-600 border-blue-300/30" },
+  URGENTE:         { label: "Urgente",         triggerClass: "border-red-400 text-red-700 bg-red-50 hover:bg-red-100",              badgeClass: "bg-destructive/10 text-destructive border-destructive/30" },
+  CONCLUÍDO:       { label: "Concluído",       triggerClass: "border-green-400 text-green-700 bg-green-50 hover:bg-green-100",      badgeClass: "bg-success/10 text-success border-success/30" },
+};
+
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 const getStatusBadge = (status: StatusCancelamento) => {
-  switch (status) {
-    case "PENDENTE":
-      return <Badge className="bg-warning/10 text-warning border-warning/30">Pendente</Badge>;
-    case "EM ATENDIMENTO":
-      return <Badge className="bg-blue-500/10 text-blue-600 border-blue-300/30">Em Atendimento</Badge>;
-    case "URGENTE":
-      return <Badge variant="destructive">Urgente</Badge>;
-    case "CONCLUÍDO":
-      return <Badge className="bg-success/10 text-success border-success/30">Concluído</Badge>;
-    default:
-      return <Badge variant="outline">{status}</Badge>;
-  }
+  const cfg = statusConfig[status];
+  return <Badge className={cfg.badgeClass}>{cfg.label}</Badge>;
 };
 
 const formatDate = (iso: string) => {
@@ -192,6 +196,53 @@ CPF: ${s.cpf}
 _________________________
 Rayanne Donato
 CEO — Grupo WALK Holding Corporation`;
+
+// ─── StatusSelect inline ─────────────────────────────────────────────────────
+
+interface StatusSelectProps {
+  value: StatusCancelamento;
+  onChange: (v: StatusCancelamento) => void;
+  compact?: boolean;
+}
+
+const StatusSelect = ({ value, onChange, compact = false }: StatusSelectProps) => {
+  const cfg = statusConfig[value];
+  return (
+    <Select value={value} onValueChange={(v) => onChange(v as StatusCancelamento)}>
+      <SelectTrigger
+        className={`${compact ? "h-8 text-xs w-[152px]" : "h-9 text-sm"} border font-medium rounded-md px-2 ${cfg.triggerClass}`}
+      >
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="PENDENTE">
+          <span className="flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-full bg-yellow-500 inline-block" />
+            Pendente
+          </span>
+        </SelectItem>
+        <SelectItem value="EM ATENDIMENTO">
+          <span className="flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-full bg-blue-500 inline-block" />
+            Em Atendimento
+          </span>
+        </SelectItem>
+        <SelectItem value="URGENTE">
+          <span className="flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-full bg-red-500 inline-block" />
+            Urgente
+          </span>
+        </SelectItem>
+        <SelectItem value="CONCLUÍDO">
+          <span className="flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-full bg-green-500 inline-block" />
+            Concluído
+          </span>
+        </SelectItem>
+      </SelectContent>
+    </Select>
+  );
+};
 
 // ─── Component ──────────────────────────────────────────────────────────────
 
@@ -229,6 +280,11 @@ const Cancelamentos = () => {
   // Confirmar conclusão
   const [openConfirmaConclusao, setOpenConfirmaConclusao] = useState(false);
   const [solicitacaoParaConcluir, setSolicitacaoParaConcluir] = useState<SolicitacaoCancelamento | null>(null);
+
+  // Autentique config
+  const [openAutentiqueConfig, setOpenAutentiqueConfig] = useState(false);
+  const [autentiqueToken, setAutentiqueToken] = useState("");
+  const [autentiqueSandbox, setAutentiqueSandbox] = useState(true);
 
   // ── Busca ──────────────────────────────────────────────────────────────────
 
@@ -293,6 +349,10 @@ const Cancelamentos = () => {
       return;
     }
     atualizarStatus(id, status);
+    toast({
+      title: "Status atualizado!",
+      description: `Status alterado para "${statusConfig[status].label}".`,
+    });
   };
 
   const atualizarStatus = (id: string, status: StatusCancelamento) => {
@@ -373,7 +433,8 @@ const Cancelamentos = () => {
   // ── Termo ──────────────────────────────────────────────────────────────────
 
   const handleAbrirTermo = (s: SolicitacaoCancelamento) => {
-    setTermoSolicitacao(s);
+    const latest = solicitacoes.find((sol) => sol.id === s.id) || s;
+    setTermoSolicitacao(latest);
     setOpenTermo(true);
   };
 
@@ -398,6 +459,59 @@ const Cancelamentos = () => {
 
   const handleEnviarEmailTermo = () => {
     toast({ title: "Termo enviado! (simulado)", description: `Termo enviado para ${termoSolicitacao?.email}.` });
+  };
+
+  // ── Autentique ────────────────────────────────────────────────────────────
+
+  const handleEnviarAutentique = () => {
+    if (!termoSolicitacao) return;
+    const link = `https://app.autentique.com.br/d/MOCK-ID-${termoSolicitacao.id}`;
+    const updatedSol: SolicitacaoCancelamento = {
+      ...termoSolicitacao,
+      linkAssinatura: link,
+      statusAssinatura: "pendente",
+    };
+    setSolicitacoes((prev) =>
+      prev.map((s) => (s.id === termoSolicitacao.id ? updatedSol : s))
+    );
+    setTermoSolicitacao(updatedSol);
+    if (solicitacaoSelecionada?.id === termoSolicitacao.id) {
+      setSolicitacaoSelecionada(updatedSol);
+    }
+    toast({
+      title: "Documento enviado para assinatura via Autentique!",
+      description: "Link de assinatura gerado com sucesso.",
+    });
+  };
+
+  const handleCopiarLinkAssinatura = () => {
+    if (!termoSolicitacao?.linkAssinatura) return;
+    navigator.clipboard.writeText(termoSolicitacao.linkAssinatura);
+    toast({ title: "Link copiado!" });
+  };
+
+  const handleEnviarWhatsAppAssinatura = () => {
+    if (!termoSolicitacao?.linkAssinatura) return;
+    const msg = `Olá ${termoSolicitacao.nome}, segue o link para assinar o Termo de Cancelamento: ${termoSolicitacao.linkAssinatura}. CollectPro - Proteção Veicular`;
+    navigator.clipboard.writeText(msg);
+    toast({ title: "Mensagem copiada!", description: "Cole no WhatsApp do associado." });
+  };
+
+  const handleEnviarEmailAssinatura = () => {
+    toast({ title: "E-mail enviado! (simulado)", description: `Link de assinatura enviado para ${termoSolicitacao?.email}.` });
+  };
+
+  const handleSalvarAutentique = () => {
+    setOpenAutentiqueConfig(false);
+    toast({ title: "Configurações salvas!", description: "Integração Autentique atualizada." });
+  };
+
+  const handleTestarConexaoAutentique = () => {
+    if (!autentiqueToken.trim()) {
+      toast({ title: "Token necessário", description: "Informe o API Token antes de testar.", variant: "destructive" });
+      return;
+    }
+    toast({ title: "Conexão testada! (simulado)", description: autentiqueSandbox ? "Sandbox OK ✓" : "Produção OK ✓" });
   };
 
   // ── Detalhes ───────────────────────────────────────────────────────────────
@@ -432,9 +546,20 @@ const Cancelamentos = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-foreground">Cancelamentos</h1>
-        <p className="text-muted-foreground">Gestão de solicitações de cancelamento de associados</p>
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">Cancelamentos</h1>
+          <p className="text-muted-foreground">Gestão de solicitações de cancelamento de associados</p>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          className="flex items-center gap-2 shrink-0"
+          onClick={() => setOpenAutentiqueConfig(true)}
+        >
+          <Settings className="h-4 w-4" />
+          Configurar Autentique
+        </Button>
       </div>
 
       {/* Stats Cards */}
@@ -628,7 +753,13 @@ const Cancelamentos = () => {
                     <td className="py-3 px-2">
                       <Badge variant="outline">{s.plano}</Badge>
                     </td>
-                    <td className="py-3 px-2">{getStatusBadge(s.status)}</td>
+                    <td className="py-3 px-2">
+                      <StatusSelect
+                        value={s.status}
+                        onChange={(v) => handleChangeStatus(s.id, v)}
+                        compact
+                      />
+                    </td>
                     <td className="py-3 px-2">
                       <Select
                         value={s.atendente}
@@ -749,7 +880,7 @@ const Cancelamentos = () => {
               </DialogHeader>
 
               <div className="space-y-6 py-2">
-                {/* Info + Status */}
+                {/* Info */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label className="text-xs text-muted-foreground">CPF</Label>
@@ -773,20 +904,10 @@ const Cancelamentos = () => {
                 <div className="grid grid-cols-2 gap-4 p-4 rounded-lg border bg-muted/20">
                   <div className="grid gap-2">
                     <Label>Status</Label>
-                    <Select
+                    <StatusSelect
                       value={solicitacaoSelecionada.status}
-                      onValueChange={(v) => handleChangeStatus(solicitacaoSelecionada.id, v as StatusCancelamento)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="PENDENTE">Pendente</SelectItem>
-                        <SelectItem value="EM ATENDIMENTO">Em Atendimento</SelectItem>
-                        <SelectItem value="URGENTE">Urgente</SelectItem>
-                        <SelectItem value="CONCLUÍDO">Concluído</SelectItem>
-                      </SelectContent>
-                    </Select>
+                      onChange={(v) => handleChangeStatus(solicitacaoSelecionada.id, v)}
+                    />
                   </div>
                   <div className="grid gap-2">
                     <Label>Atendente</Label>
@@ -929,9 +1050,12 @@ const Cancelamentos = () => {
 
           {termoSolicitacao && (
             <div className="space-y-4">
+              {/* Termo text */}
               <div className="p-4 rounded-lg border bg-muted/20 font-mono text-sm whitespace-pre-wrap leading-relaxed">
                 {buildTermo(termoSolicitacao)}
               </div>
+
+              {/* Ações do termo */}
               <div className="flex flex-wrap gap-2">
                 <Button variant="outline" onClick={handleBaixarTermo}>
                   <Download className="h-4 w-4 mr-2" />
@@ -945,7 +1069,48 @@ const Cancelamentos = () => {
                   <Mail className="h-4 w-4 mr-2" />
                   Enviar por E-mail
                 </Button>
+                <Button onClick={handleEnviarAutentique} className="bg-primary hover:bg-primary/90">
+                  <FileText className="h-4 w-4 mr-2" />
+                  Enviar para Assinatura (Autentique)
+                </Button>
               </div>
+
+              {/* Link de assinatura — aparece quando gerado */}
+              {termoSolicitacao.linkAssinatura && (
+                <div className="space-y-3 p-4 rounded-lg border border-dashed bg-muted/10">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <h4 className="font-semibold text-sm flex items-center gap-2">
+                      <Link className="h-4 w-4 text-primary" />
+                      Link de Assinatura
+                    </h4>
+                    {termoSolicitacao.statusAssinatura === "assinado" ? (
+                      <Badge className="bg-success/10 text-success border-success/30">Assinado</Badge>
+                    ) : (
+                      <Badge className="bg-warning/10 text-warning border-warning/30">Aguardando Assinatura</Badge>
+                    )}
+                  </div>
+                  <div className="flex gap-2 items-center">
+                    <Input
+                      readOnly
+                      value={termoSolicitacao.linkAssinatura}
+                      className="text-xs font-mono bg-muted"
+                    />
+                    <Button variant="outline" size="sm" onClick={handleCopiarLinkAssinatura} className="shrink-0">
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <Button variant="outline" size="sm" onClick={handleEnviarWhatsAppAssinatura}>
+                      <MessageCircle className="h-3.5 w-3.5 mr-1.5" />
+                      Enviar por WhatsApp
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={handleEnviarEmailAssinatura}>
+                      <Mail className="h-3.5 w-3.5 mr-1.5" />
+                      Enviar por E-mail
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -997,6 +1162,58 @@ const Cancelamentos = () => {
             <Button className="bg-success hover:bg-success/90 text-white" onClick={confirmarConclusao}>
               <CheckCircle className="h-4 w-4 mr-2" />
               Confirmar Conclusão
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Dialog: Configuração Autentique ── */}
+      <Dialog open={openAutentiqueConfig} onOpenChange={setOpenAutentiqueConfig}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Settings className="h-5 w-5 text-primary" />
+              Configurar Autentique
+            </DialogTitle>
+            <DialogDescription>
+              Configure a integração com a plataforma de assinatura digital Autentique.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-5 py-2">
+            <div className="grid gap-2">
+              <Label htmlFor="autentiqueToken">API Token</Label>
+              <Input
+                id="autentiqueToken"
+                type="password"
+                placeholder="Token da API Autentique..."
+                value={autentiqueToken}
+                onChange={(e) => setAutentiqueToken(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                Obtenha seu token em{" "}
+                <span className="font-mono">app.autentique.com.br</span> → Configurações → API.
+              </p>
+            </div>
+
+            <div className="flex items-center justify-between p-3 rounded-lg border bg-muted/10">
+              <div>
+                <p className="text-sm font-medium">Modo Sandbox</p>
+                <p className="text-xs text-muted-foreground">Ative para testes sem consumir créditos reais</p>
+              </div>
+              <Switch
+                checked={autentiqueSandbox}
+                onCheckedChange={setAutentiqueSandbox}
+              />
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={handleTestarConexaoAutentique}>
+              Testar Conexão
+            </Button>
+            <Button onClick={handleSalvarAutentique}>
+              Salvar
             </Button>
           </DialogFooter>
         </DialogContent>

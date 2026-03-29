@@ -315,9 +315,9 @@ export default function Reembolsos() {
       </Dialog>
 
       {/* Dialog Detalhes */}
-      {dlgDetalhe && (
-        <Dialog open={!!dlgDetalhe} onOpenChange={() => setDlgDetalhe(null)}>
-          <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+      <Dialog open={!!dlgDetalhe} onOpenChange={() => setDlgDetalhe(null)}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          {dlgDetalhe && (<>
             <DialogHeader>
               <DialogTitle>Reembolso #{dlgDetalhe.id}</DialogTitle>
               <DialogDescription>{dlgDetalhe.associado} — {dlgDetalhe.cpf}</DialogDescription>
@@ -350,4 +350,72 @@ export default function Reembolsos() {
                   <div key={i} className="flex items-start gap-2">
                     <div className="w-2 h-2 rounded-full bg-primary mt-1.5 shrink-0" />
                     <div>
-                      <p className="font-medium">{t.
+                      <p className="font-medium">{t.evento}</p>
+                      <p className="text-xs text-muted-foreground">{t.data} — {t.usuario}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {dlgDetalhe.status === "Aguardando" && (
+                <div className="flex gap-2">
+                  <Button className="flex-1" onClick={() => { setReembolsos(prev => prev.map(r => r.id === dlgDetalhe.id ? { ...r, status: "Aprovado" as StatusReembolso, timeline: [...r.timeline, { data: today(), evento: "Aprovado", usuario: "Rayanne Donato" }] } : r)); setDlgDetalhe(null); toast({ title: "Reembolso aprovado!" }); }}>Aprovar</Button>
+                  <Button variant="destructive" className="flex-1" onClick={() => { setReembolsos(prev => prev.map(r => r.id === dlgDetalhe.id ? { ...r, status: "Recusado" as StatusReembolso, timeline: [...r.timeline, { data: today(), evento: "Recusado", usuario: "Rayanne Donato" }] } : r)); setDlgDetalhe(null); toast({ title: "Reembolso recusado." }); }}>Recusar</Button>
+                </div>
+              )}
+              {dlgDetalhe.status === "Aprovado" && (
+                <Button onClick={() => { setReembolsos(prev => prev.map(r => r.id === dlgDetalhe.id ? { ...r, status: "Pago" as StatusReembolso, timeline: [...r.timeline, { data: today(), evento: "Pago", usuario: "Financeiro" }] } : r)); setDlgDetalhe(null); toast({ title: "Reembolso marcado como pago!" }); }}>Marcar como Pago</Button>
+              )}
+            </div>
+          </>)}
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog Gerar Termo */}
+      <Dialog open={!!dlgTermo} onOpenChange={(v) => !v && setDlgTermo(null)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          {dlgTermo && (
+            <>
+              <DialogHeader>
+                <DialogTitle>Termo de Reembolso #{dlgTermo.id}</DialogTitle>
+                <DialogDescription>Preview do termo — envie por Autentique, Email ou WhatsApp</DialogDescription>
+              </DialogHeader>
+              <div className="border rounded-lg p-4 bg-muted/20 font-mono text-sm whitespace-pre-wrap">
+{`TERMO DE REEMBOLSO Nº ${dlgTermo.id}
+CollectPro - Proteção Veicular
+
+Data: ${dlgTermo.data}
+Associado: ${dlgTermo.associado}
+CPF: ${dlgTermo.cpf}
+Cooperativa: ${dlgTermo.cooperativa}
+
+DETALHES DO REEMBOLSO:
+Valor Original: ${fmt(dlgTermo.valorOriginal)}
+Valor do Reembolso: ${fmt(dlgTermo.valorReembolso)}
+Tipo: ${dlgTermo.tipo}
+Motivo: ${dlgTermo.motivo}
+
+DADOS PARA PAGAMENTO:
+${dlgTermo.pixOuBanco === "pix" ? `Chave PIX: ${dlgTermo.chavePix}` : `Banco: ${dlgTermo.banco}\nAgência: ${dlgTermo.agencia}\nConta: ${dlgTermo.conta}`}
+
+Declaro que o valor acima será reembolsado conforme acordado.
+
+Responsável: ${dlgTermo.atendente}
+
+_________________________
+Assinatura`}
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Button variant="outline" size="sm" onClick={() => { navigator.clipboard.writeText(`Termo de Reembolso #${dlgTermo.id}`); toast({ title: "Termo copiado!" }); }}><Copy className="h-4 w-4 mr-1.5" />Copiar</Button>
+                <Button variant="outline" size="sm" onClick={() => toast({ title: "PDF gerado!" })}><Download className="h-4 w-4 mr-1.5" />Baixar PDF</Button>
+                <Button size="sm" onClick={() => toast({ title: "Enviado para Autentique!", description: `Link: https://app.autentique.com.br/d/MOCK-${dlgTermo.id}` })}><Send className="h-4 w-4 mr-1.5" />Enviar Autentique</Button>
+                <Button variant="outline" size="sm" onClick={() => toast({ title: "Email enviado!", description: `Termo enviado para ${dlgTermo.associado}` })}><Mail className="h-4 w-4 mr-1.5" />Email</Button>
+                <Button variant="outline" size="sm" onClick={() => toast({ title: "WhatsApp!", description: `Mensagem copiada para envio` })}><MessageCircle className="h-4 w-4 mr-1.5" />WhatsApp</Button>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+

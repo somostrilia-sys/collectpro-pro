@@ -21,6 +21,7 @@ import {
   Plug,
   ShieldAlert,
   DollarSign,
+  RotateCcw,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -43,6 +44,7 @@ const items = [
   { title: "Cooperativas", url: "/cooperativas", icon: Building2 },
   { title: "Boletos", url: "/boletos", icon: FileText },
   { title: "Financeiro", url: "/financeiro", icon: DollarSign },
+  { title: "Reembolsos", url: "/reembolsos", icon: RotateCcw },
   { title: "Colaboradores", url: "/colaboradores", icon: UserCheck },
   { title: "Ligações", url: "/ligacoes", icon: Phone },
   { title: "Ações de Cobrança", url: "/acoes-cobranca", icon: Zap },

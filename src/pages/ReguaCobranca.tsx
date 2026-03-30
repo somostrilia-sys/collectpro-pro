@@ -158,12 +158,12 @@ const etaposPosVencimento: EtapaRegua[] = [
     id: "pos_d1",
     dia: "D+1",
     diaNum: 1,
-    titulo: "Aviso de Atraso",
-    descricao: "Primeiro aviso — boleto venceu ontem",
+    titulo: "WhatsApp Amigável",
+    descricao: "Primeiro aviso amigável — boleto venceu ontem, tom cordial",
     canais: ["WhatsApp"],
     ativo: true,
     mensagem:
-      "Olá {nome}! Identificamos que seu boleto de R$ {valor} venceu ontem ({vencimento}). Regularize para manter sua proteção ativa! {link_boleto}",
+      "Olá {nome}! Tudo bem? Notamos que seu boleto de R$ {valor} venceu ontem ({vencimento}). Pode ter sido um esquecimento — sem problemas! Regularize pelo link: {link_boleto}. Qualquer dúvida, estamos aqui. 😊",
     color: "yellow",
   },
   {
@@ -218,12 +218,12 @@ const etaposPosVencimento: EtapaRegua[] = [
     id: "pos_d15",
     dia: "D+15",
     diaNum: 15,
-    titulo: "Última Tentativa",
-    descricao: "Última chance — WhatsApp + ligação + e-mail",
-    canais: ["WhatsApp", "Ligação", "E-mail"],
+    titulo: "Última Chance + VoIP IA",
+    descricao: "Última tentativa — WhatsApp + ligação + e-mail + ligação automática VoIP IA",
+    canais: ["WhatsApp", "Ligação", "E-mail", "VoIP IA"],
     ativo: true,
     mensagem:
-      "{nome}, ÚLTIMA TENTATIVA: seu débito de R$ {valor} está 15 dias em atraso. Após este prazo, medidas de negativação serão tomadas. Contato: {telefone_contato}",
+      "{nome}, ÚLTIMA TENTATIVA: seu débito de R$ {valor} está 15 dias em atraso. Nossa IA de cobrança entrará em contato por telefone para negociar. Após este prazo, medidas de negativação serão iniciadas. Regularize agora: {link_boleto} ou ligue: {telefone_contato}",
     color: "orange",
   },
   {
@@ -274,6 +274,7 @@ const canalIcons: Record<string, React.ReactNode> = {
   Ligação: <Phone className="h-3 w-3" />,
   "E-mail": <Mail className="h-3 w-3" />,
   Sistema: <Shield className="h-3 w-3" />,
+  "VoIP IA": <Zap className="h-3 w-3" />,
 };
 
 const etapaStepIcon = (color: EtapaRegua["color"], canais: string[]) => {

@@ -29,25 +29,25 @@ import {
 } from "recharts";
 
 const monthlyData = [
-  { mes: "Jan", arrecadacao: 125000, meta: 150000 },
-  { mes: "Fev", arrecadacao: 132000, meta: 150000 },
-  { mes: "Mar", arrecadacao: 148000, meta: 150000 },
-  { mes: "Abr", arrecadacao: 156000, meta: 160000 },
-  { mes: "Mai", arrecadacao: 142000, meta: 160000 },
-  { mes: "Jun", arrecadacao: 168000, meta: 170000 },
+  { mes: "Out", arrecadacao: 151000, meta: 155000 },
+  { mes: "Nov", arrecadacao: 158000, meta: 160000 },
+  { mes: "Dez", arrecadacao: 163000, meta: 165000 },
+  { mes: "Jan", arrecadacao: 171000, meta: 170000 },
+  { mes: "Fev", arrecadacao: 185000, meta: 175000 },
+  { mes: "Mar", arrecadacao: 197000, meta: 180000 },
 ];
 
 const statusData = [
-  { name: "Pagos", value: 1847, color: "hsl(var(--success))" },
-  { name: "Pendentes", value: 423, color: "hsl(var(--warning))" },
-  { name: "Vencidos", value: 289, color: "hsl(var(--destructive))" },
+  { name: "Pagos", value: 23400, color: "hsl(var(--success))" },
+  { name: "Pendentes", value: 1847, color: "hsl(var(--warning))" },
+  { name: "Vencidos", value: 892, color: "hsl(var(--destructive))" },
 ];
 
 const collaboratorData = [
-  { nome: "Maria S.", recuperado: 45000, meta: 40000 },
-  { nome: "João S.", recuperado: 38000, meta: 35000 },
-  { nome: "Ana C.", recuperado: 42000, meta: 45000 },
-  { nome: "Carlos L.", recuperado: 35000, meta: 30000 },
+  { nome: "Angela S.", recuperado: 62000, meta: 55000 },
+  { nome: "Carlos M.", recuperado: 48000, meta: 45000 },
+  { nome: "Fernanda L.", recuperado: 51000, meta: 50000 },
+  { nome: "Rodrigo T.", recuperado: 36000, meta: 40000 },
 ];
 
 const Dashboard = () => {
@@ -70,36 +70,36 @@ const Dashboard = () => {
       {/* KPIs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <KPICard
-          title="Total a Receber"
-          value="R$ 856.420"
-          change="+12% vs mês anterior"
-          changeType="positive"
+          title="Total em Aberto"
+          value="R$ 1.247.000"
+          change="+8% vs mês anterior"
+          changeType="negative"
           icon={DollarSign}
           gradient="primary"
         />
         <KPICard
-          title="Taxa de Inadimplência"
-          value="18.2%"
-          change="-3.2% vs mês anterior"
+          title="Taxa de Recuperação"
+          value="68%"
+          change="+4pp vs mês anterior"
           changeType="positive"
           icon={TrendingUp}
-          gradient="danger"
+          gradient="success"
         />
         <KPICard
-          title="Acordos Ativos"
-          value="127"
-          change="+8 novos acordos"
+          title="Acordos esta Semana"
+          value="47"
+          change="+12 vs semana passada"
           changeType="positive"
           icon={Users}
           gradient="success"
         />
         <KPICard
-          title="Arrecadação Mensal"
-          value="R$ 168.340"
-          change="+15% vs meta"
+          title="NPS Cobrança"
+          value="72"
+          change="+3 pts vs mês anterior"
           changeType="positive"
           icon={BarChart3}
-          gradient="success"
+          gradient="primary"
         />
       </div>
 
@@ -206,7 +206,7 @@ const Dashboard = () => {
                 <span className="text-xs font-semibold text-destructive">Prioridade Alta</span>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                289 boletos vencidos com potencial de R$ 156k. Acione régua D+15.
+                892 boletos vencidos com potencial de R$ 312k. Acione régua D+15 com VoIP IA.
               </p>
             </div>
             <div className="p-3 bg-card rounded-lg border border-success/20">
@@ -215,7 +215,7 @@ const Dashboard = () => {
                 <span className="text-xs font-semibold text-success">Oportunidade</span>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Ana Costa 7% abaixo da meta. Redistribua 15 casos de baixa complexidade.
+                Rodrigo T. 10% abaixo da meta. Redistribua 18 casos de baixa complexidade.
               </p>
             </div>
             <div className="p-3 bg-card rounded-lg border border-warning/20">
@@ -224,7 +224,7 @@ const Dashboard = () => {
                 <span className="text-xs font-semibold text-warning">Sugestão</span>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                127 acordos precisam de follow-up. Configure lembretes D+7.
+                47 acordos fechados esta semana — maior taxa do trimestre. Continue a régua D+7.
               </p>
             </div>
           </CardContent>

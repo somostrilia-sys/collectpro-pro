@@ -16,7 +16,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         <AppSidebar />
 
         <div className="flex-1 flex flex-col min-w-0">
-          <header className="h-14 flex items-center justify-between border-b bg-card/80 backdrop-blur-sm px-6 shrink-0 sticky top-0 z-10">
+          <header className="h-14 flex items-center justify-between border-b border-border/60 bg-card px-6 shrink-0 sticky top-0 z-10 shadow-sm">
             <div className="flex items-center gap-4">
               <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
               <div className="relative hidden sm:block">

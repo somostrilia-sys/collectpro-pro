@@ -7,7 +7,7 @@
 @layer base {
   :root {
     /* CollectPro Indigo Theme */
-    --background: 210 40% 98%; /* #F8FAFC */
+    --background: 216 20% 93%; /* #E8ECF1 cinza claro azulado */
     --foreground: 215 25% 15%; /* #1E293B */
 
     --card: 0 0% 100%;
@@ -40,8 +40,8 @@
     --info: 217 91% 60%; /* #3B82F6 */
     --info-foreground: 0 0% 100%;
 
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
+    --border: 214 25% 88%;
+    --input: 214 25% 88%;
     --ring: 239 84% 67%;
 
     --radius: 0.75rem;
@@ -120,5 +120,40 @@
 
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  }
+}
+
+@layer components {
+  /* Cards com borda sutil para separação visual */
+  .card-elevated {
+    @apply bg-card rounded-xl border border-border/60 shadow-sm;
+  }
+
+  /* Tabelas com separação de colunas */
+  table th {
+    @apply bg-muted/60 text-xs font-semibold uppercase tracking-wider text-muted-foreground;
+  }
+
+  table td {
+    @apply border-b border-border/40;
+  }
+
+  table th:not(:last-child),
+  table td:not(:last-child) {
+    @apply border-r border-border/30;
+  }
+
+  table tr:hover td {
+    @apply bg-muted/30;
+  }
+
+  /* Header da página sempre branco */
+  header {
+    @apply bg-card border-b border-border/60;
+  }
+
+  /* Inputs com fundo branco */
+  input, select, textarea {
+    @apply bg-card;
   }
 }

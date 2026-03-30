@@ -7,7 +7,7 @@
 @layer base {
   :root {
     /* CollectPro Indigo Theme */
-    --background: 220 14% 90%; /* #E2E4E9 cinza claro */
+    --background: 220 13% 86%; /* #D5D8DE cinza visível */
     --foreground: 215 25% 15%; /* #1E293B */
 
     --card: 0 0% 100%;

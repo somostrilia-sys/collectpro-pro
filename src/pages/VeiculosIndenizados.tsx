@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Eye, Plus, ShieldAlert, Car, AlertTriangle, Calendar, TrendingUp, DollarSign } from "lucide-react";
+import { Search, Eye, Plus, ShieldAlert, Car, AlertTriangle, Calendar, TrendingUp, DollarSign, CheckCircle, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -81,8 +81,8 @@ function calcProgresso(dataEvento: string): number {
 }
 
 function StatusBadge({ status }: { status: StatusFidelidade }) {
-  if (status === "Em Fidelidade") return <Badge className="bg-red-100 text-red-700 border border-red-300">Em Fidelidade</Badge>;
-  if (status === "Fidelidade Cumprida") return <Badge className="bg-green-100 text-green-700 border border-green-300">Fidelidade Cumprida</Badge>;
+  if (status === "Em Fidelidade") return <Badge className="bg-destructive/10 text-destructive border-0">Em Fidelidade</Badge>;
+  if (status === "Fidelidade Cumprida") return <Badge className="bg-success/10 text-success border-0">Fidelidade Cumprida</Badge>;
   return <Badge variant="secondary">Encerrado</Badge>;
 }
 
@@ -100,16 +100,16 @@ function DialogDetalhes({ veiculo, onClose }: { veiculo: VeiculoIndenizado; onCl
     <Dialog open onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2"><Eye className="h-5 w-5" /> Detalhes da Indenização</DialogTitle>
+          <DialogTitle className="font-heading flex items-center gap-2"><Eye className="h-5 w-5" /> Detalhes da Indenização</DialogTitle>
           <DialogDescription>{veiculo.associado} · {veiculo.placa}</DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           {emFidelidade && (
-            <div className="rounded-lg border border-red-300 bg-red-50 p-4">
-              <div className="flex items-center gap-2 text-red-700 font-semibold">
-                <ShieldAlert className="h-5 w-5" /> Cancelamento Bloqueado — Cláusula de Fidelidade Ativa
+            <div className="rounded-lg bg-destructive/5 p-4 border-0">
+              <div className="flex items-center gap-2 text-destructive font-semibold">
+                <ShieldAlert className="h-5 w-5" /> Cancelamento Bloqueado -- Cláusula de Fidelidade Ativa
               </div>
-              <p className="text-sm text-red-600 mt-1">
+              <p className="text-sm text-destructive/80 mt-1">
                 Este associado está em cláusula de fidelidade até <strong>{veiculo.fidelidadeAte}</strong>. Cancelamento bloqueado.
               </p>
             </div>
@@ -126,7 +126,7 @@ function DialogDetalhes({ veiculo, onClose }: { veiculo: VeiculoIndenizado; onCl
             <p className="font-semibold text-sm">Detalhes da Indenização</p>
             <div className="grid grid-cols-2 gap-2 text-sm">
               <div><span className="text-muted-foreground">Tipo:</span> {veiculo.tipoEvento}</div>
-              <div><span className="text-muted-foreground">Valor:</span> <span className="font-semibold text-green-600">{fmt(veiculo.valorIndenizacao)}</span></div>
+              <div><span className="text-muted-foreground">Valor:</span> <span className="font-semibold text-success">{fmt(veiculo.valorIndenizacao)}</span></div>
               <div><span className="text-muted-foreground">Data do evento:</span> {veiculo.dataEvento}</div>
               <div><span className="text-muted-foreground">Fidelidade até:</span> {veiculo.fidelidadeAte}</div>
             </div>
@@ -137,8 +137,8 @@ function DialogDetalhes({ veiculo, onClose }: { veiculo: VeiculoIndenizado; onCl
             <div className="space-y-2">
               {timeline.map((t, i) => (
                 <div key={i} className="flex items-center gap-3 text-sm">
-                  <div className={`h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0 text-xs ${t.done ? "bg-green-100 text-green-700" : "bg-muted text-muted-foreground"}`}>
-                    {t.done ? "✓" : "○"}
+                  <div className={`h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0 text-xs ${t.done ? "bg-success/10 text-success" : "bg-muted text-muted-foreground"}`}>
+                    {t.done ? <CheckCircle className="h-3.5 w-3.5" /> : <Clock className="h-3.5 w-3.5" />}
                   </div>
                   <span className={`flex-1 ${t.done ? "font-medium" : "text-muted-foreground"}`}>{t.label}</span>
                   <span className="text-muted-foreground text-xs">{t.data}</span>
@@ -182,7 +182,7 @@ function DialogRegistrar({ onClose }: { onClose: () => void }) {
     <Dialog open onOpenChange={onClose}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2"><Plus className="h-5 w-5" /> Registrar Indenização</DialogTitle>
+          <DialogTitle className="font-heading flex items-center gap-2"><Plus className="h-5 w-5" /> Registrar Indenização</DialogTitle>
           <DialogDescription>Cadastre um novo evento de indenização de veículo</DialogDescription>
         </DialogHeader>
         <div className="space-y-3">
@@ -280,11 +280,11 @@ export default function VeiculosIndenizados() {
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-lg bg-red-100 flex items-center justify-center">
-            <ShieldAlert className="h-5 w-5 text-red-600" />
+          <div className="rounded-xl p-2.5 bg-destructive/10">
+            <ShieldAlert className="h-5 w-5 text-destructive" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold">Veículos Indenizados</h1>
+            <h1 className="font-heading text-2xl font-bold">Veículos Indenizados</h1>
             <p className="text-sm text-muted-foreground">Gestão de indenizações e cláusula de fidelidade</p>
           </div>
         </div>
@@ -303,17 +303,17 @@ export default function VeiculosIndenizados() {
         {/* Tab 1 */}
         <TabsContent value="veiculos" className="space-y-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Card><CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2"><Car className="h-4 w-4" />Total Indenizados</CardTitle></CardHeader><CardContent><p className="text-2xl font-bold">45</p></CardContent></Card>
-            <Card><CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2"><Calendar className="h-4 w-4" />Ativas (12 meses)</CardTitle></CardHeader><CardContent><p className="text-2xl font-bold text-blue-600">18</p></CardContent></Card>
-            <Card><CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2"><ShieldAlert className="h-4 w-4" />Em Fidelidade</CardTitle></CardHeader><CardContent><p className="text-2xl font-bold text-red-600">15</p></CardContent></Card>
-            <Card><CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2"><DollarSign className="h-4 w-4" />Valor Total</CardTitle></CardHeader><CardContent><p className="text-xl font-bold text-green-600">R$ 892.500</p></CardContent></Card>
+            <Card className="border-0 shadow-sm hover:shadow-md transition-shadow"><CardContent className="pt-6"><div className="flex items-center gap-3"><div className="rounded-xl p-2.5 bg-primary/10"><Car className="h-5 w-5 text-primary" /></div><div><p className="text-2xl font-bold">45</p><p className="text-sm text-muted-foreground">Total Indenizados</p></div></div></CardContent></Card>
+            <Card className="border-0 shadow-sm hover:shadow-md transition-shadow"><CardContent className="pt-6"><div className="flex items-center gap-3"><div className="rounded-xl p-2.5 bg-primary/10"><Calendar className="h-5 w-5 text-primary" /></div><div><p className="text-2xl font-bold text-primary">18</p><p className="text-sm text-muted-foreground">Ativas (12 meses)</p></div></div></CardContent></Card>
+            <Card className="border-0 shadow-sm hover:shadow-md transition-shadow"><CardContent className="pt-6"><div className="flex items-center gap-3"><div className="rounded-xl p-2.5 bg-destructive/10"><ShieldAlert className="h-5 w-5 text-destructive" /></div><div><p className="text-2xl font-bold text-destructive">15</p><p className="text-sm text-muted-foreground">Em Fidelidade</p></div></div></CardContent></Card>
+            <Card className="border-0 shadow-sm hover:shadow-md transition-shadow"><CardContent className="pt-6"><div className="flex items-center gap-3"><div className="rounded-xl p-2.5 bg-success/10"><DollarSign className="h-5 w-5 text-success" /></div><div><p className="text-xl font-bold text-success">R$ 892.500</p><p className="text-sm text-muted-foreground">Valor Total</p></div></div></CardContent></Card>
           </div>
 
-          <Card><CardContent className="pt-4">
+          <Card className="border-0 shadow-sm hover:shadow-md transition-shadow"><CardContent className="pt-4">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input className="pl-9" placeholder="Buscar nome, CPF, placa..." value={busca} onChange={(e) => setBusca(e.target.value)} />
+                <Input className="pl-9 rounded-lg" placeholder="Buscar nome, CPF, placa..." value={busca} onChange={(e) => setBusca(e.target.value)} />
               </div>
               <Select value={filtroStatus} onValueChange={setFiltroStatus}>
                 <SelectTrigger><SelectValue placeholder="Status fidelidade" /></SelectTrigger>
@@ -344,7 +344,7 @@ export default function VeiculosIndenizados() {
             </div>
           </CardContent></Card>
 
-          <Card><CardContent className="p-0">
+          <Card className="border-0 shadow-sm hover:shadow-md transition-shadow"><CardContent className="p-0">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead className="border-b bg-muted/50">
@@ -360,7 +360,7 @@ export default function VeiculosIndenizados() {
                       <td className="px-4 py-3"><Badge variant="outline">{v.placa}</Badge></td>
                       <td className="px-4 py-3">{v.veiculo}</td>
                       <td className="px-4 py-3 text-xs">{v.tipoEvento}</td>
-                      <td className="px-4 py-3 font-medium text-green-600">{fmt(v.valorIndenizacao)}</td>
+                      <td className="px-4 py-3 font-medium text-success">{fmt(v.valorIndenizacao)}</td>
                       <td className="px-4 py-3 text-muted-foreground">{v.dataEvento}</td>
                       <td className="px-4 py-3 text-muted-foreground">{v.fidelidadeAte}</td>
                       <td className="px-4 py-3"><StatusBadge status={v.statusFidelidade} /></td>
@@ -382,31 +382,31 @@ export default function VeiculosIndenizados() {
 
         {/* Tab 2 */}
         <TabsContent value="fidelidade" className="space-y-4">
-          <Card className="border-blue-200 bg-blue-50"><CardContent className="pt-4">
+          <Card className="border-0 shadow-sm bg-primary/5"><CardContent className="pt-4">
             <div className="flex gap-3 items-start">
-              <ShieldAlert className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+              <div className="rounded-xl p-2 bg-primary/10 flex-shrink-0"><ShieldAlert className="h-5 w-5 text-primary" /></div>
               <div>
-                <p className="font-semibold text-blue-800">O que é a Cláusula de Fidelidade?</p>
-                <p className="text-sm text-blue-700 mt-1">A cláusula de fidelidade determina que associados que receberam indenização devem permanecer vinculados por 12 meses. Durante este período, solicitações de cancelamento são <strong>bloqueadas automaticamente</strong>.</p>
+                <p className="font-semibold">O que é a Cláusula de Fidelidade?</p>
+                <p className="text-sm text-muted-foreground mt-1">A cláusula de fidelidade determina que associados que receberam indenização devem permanecer vinculados por 12 meses. Durante este período, solicitações de cancelamento são <strong>bloqueadas automaticamente</strong>.</p>
               </div>            </div>
           </CardContent></Card>
 
-          <Card className="border-amber-200 bg-amber-50">
+          <Card className="border-0 shadow-sm bg-warning/5">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-semibold text-amber-800 flex items-center gap-2">
+              <CardTitle className="text-sm font-semibold flex items-center gap-2">
                 <AlertTriangle className="h-4 w-4" />
-                ⚠️ {tentativasCancelamento.length} associados em fidelidade tentaram solicitar cancelamento
+                {tentativasCancelamento.length} associados em fidelidade tentaram solicitar cancelamento
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
                 {tentativasCancelamento.map((t, i) => (
-                  <div key={i} className="flex items-center justify-between bg-white rounded-lg px-3 py-2 border border-amber-200">
+                  <div key={i} className="flex items-center justify-between bg-card rounded-lg px-3 py-2 border">
                     <div>
                       <p className="font-medium text-sm">{t.nome}</p>
                       <p className="text-xs text-muted-foreground">{t.cpf} · {t.data}</p>
                     </div>
-                    <Badge className="bg-red-100 text-red-700 border-red-300 text-xs">{t.status}</Badge>
+                    <Badge className="bg-destructive/10 text-destructive border-0 text-xs">{t.status}</Badge>
                   </div>
                 ))}
               </div>
@@ -432,7 +432,7 @@ export default function VeiculosIndenizados() {
                           <td className="px-4 py-3 font-medium">{v.associado}</td>
                           <td className="px-4 py-3 text-muted-foreground">{v.cpf}</td>
                           <td className="px-4 py-3"><Badge variant="outline">{v.placa}</Badge></td>
-                          <td className="px-4 py-3 font-medium text-green-600">{fmt(v.valorIndenizacao)}</td>
+                          <td className="px-4 py-3 font-medium text-success">{fmt(v.valorIndenizacao)}</td>
                           <td className="px-4 py-3 text-muted-foreground">{v.dataEvento}</td>
                           <td className="px-4 py-3 text-muted-foreground">{v.fidelidadeAte}</td>
                           <td className="px-4 py-3"><span className={`font-semibold ${dias < 60 ? "text-red-600" : "text-orange-600"}`}>{dias} dias</span></td>
@@ -458,18 +458,18 @@ export default function VeiculosIndenizados() {
         {/* Tab 3 */}
         <TabsContent value="relatorios" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Card className="border-green-200 bg-green-50">
-              <CardHeader className="pb-2"><CardTitle className="text-sm text-green-800 flex items-center gap-2"><DollarSign className="h-4 w-4" />Valor Total Indenizado</CardTitle></CardHeader>
+            <Card className="border-0 shadow-sm bg-success/5">
+              <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2"><DollarSign className="h-4 w-4 text-success" />Valor Total Indenizado</CardTitle></CardHeader>
               <CardContent>
-                <p className="text-3xl font-bold text-green-700">{fmt(totalValor)}</p>
-                <p className="text-xs text-green-600 mt-1">Todos os períodos · {mockVeiculos.length} registros</p>
+                <p className="text-3xl font-bold text-success">{fmt(totalValor)}</p>
+                <p className="text-xs text-muted-foreground mt-1">Todos os períodos - {mockVeiculos.length} registros</p>
               </CardContent>
             </Card>
-            <Card className="border-blue-200 bg-blue-50">
-              <CardHeader className="pb-2"><CardTitle className="text-sm text-blue-800 flex items-center gap-2"><TrendingUp className="h-4 w-4" />Ticket Médio por Indenização</CardTitle></CardHeader>
+            <Card className="border-0 shadow-sm bg-primary/5">
+              <CardHeader className="pb-2"><CardTitle className="text-sm flex items-center gap-2"><TrendingUp className="h-4 w-4 text-primary" />Ticket Médio por Indenização</CardTitle></CardHeader>
               <CardContent>
-                <p className="text-3xl font-bold text-blue-700">{fmt(totalValor / mockVeiculos.length)}</p>
-                <p className="text-xs text-blue-600 mt-1">Baseado em {mockVeiculos.length} registros</p>
+                <p className="text-3xl font-bold text-primary">{fmt(totalValor / mockVeiculos.length)}</p>
+                <p className="text-xs text-muted-foreground mt-1">Baseado em {mockVeiculos.length} registros</p>
               </CardContent>
             </Card>
           </div>
@@ -492,7 +492,7 @@ export default function VeiculosIndenizados() {
                       <tr key={i} className="border-b hover:bg-muted/30">
                         <td className="px-4 py-2">{r.tipo}</td>
                         <td className="px-4 py-2 text-right">{r.quantidade}</td>
-                        <td className="px-4 py-2 text-right text-green-600 font-medium">{fmt(r.valorTotal)}</td>
+                        <td className="px-4 py-2 text-right text-success font-medium">{fmt(r.valorTotal)}</td>
                         <td className="px-4 py-2 text-right">{Math.round((r.valorTotal / totalRelatorio) * 100)}%</td>
                       </tr>
                     ))}
@@ -517,7 +517,7 @@ export default function VeiculosIndenizados() {
                       <tr key={i} className="border-b hover:bg-muted/30">
                         <td className="px-4 py-2 font-medium">{r.cooperativa}</td>
                         <td className="px-4 py-2 text-right">{r.indenizacoes}</td>
-                        <td className="px-4 py-2 text-right text-green-600 font-medium">{fmt(r.valorTotal)}</td>
+                        <td className="px-4 py-2 text-right text-success font-medium">{fmt(r.valorTotal)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -542,7 +542,7 @@ export default function VeiculosIndenizados() {
                     <tr key={i} className="border-b hover:bg-muted/30">
                       <td className="px-4 py-2 font-medium">{r.mes}</td>
                       <td className="px-4 py-2 text-right">{r.indenizacoes}</td>
-                      <td className="px-4 py-2 text-right text-green-600 font-medium">{fmt(r.valor)}</td>
+                      <td className="px-4 py-2 text-right text-success font-medium">{fmt(r.valor)}</td>
                     </tr>
                   ))}
                 </tbody>

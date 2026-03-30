@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { RotateCcw, Search, Eye, FileText, Plus, Copy, Download, Send, Mail, MessageCircle } from "lucide-react";
+import { RotateCcw, Search, Eye, FileText, Plus, Copy, Download, Send, Mail, MessageCircle, DollarSign, Clock, CheckCircle2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -40,17 +40,17 @@ const today = () => new Date().toISOString().split("T")[0];
 
 function StatusBadge({ s }: { s: StatusReembolso }) {
   const map: Record<StatusReembolso, string> = {
-    Pago: "bg-blue-100 text-blue-700 hover:bg-blue-100",
-    Aprovado: "bg-green-100 text-green-700 hover:bg-green-100",
-    Aguardando: "bg-yellow-100 text-yellow-700 hover:bg-yellow-100",
-    Recusado: "bg-red-100 text-red-700 hover:bg-red-100",
+    Pago: "bg-success/10 text-success hover:bg-success/10",
+    Aprovado: "bg-primary/10 text-primary hover:bg-primary/10",
+    Aguardando: "bg-warning/10 text-warning hover:bg-warning/10",
+    Recusado: "bg-destructive/10 text-destructive hover:bg-destructive/10",
   };
   return <Badge className={map[s]}>{s}</Badge>;
 }
 
 function TipoBadge({ t }: { t: TipoReembolso }) {
   return (
-    <Badge className={t === "Integral" ? "bg-blue-100 text-blue-700 hover:bg-blue-100" : "bg-orange-100 text-orange-700 hover:bg-orange-100"}>
+    <Badge className={t === "Integral" ? "bg-primary/10 text-primary hover:bg-primary/10" : "bg-warning/10 text-warning hover:bg-warning/10"}>
       {t}
     </Badge>
   );
@@ -159,9 +159,11 @@ export default function Reembolsos() {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-3">
-          <RotateCcw className="h-7 w-7 text-primary" />
+          <div className="rounded-xl p-2.5 bg-primary/10">
+            <RotateCcw className="h-6 w-6 text-primary" />
+          </div>
           <div>
-            <h1 className="text-2xl font-bold">Reembolsos</h1>
+            <h1 className="font-heading text-2xl font-bold">Reembolsos</h1>
             <p className="text-sm text-muted-foreground">Gestão de reembolsos e estornos para associados</p>
           </div>
         </div>
@@ -169,21 +171,61 @@ export default function Reembolsos() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card><CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground">Reembolsos no Mês</CardTitle></CardHeader><CardContent><p className="text-2xl font-bold text-blue-600">8</p></CardContent></Card>
-        <Card><CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground">Valor Total Reembolsado</CardTitle></CardHeader><CardContent><p className="text-2xl font-bold text-green-600">R$ 3.420</p></CardContent></Card>
-        <Card><CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground">Aguardando Aprovação</CardTitle></CardHeader><CardContent><p className="text-2xl font-bold text-yellow-600">{aguardando}</p></CardContent></Card>
-        <Card><CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground">Ticket Médio</CardTitle></CardHeader><CardContent><p className="text-2xl font-bold text-purple-600">{fmt(ticket)}</p></CardContent></Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Reembolsos no Mês</CardTitle>
+          </CardHeader>
+          <CardContent className="flex items-center gap-3">
+            <div className="rounded-xl p-2.5 bg-primary/10">
+              <RotateCcw className="h-5 w-5 text-primary" />
+            </div>
+            <p className="text-2xl font-bold">8</p>
+          </CardContent>
+        </Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Valor Total Reembolsado</CardTitle>
+          </CardHeader>
+          <CardContent className="flex items-center gap-3">
+            <div className="rounded-xl p-2.5 bg-success/10">
+              <DollarSign className="h-5 w-5 text-success" />
+            </div>
+            <p className="text-2xl font-bold text-success">R$ 3.420</p>
+          </CardContent>
+        </Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Aguardando Aprovação</CardTitle>
+          </CardHeader>
+          <CardContent className="flex items-center gap-3">
+            <div className="rounded-xl p-2.5 bg-warning/10">
+              <Clock className="h-5 w-5 text-warning" />
+            </div>
+            <p className="text-2xl font-bold text-warning">{aguardando}</p>
+          </CardContent>
+        </Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Ticket Médio</CardTitle>
+          </CardHeader>
+          <CardContent className="flex items-center gap-3">
+            <div className="rounded-xl p-2.5 bg-primary/10">
+              <DollarSign className="h-5 w-5 text-primary" />
+            </div>
+            <p className="text-2xl font-bold">{fmt(ticket)}</p>
+          </CardContent>
+        </Card>
       </div>
 
-      <Card>
+      <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
         <CardContent className="pt-4">
           <div className="flex flex-wrap gap-3">
             <div className="relative flex-1 min-w-[200px]">
               <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Buscar por nome ou CPF..." className="pl-9" value={busca} onChange={(e) => setBusca(e.target.value)} />
+              <Input placeholder="Buscar por nome ou CPF..." className="pl-9 rounded-lg" value={busca} onChange={(e) => setBusca(e.target.value)} />
             </div>
             <Select value={filtroStatus} onValueChange={setFiltroStatus}>
-              <SelectTrigger className="w-44"><SelectValue placeholder="Status" /></SelectTrigger>
+              <SelectTrigger className="w-44 rounded-lg"><SelectValue placeholder="Status" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="todos">Todos os status</SelectItem>
                 <SelectItem value="Pago">Pago</SelectItem>
@@ -193,7 +235,7 @@ export default function Reembolsos() {
               </SelectContent>
             </Select>
             <Select value={filtroTipo} onValueChange={setFiltroTipo}>
-              <SelectTrigger className="w-36"><SelectValue placeholder="Tipo" /></SelectTrigger>
+              <SelectTrigger className="w-36 rounded-lg"><SelectValue placeholder="Tipo" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="todos">Todos os tipos</SelectItem>
                 <SelectItem value="Integral">Integral</SelectItem>
@@ -201,7 +243,7 @@ export default function Reembolsos() {
               </SelectContent>
             </Select>
             <Select value={filtroCoop} onValueChange={setFiltroCoop}>
-              <SelectTrigger className="w-40"><SelectValue placeholder="Cooperativa" /></SelectTrigger>
+              <SelectTrigger className="w-40 rounded-lg"><SelectValue placeholder="Cooperativa" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="todas">Todas</SelectItem>
                 {cooperativas.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
@@ -211,7 +253,7 @@ export default function Reembolsos() {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
         <CardContent className="pt-4 overflow-x-auto">
           <Table>
             <TableHeader>
@@ -254,42 +296,42 @@ export default function Reembolsos() {
       <Dialog open={dlgNovo} onOpenChange={setDlgNovo}>
         <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Novo Reembolso</DialogTitle>
+            <DialogTitle className="font-heading">Novo Reembolso</DialogTitle>
             <DialogDescription>Preencha os dados para solicitar um reembolso ou estorno.</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1"><Label>Associado *</Label><Input placeholder="Nome do associado" value={fAssociado} onChange={(e) => setFAssociado(e.target.value)} /></div>
-              <div className="space-y-1"><Label>CPF *</Label><Input placeholder="000.000.000-00" value={fCpf} onChange={(e) => setFCpf(e.target.value)} /></div>
+              <div className="space-y-1"><Label>Associado *</Label><Input placeholder="Nome do associado" className="rounded-lg" value={fAssociado} onChange={(e) => setFAssociado(e.target.value)} /></div>
+              <div className="space-y-1"><Label>CPF *</Label><Input placeholder="000.000.000-00" className="rounded-lg" value={fCpf} onChange={(e) => setFCpf(e.target.value)} /></div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
                 <Label>Cooperativa</Label>
                 <Select value={fCoop} onValueChange={setFCoop}>
-                  <SelectTrigger><SelectValue placeholder="Selecionar" /></SelectTrigger>
+                  <SelectTrigger className="rounded-lg"><SelectValue placeholder="Selecionar" /></SelectTrigger>
                   <SelectContent>{cooperativas.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
                 </Select>
               </div>
               <div className="space-y-1">
                 <Label>Tipo *</Label>
                 <Select value={fTipo} onValueChange={(v) => setFTipo(v as TipoReembolso)}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="rounded-lg"><SelectValue /></SelectTrigger>
                   <SelectContent><SelectItem value="Integral">Integral</SelectItem><SelectItem value="Parcial">Parcial</SelectItem></SelectContent>
                 </Select>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1"><Label>Valor Original (R$) *</Label><Input type="number" placeholder="0,00" value={fValorOrig} onChange={(e) => setFValorOrig(e.target.value)} /></div>
-              <div className="space-y-1"><Label>Valor Reembolso (R$) *</Label><Input type="number" placeholder="0,00" value={fValorReemb} onChange={(e) => setFValorReemb(e.target.value)} /></div>
+              <div className="space-y-1"><Label>Valor Original (R$) *</Label><Input type="number" placeholder="0,00" className="rounded-lg" value={fValorOrig} onChange={(e) => setFValorOrig(e.target.value)} /></div>
+              <div className="space-y-1"><Label>Valor Reembolso (R$) *</Label><Input type="number" placeholder="0,00" className="rounded-lg" value={fValorReemb} onChange={(e) => setFValorReemb(e.target.value)} /></div>
             </div>
             <div className="space-y-1">
               <Label>Motivo *</Label>
               <Select value={fMotivo} onValueChange={setFMotivo}>
-                <SelectTrigger><SelectValue placeholder="Selecionar motivo" /></SelectTrigger>
+                <SelectTrigger className="rounded-lg"><SelectValue placeholder="Selecionar motivo" /></SelectTrigger>
                 <SelectContent>{motivos.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}</SelectContent>
               </Select>
             </div>
-            <div className="space-y-1"><Label>Atendente *</Label><Input placeholder="Nome do atendente" value={fAtendente} onChange={(e) => setFAtendente(e.target.value)} /></div>
+            <div className="space-y-1"><Label>Atendente *</Label><Input placeholder="Nome do atendente" className="rounded-lg" value={fAtendente} onChange={(e) => setFAtendente(e.target.value)} /></div>
             <div className="space-y-2">
               <Label>Forma de Pagamento</Label>
               <div className="flex gap-2">
@@ -297,12 +339,12 @@ export default function Reembolsos() {
                 <Button type="button" variant={fPixBanco === "banco" ? "default" : "outline"} size="sm" onClick={() => setFPixBanco("banco")}>Dados Bancários</Button>
               </div>
               {fPixBanco === "pix" ? (
-                <div className="space-y-1"><Label>Chave PIX</Label><Input placeholder="CPF, email, telefone ou chave aleatória" value={fChavePix} onChange={(e) => setFChavePix(e.target.value)} /></div>
+                <div className="space-y-1"><Label>Chave PIX</Label><Input placeholder="CPF, email, telefone ou chave aleatória" className="rounded-lg" value={fChavePix} onChange={(e) => setFChavePix(e.target.value)} /></div>
               ) : (
                 <div className="grid grid-cols-3 gap-2">
-                  <div className="space-y-1"><Label>Banco</Label><Input placeholder="Nome do banco" value={fBanco} onChange={(e) => setFBanco(e.target.value)} /></div>
-                  <div className="space-y-1"><Label>Agência</Label><Input placeholder="0000" value={fAgencia} onChange={(e) => setFAgencia(e.target.value)} /></div>
-                  <div className="space-y-1"><Label>Conta</Label><Input placeholder="00000-0" value={fConta} onChange={(e) => setFConta(e.target.value)} /></div>
+                  <div className="space-y-1"><Label>Banco</Label><Input placeholder="Nome do banco" className="rounded-lg" value={fBanco} onChange={(e) => setFBanco(e.target.value)} /></div>
+                  <div className="space-y-1"><Label>Agência</Label><Input placeholder="0000" className="rounded-lg" value={fAgencia} onChange={(e) => setFAgencia(e.target.value)} /></div>
+                  <div className="space-y-1"><Label>Conta</Label><Input placeholder="00000-0" className="rounded-lg" value={fConta} onChange={(e) => setFConta(e.target.value)} /></div>
                 </div>
               )}
             </div>
@@ -319,7 +361,7 @@ export default function Reembolsos() {
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           {dlgDetalhe && (<>
             <DialogHeader>
-              <DialogTitle>Reembolso #{dlgDetalhe.id}</DialogTitle>
+              <DialogTitle className="font-heading">Reembolso #{dlgDetalhe.id}</DialogTitle>
               <DialogDescription>{dlgDetalhe.associado} — {dlgDetalhe.cpf}</DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-2 text-sm">
@@ -327,13 +369,13 @@ export default function Reembolsos() {
                 <div><p className="text-muted-foreground text-xs">Data</p><p className="font-medium">{dlgDetalhe.data}</p></div>
                 <div><p className="text-muted-foreground text-xs">Cooperativa</p><p className="font-medium">{dlgDetalhe.cooperativa}</p></div>
                 <div><p className="text-muted-foreground text-xs">Valor Original</p><p className="font-medium">{fmt(dlgDetalhe.valorOriginal)}</p></div>
-                <div><p className="text-muted-foreground text-xs">Valor Reembolso</p><p className="font-semibold text-green-700">{fmt(dlgDetalhe.valorReembolso)}</p></div>
+                <div><p className="text-muted-foreground text-xs">Valor Reembolso</p><p className="font-semibold text-success">{fmt(dlgDetalhe.valorReembolso)}</p></div>
                 <div><p className="text-muted-foreground text-xs">Tipo</p><div className="mt-0.5"><TipoBadge t={dlgDetalhe.tipo} /></div></div>
                 <div><p className="text-muted-foreground text-xs">Status</p><div className="mt-0.5"><StatusBadge s={dlgDetalhe.status} /></div></div>
                 <div className="col-span-2"><p className="text-muted-foreground text-xs">Motivo</p><p className="font-medium">{dlgDetalhe.motivo}</p></div>
                 <div className="col-span-2"><p className="text-muted-foreground text-xs">Atendente</p><p className="font-medium">{dlgDetalhe.atendente}</p></div>
               </div>
-              <div className="border rounded-md p-3 space-y-1">
+              <div className="border rounded-lg p-3 space-y-1">
                 <p className="font-semibold text-muted-foreground uppercase text-xs mb-2">Dados Bancários</p>
                 {dlgDetalhe.pixOuBanco === "pix" ? (
                   <p>Chave PIX: <span className="font-medium">{dlgDetalhe.chavePix}</span></p>
@@ -358,12 +400,18 @@ export default function Reembolsos() {
               </div>
               {dlgDetalhe.status === "Aguardando" && (
                 <div className="flex gap-2">
-                  <Button className="flex-1" onClick={() => { setReembolsos(prev => prev.map(r => r.id === dlgDetalhe.id ? { ...r, status: "Aprovado" as StatusReembolso, timeline: [...r.timeline, { data: today(), evento: "Aprovado", usuario: "Rayanne Donato" }] } : r)); setDlgDetalhe(null); toast({ title: "Reembolso aprovado!" }); }}>Aprovar</Button>
-                  <Button variant="destructive" className="flex-1" onClick={() => { setReembolsos(prev => prev.map(r => r.id === dlgDetalhe.id ? { ...r, status: "Recusado" as StatusReembolso, timeline: [...r.timeline, { data: today(), evento: "Recusado", usuario: "Rayanne Donato" }] } : r)); setDlgDetalhe(null); toast({ title: "Reembolso recusado." }); }}>Recusar</Button>
+                  <Button className="flex-1" onClick={() => handleAprovar(dlgDetalhe)}>
+                    <CheckCircle2 className="h-4 w-4 mr-2" />Aprovar
+                  </Button>
+                  <Button variant="destructive" className="flex-1" onClick={() => handleRecusar(dlgDetalhe)}>
+                    <XCircle className="h-4 w-4 mr-2" />Recusar
+                  </Button>
                 </div>
               )}
               {dlgDetalhe.status === "Aprovado" && (
-                <Button onClick={() => { setReembolsos(prev => prev.map(r => r.id === dlgDetalhe.id ? { ...r, status: "Pago" as StatusReembolso, timeline: [...r.timeline, { data: today(), evento: "Pago", usuario: "Financeiro" }] } : r)); setDlgDetalhe(null); toast({ title: "Reembolso marcado como pago!" }); }}>Marcar como Pago</Button>
+                <Button onClick={() => handlePago(dlgDetalhe)}>
+                  <DollarSign className="h-4 w-4 mr-2" />Marcar como Pago
+                </Button>
               )}
             </div>
           </>)}
@@ -376,7 +424,7 @@ export default function Reembolsos() {
           {dlgTermo && (
             <>
               <DialogHeader>
-                <DialogTitle>Termo de Reembolso #{dlgTermo.id}</DialogTitle>
+                <DialogTitle className="font-heading">Termo de Reembolso #{dlgTermo.id}</DialogTitle>
                 <DialogDescription>Preview do termo — envie por Autentique, Email ou WhatsApp</DialogDescription>
               </DialogHeader>
               <div className="border rounded-lg p-4 bg-muted/20 font-mono text-sm whitespace-pre-wrap">
@@ -418,4 +466,3 @@ Assinatura`}
     </div>
   );
 }
-

@@ -119,17 +119,22 @@ const AcoesCobranca = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-foreground">Ações de Cobrança</h1>
-        <p className="text-muted-foreground">Log de todas as ações realizadas</p>
+    <div className="p-6 space-y-6">
+      <div className="flex items-center gap-3">
+        <div className="rounded-xl p-2.5 bg-primary/10">
+          <Zap className="h-6 w-6 text-primary" />
+        </div>
+        <div>
+          <h1 className="font-heading text-2xl font-bold">Ações de Cobrança</h1>
+          <p className="text-sm text-muted-foreground">Log de todas as ações realizadas</p>
+        </div>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6 flex items-center gap-4">
-            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+            <div className="rounded-xl p-2.5 bg-primary/10">
               <Zap className="h-5 w-5 text-primary" />
             </div>
             <div>
@@ -138,9 +143,9 @@ const AcoesCobranca = () => {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6 flex items-center gap-4">
-            <div className="h-10 w-10 rounded-full bg-success/10 flex items-center justify-center">
+            <div className="rounded-xl p-2.5 bg-success/10">
               <MessageSquare className="h-5 w-5 text-success" />
             </div>
             <div>
@@ -149,9 +154,9 @@ const AcoesCobranca = () => {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6 flex items-center gap-4">
-            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+            <div className="rounded-xl p-2.5 bg-primary/10">
               <Phone className="h-5 w-5 text-primary" />
             </div>
             <div>
@@ -160,9 +165,9 @@ const AcoesCobranca = () => {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6 flex items-center gap-4">
-            <div className="h-10 w-10 rounded-full bg-warning/10 flex items-center justify-center">
+            <div className="rounded-xl p-2.5 bg-warning/10">
               <Mail className="h-5 w-5 text-warning" />
             </div>
             <div>
@@ -174,7 +179,7 @@ const AcoesCobranca = () => {
       </div>
 
       {/* Filters */}
-      <Card>
+      <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
         <CardContent className="pt-6">
           <div className="flex gap-4 flex-wrap">
             <div className="relative flex-1 min-w-[200px]">
@@ -183,11 +188,11 @@ const AcoesCobranca = () => {
                 placeholder="Buscar por associado..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                className="pl-10 rounded-lg"
               />
             </div>
             <Select value={tipoFilter} onValueChange={setTipoFilter}>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-[180px] rounded-lg">
                 <Filter className="h-4 w-4 mr-2" />
                 <SelectValue placeholder="Tipo" />
               </SelectTrigger>
@@ -204,9 +209,9 @@ const AcoesCobranca = () => {
       </Card>
 
       {/* Table */}
-      <Card>
+      <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
         <CardHeader>
-          <CardTitle>Histórico de Ações</CardTitle>
+          <CardTitle className="font-heading">Histórico de Ações</CardTitle>
           <CardDescription>
             {filteredAcoes.length} ação(ões) registrada(s)
           </CardDescription>

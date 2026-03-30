@@ -135,11 +135,11 @@ const Negativacoes = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "Negativado":
-        return <Badge className="bg-destructive/10 text-destructive">Negativado</Badge>;
+        return <Badge className="bg-destructive/10 text-destructive border-0">Negativado</Badge>;
       case "Retirado":
-        return <Badge className="bg-success/10 text-success">Retirado</Badge>;
+        return <Badge className="bg-success/10 text-success border-0">Retirado</Badge>;
       case "Aguardando":
-        return <Badge className="bg-warning/10 text-warning">Aguardando</Badge>;
+        return <Badge className="bg-warning/10 text-warning border-0">Aguardando</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -159,8 +159,8 @@ const Negativacoes = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Negativações</h1>
-          <p className="text-muted-foreground">Controle de inclusão SPC/Serasa</p>
+          <h1 className="font-heading text-2xl font-bold">Negativações</h1>
+          <p className="text-sm text-muted-foreground">Controle de inclusão SPC/Serasa</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline">
@@ -176,7 +176,7 @@ const Negativacoes = () => {
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Incluir Negativação</DialogTitle>
+                <DialogTitle className="font-heading">Incluir Negativação</DialogTitle>
                 <DialogDescription>
                   Registre uma nova inclusão nos órgãos de proteção
                 </DialogDescription>
@@ -190,6 +190,7 @@ const Negativacoes = () => {
                       setNewNegativacao({ ...newNegativacao, associado: e.target.value })
                     }
                     placeholder="Nome do associado"
+                    className="rounded-lg"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -201,6 +202,7 @@ const Negativacoes = () => {
                         setNewNegativacao({ ...newNegativacao, cpf: e.target.value })
                       }
                       placeholder="000.000.000-00"
+                      className="rounded-lg"
                     />
                   </div>
                   <div className="grid gap-2">
@@ -211,6 +213,7 @@ const Negativacoes = () => {
                       onChange={(e) =>
                         setNewNegativacao({ ...newNegativacao, valorDevido: Number(e.target.value) })
                       }
+                      className="rounded-lg"
                     />
                   </div>
                 </div>
@@ -222,7 +225,7 @@ const Negativacoes = () => {
                       setNewNegativacao({ ...newNegativacao, orgao: value })
                     }
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="rounded-lg">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -248,10 +251,10 @@ const Negativacoes = () => {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
-              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <div className="rounded-xl p-2.5 bg-primary/10">
                 <FileText className="h-5 w-5 text-primary" />
               </div>
               <div>
@@ -261,10 +264,10 @@ const Negativacoes = () => {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
-              <div className="h-10 w-10 rounded-full bg-destructive/10 flex items-center justify-center">
+              <div className="rounded-xl p-2.5 bg-destructive/10">
                 <AlertTriangle className="h-5 w-5 text-destructive" />
               </div>
               <div>
@@ -274,10 +277,10 @@ const Negativacoes = () => {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
-              <div className="h-10 w-10 rounded-full bg-success/10 flex items-center justify-center">
+              <div className="rounded-xl p-2.5 bg-success/10">
                 <Check className="h-5 w-5 text-success" />
               </div>
               <div>
@@ -287,10 +290,10 @@ const Negativacoes = () => {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
-              <div className="h-10 w-10 rounded-full bg-warning/10 flex items-center justify-center">
+              <div className="rounded-xl p-2.5 bg-warning/10">
                 <Clock className="h-5 w-5 text-warning" />
               </div>
               <div>
@@ -303,14 +306,16 @@ const Negativacoes = () => {
       </div>
 
       {/* Value Summary */}
-      <Card className="border-destructive/30 bg-destructive/5">
+      <Card className="border-0 shadow-sm hover:shadow-md transition-shadow bg-destructive/5">
         <CardContent className="pt-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <AlertTriangle className="h-8 w-8 text-destructive" />
+              <div className="rounded-xl p-2.5 bg-destructive/10">
+                <AlertTriangle className="h-6 w-6 text-destructive" />
+              </div>
               <div>
                 <p className="text-sm text-muted-foreground">Valor Total Negativado</p>
-                <p className="text-3xl font-bold text-destructive">
+                <p className="font-heading text-3xl font-bold text-destructive">
                   R$ {stats.valorNegativado.toLocaleString()}
                 </p>
               </div>
@@ -320,7 +325,7 @@ const Negativacoes = () => {
       </Card>
 
       {/* Search */}
-      <Card>
+      <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
         <CardContent className="pt-6">
           <div className="relative max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -328,16 +333,16 @@ const Negativacoes = () => {
               placeholder="Buscar por associado..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              className="pl-10 rounded-lg"
             />
           </div>
         </CardContent>
       </Card>
 
       {/* Table */}
-      <Card>
+      <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
         <CardHeader>
-          <CardTitle>Registro de Negativações</CardTitle>
+          <CardTitle className="font-heading">Registro de Negativações</CardTitle>
           <CardDescription>
             {filteredNegativacoes.length} registro(s) encontrado(s)
           </CardDescription>

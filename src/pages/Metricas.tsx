@@ -66,12 +66,12 @@ const Metricas = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Métricas Mensais</h1>
-          <p className="text-muted-foreground">Relatórios consolidados de performance</p>
+          <h1 className="font-heading text-2xl font-bold">Métricas Mensais</h1>
+          <p className="text-sm text-muted-foreground">Relatórios consolidados de performance</p>
         </div>
         <div className="flex gap-2">
           <Select value={periodo} onValueChange={setPeriodo}>
-            <SelectTrigger className="w-[150px]">
+            <SelectTrigger className="w-[150px] rounded-lg">
               <Calendar className="h-4 w-4 mr-2" />
               <SelectValue />
             </SelectTrigger>
@@ -94,10 +94,10 @@ const Metricas = () => {
 
       {/* Summary KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-full bg-success/10 flex items-center justify-center">
+              <div className="rounded-xl p-2.5 bg-success/10">
                 <DollarSign className="h-6 w-6 text-success" />
               </div>
               <div>
@@ -109,10 +109,10 @@ const Metricas = () => {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+              <div className="rounded-xl p-2.5 bg-primary/10">
                 <Target className="h-6 w-6 text-primary" />
               </div>
               <div>
@@ -124,10 +124,10 @@ const Metricas = () => {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+              <div className="rounded-xl p-2.5 bg-primary/10">
                 <Users className="h-6 w-6 text-primary" />
               </div>
               <div>
@@ -137,10 +137,10 @@ const Metricas = () => {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-full bg-warning/10 flex items-center justify-center">
+              <div className="rounded-xl p-2.5 bg-warning/10">
                 <Phone className="h-6 w-6 text-warning" />
               </div>
               <div>
@@ -155,9 +155,9 @@ const Metricas = () => {
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Monthly Evolution */}
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="font-heading flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-primary" />
               Evolução da Arrecadação
             </CardTitle>
@@ -201,9 +201,9 @@ const Metricas = () => {
         </Card>
 
         {/* Acordos e Ligações */}
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="font-heading flex items-center gap-2">
               <Users className="h-5 w-5 text-primary" />
               Acordos e Ligações por Mês
             </CardTitle>
@@ -241,9 +241,9 @@ const Metricas = () => {
       </div>
 
       {/* Channel Effectiveness */}
-      <Card>
+      <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
         <CardHeader>
-          <CardTitle>Efetividade por Canal de Cobrança</CardTitle>
+          <CardTitle className="font-heading">Efetividade por Canal de Cobrança</CardTitle>
           <CardDescription>
             Taxa de sucesso de cada canal de comunicação
           </CardDescription>
@@ -269,9 +269,9 @@ const Metricas = () => {
       </Card>
 
       {/* Summary Table */}
-      <Card>
+      <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
         <CardHeader>
-          <CardTitle>Resumo por Período</CardTitle>
+          <CardTitle className="font-heading">Resumo por Período</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">

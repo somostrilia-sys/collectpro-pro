@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Eye, Edit, Trash2, Search, Filter, Phone, Mail } from "lucide-react";
+import { Plus, Eye, Edit, Trash2, Search, Filter, Phone, Mail, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -112,7 +112,11 @@ const Associados = () => {
     {
       accessorKey: "plano",
       header: "Plano",
-      cell: ({ row }: any) => <Badge variant="outline">{row.original.plano}</Badge>,
+      cell: ({ row }: any) => (
+        <Badge variant="outline" className="font-medium">
+          {row.original.plano}
+        </Badge>
+      ),
     },
     {
       accessorKey: "status",
@@ -144,10 +148,11 @@ const Associados = () => {
       cell: ({ row }: any) => {
         const associado = row.original;
         return (
-          <div className="flex justify-end gap-2">
+          <div className="flex justify-end gap-1">
             <Button
               variant="ghost"
               size="icon"
+              className="h-8 w-8"
               onClick={() => {
                 setSelectedAssociado(associado);
                 setIsViewModalOpen(true);
@@ -155,12 +160,13 @@ const Associados = () => {
             >
               <Eye className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className="h-8 w-8">
               <Edit className="h-4 w-4" />
             </Button>
             <Button
               variant="ghost"
               size="icon"
+              className="h-8 w-8"
               onClick={() => handleDelete(associado.id)}
             >
               <Trash2 className="h-4 w-4 text-destructive" />
@@ -190,21 +196,22 @@ const Associados = () => {
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Associados</h1>
-          <p className="text-muted-foreground">Gestão de associados da proteção veicular</p>
+          <h1 className="font-heading text-2xl font-bold">Associados</h1>
+          <p className="text-sm text-muted-foreground">Gestão de associados da proteção veicular</p>
         </div>
         <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-primary hover:bg-primary/90">
+            <Button>
               <Plus className="h-4 w-4 mr-2" />
               Novo Associado
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle>Cadastrar Novo Associado</DialogTitle>
+              <DialogTitle className="font-heading">Cadastrar Novo Associado</DialogTitle>
               <DialogDescription>
                 Preencha os dados do novo associado
               </DialogDescription>
@@ -287,7 +294,8 @@ const Associados = () => {
         </Dialog>
       </div>
 
-      <Card>
+      {/* Filter + Table Card */}
+      <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
         <CardContent className="pt-6">
           <div className="flex gap-4 flex-wrap mb-4">
             <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -303,7 +311,7 @@ const Associados = () => {
               </SelectContent>
             </Select>
           </div>
-          
+
           <DataTable
             columns={columns}
             data={filteredAssociados}
@@ -313,49 +321,65 @@ const Associados = () => {
         </CardContent>
       </Card>
 
+      {/* View Modal */}
       <Dialog open={isViewModalOpen} onOpenChange={setIsViewModalOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Detalhes do Associado</DialogTitle>
+            <DialogTitle className="font-heading flex items-center gap-2">
+              <div className="rounded-xl p-2.5 bg-primary/10">
+                <Users className="h-4 w-4 text-primary" />
+              </div>
+              Detalhes do Associado
+            </DialogTitle>
           </DialogHeader>
           {selectedAssociado && (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4 p-4 rounded-lg bg-muted/30">
                 <div>
-                  <Label className="text-muted-foreground">Nome</Label>
-                  <p className="font-medium">{selectedAssociado.nome}</p>
+                  <Label className="text-xs text-muted-foreground">Nome</Label>
+                  <p className="font-medium text-sm">{selectedAssociado.nome}</p>
                 </div>
                 <div>
-                  <Label className="text-muted-foreground">CPF</Label>
-                  <p className="font-medium">{selectedAssociado.cpf}</p>
+                  <Label className="text-xs text-muted-foreground">CPF</Label>
+                  <p className="font-medium text-sm">{selectedAssociado.cpf}</p>
                 </div>
                 <div>
-                  <Label className="text-muted-foreground">Placa</Label>
-                  <p className="font-medium">{selectedAssociado.placa}</p>
+                  <Label className="text-xs text-muted-foreground">Placa</Label>
+                  <p className="font-medium text-sm">{selectedAssociado.placa}</p>
                 </div>
                 <div>
-                  <Label className="text-muted-foreground">Plano</Label>
-                  <Badge variant="outline">{selectedAssociado.plano}</Badge>
+                  <Label className="text-xs text-muted-foreground">Plano</Label>
+                  <div className="mt-1">
+                    <Badge variant="outline" className="font-medium">{selectedAssociado.plano}</Badge>
+                  </div>
                 </div>
                 <div>
-                  <Label className="text-muted-foreground">Status</Label>
-                  <StatusBadge status={selectedAssociado.status} />
+                  <Label className="text-xs text-muted-foreground">Status</Label>
+                  <div className="mt-1">
+                    <StatusBadge status={selectedAssociado.status} />
+                  </div>
                 </div>
                 <div>
-                  <Label className="text-muted-foreground">Score</Label>
-                  <Badge className={getScoreColor(selectedAssociado.score)}>
-                    {selectedAssociado.score}
-                  </Badge>
+                  <Label className="text-xs text-muted-foreground">Score</Label>
+                  <div className="mt-1">
+                    <Badge className={getScoreColor(selectedAssociado.score)}>
+                      {selectedAssociado.score}
+                    </Badge>
+                  </div>
                 </div>
               </div>
-              <div className="pt-4 border-t space-y-2">
-                <div className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 text-muted-foreground" />
-                  <span>{selectedAssociado.telefone}</span>
+              <div className="pt-2 border-t space-y-2">
+                <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/30 transition-colors">
+                  <div className="rounded-xl p-2 bg-primary/10">
+                    <Phone className="h-3.5 w-3.5 text-primary" />
+                  </div>
+                  <span className="text-sm">{selectedAssociado.telefone}</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Mail className="h-4 w-4 text-muted-foreground" />
-                  <span>{selectedAssociado.email}</span>
+                <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/30 transition-colors">
+                  <div className="rounded-xl p-2 bg-primary/10">
+                    <Mail className="h-3.5 w-3.5 text-primary" />
+                  </div>
+                  <span className="text-sm">{selectedAssociado.email}</span>
                 </div>
               </div>
             </div>

@@ -18,6 +18,7 @@ import {
   FileWarning,
   Ban,
   Zap,
+  Gauge,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -59,7 +60,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// --- Types ---
 
 interface EtapaRegua {
   id: string;
@@ -85,7 +86,7 @@ interface AssociadoRegua {
   fase: "pre" | "pos";
 }
 
-// ─── Data: Pré-Vencimento ─────────────────────────────────────────────────────
+// --- Data: Pre-Vencimento ---
 
 const etapasPreVencimento: EtapaRegua[] = [
   {
@@ -97,7 +98,7 @@ const etapasPreVencimento: EtapaRegua[] = [
     canais: ["WhatsApp"],
     ativo: true,
     mensagem:
-      "Olá {nome}! 👋 Seu boleto de R$ {valor} referente ao plano {plano} vence em 7 dias ({vencimento}). Segue o boleto: {link_boleto}. CollectPro - Proteção Veicular",
+      "Olá {nome}! Seu boleto de R$ {valor} referente ao plano {plano} vence em 7 dias ({vencimento}). Segue o boleto: {link_boleto}. CollectPro - Proteção Veicular",
     color: "blue",
   },
   {
@@ -150,7 +151,7 @@ const etapasPreVencimento: EtapaRegua[] = [
   },
 ];
 
-// ─── Data: Pós-Vencimento ─────────────────────────────────────────────────────
+// --- Data: Pos-Vencimento ---
 
 const etaposPosVencimento: EtapaRegua[] = [
   {
@@ -251,122 +252,22 @@ const etaposPosVencimento: EtapaRegua[] = [
   },
 ];
 
-// ─── Mock: Associados na Régua ────────────────────────────────────────────────
+// --- Mock: Associados na Regua ---
 
 const mockAssociados: AssociadoRegua[] = [
-  {
-    id: "1",
-    nome: "Maria Santos",
-    cpf: "123.456.789-00",
-    etapaAtual: "D-7",
-    diasAtraso: -7,
-    valor: 320.0,
-    proximoDisparo: "Hoje 08:00",
-    canal: "WhatsApp",
-    fase: "pre",
-  },
-  {
-    id: "2",
-    nome: "João Silva",
-    cpf: "234.567.890-11",
-    etapaAtual: "D-3",
-    diasAtraso: -3,
-    valor: 450.0,
-    proximoDisparo: "Hoje 09:00",
-    canal: "WhatsApp",
-    fase: "pre",
-  },
-  {
-    id: "3",
-    nome: "Ana Lima",
-    cpf: "345.678.901-22",
-    etapaAtual: "D0",
-    diasAtraso: 0,
-    valor: 189.0,
-    proximoDisparo: "Hoje 10:00",
-    canal: "WhatsApp",
-    fase: "pre",
-  },
-  {
-    id: "4",
-    nome: "Carlos Souza",
-    cpf: "456.789.012-33",
-    etapaAtual: "D+1",
-    diasAtraso: 1,
-    valor: 275.0,
-    proximoDisparo: "Amanhã 08:00",
-    canal: "WhatsApp",
-    fase: "pos",
-  },
-  {
-    id: "5",
-    nome: "Pedro Costa",
-    cpf: "567.890.123-44",
-    etapaAtual: "D+3",
-    diasAtraso: 3,
-    valor: 390.0,
-    proximoDisparo: "27/01 08:00",
-    canal: "WhatsApp",
-    fase: "pos",
-  },
-  {
-    id: "6",
-    nome: "Lucia Ferreira",
-    cpf: "678.901.234-55",
-    etapaAtual: "D+7",
-    diasAtraso: 7,
-    valor: 520.0,
-    proximoDisparo: "28/01 09:00",
-    canal: "WhatsApp + Ligação",
-    fase: "pos",
-  },
-  {
-    id: "7",
-    nome: "Roberto Alves",
-    cpf: "789.012.345-66",
-    etapaAtual: "D+10",
-    diasAtraso: 10,
-    valor: 870.0,
-    proximoDisparo: "29/01 10:00",
-    canal: "WhatsApp + E-mail",
-    fase: "pos",
-  },
-  {
-    id: "8",
-    nome: "Fernanda Rocha",
-    cpf: "890.123.456-77",
-    etapaAtual: "D+15",
-    diasAtraso: 15,
-    valor: 640.0,
-    proximoDisparo: "30/01 08:00",
-    canal: "WhatsApp + Ligação + E-mail",
-    fase: "pos",
-  },
-  {
-    id: "9",
-    nome: "Marcos Nunes",
-    cpf: "901.234.567-88",
-    etapaAtual: "D+25",
-    diasAtraso: 25,
-    valor: 1200.0,
-    proximoDisparo: "01/02 08:00",
-    canal: "WhatsApp + E-mail",
-    fase: "pos",
-  },
-  {
-    id: "10",
-    nome: "Patrícia Gomes",
-    cpf: "012.345.678-99",
-    etapaAtual: "D+30",
-    diasAtraso: 30,
-    valor: 980.0,
-    proximoDisparo: "Aguardando",
-    canal: "Sistema",
-    fase: "pos",
-  },
+  { id: "1", nome: "Maria Santos", cpf: "123.456.789-00", etapaAtual: "D-7", diasAtraso: -7, valor: 320.0, proximoDisparo: "Hoje 08:00", canal: "WhatsApp", fase: "pre" },
+  { id: "2", nome: "João Silva", cpf: "234.567.890-11", etapaAtual: "D-3", diasAtraso: -3, valor: 450.0, proximoDisparo: "Hoje 09:00", canal: "WhatsApp", fase: "pre" },
+  { id: "3", nome: "Ana Lima", cpf: "345.678.901-22", etapaAtual: "D0", diasAtraso: 0, valor: 189.0, proximoDisparo: "Hoje 10:00", canal: "WhatsApp", fase: "pre" },
+  { id: "4", nome: "Carlos Souza", cpf: "456.789.012-33", etapaAtual: "D+1", diasAtraso: 1, valor: 275.0, proximoDisparo: "Amanhã 08:00", canal: "WhatsApp", fase: "pos" },
+  { id: "5", nome: "Pedro Costa", cpf: "567.890.123-44", etapaAtual: "D+3", diasAtraso: 3, valor: 390.0, proximoDisparo: "27/01 08:00", canal: "WhatsApp", fase: "pos" },
+  { id: "6", nome: "Lucia Ferreira", cpf: "678.901.234-55", etapaAtual: "D+7", diasAtraso: 7, valor: 520.0, proximoDisparo: "28/01 09:00", canal: "WhatsApp + Ligação", fase: "pos" },
+  { id: "7", nome: "Roberto Alves", cpf: "789.012.345-66", etapaAtual: "D+10", diasAtraso: 10, valor: 870.0, proximoDisparo: "29/01 10:00", canal: "WhatsApp + E-mail", fase: "pos" },
+  { id: "8", nome: "Fernanda Rocha", cpf: "890.123.456-77", etapaAtual: "D+15", diasAtraso: 15, valor: 640.0, proximoDisparo: "30/01 08:00", canal: "WhatsApp + Ligação + E-mail", fase: "pos" },
+  { id: "9", nome: "Marcos Nunes", cpf: "901.234.567-88", etapaAtual: "D+25", diasAtraso: 25, valor: 1200.0, proximoDisparo: "01/02 08:00", canal: "WhatsApp + E-mail", fase: "pos" },
+  { id: "10", nome: "Patrícia Gomes", cpf: "012.345.678-99", etapaAtual: "D+30", diasAtraso: 30, valor: 980.0, proximoDisparo: "Aguardando", canal: "Sistema", fase: "pos" },
 ];
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// --- Helpers ---
 
 const canalIcons: Record<string, React.ReactNode> = {
   WhatsApp: <MessageSquare className="h-3 w-3" />,
@@ -388,18 +289,18 @@ const colorClasses: Record<
   { badge: string; dot: string; border: string; icon: string; bg: string }
 > = {
   blue: {
-    badge: "bg-blue-100 text-blue-700 border-blue-200",
-    dot: "bg-blue-500",
-    border: "border-blue-200",
-    icon: "text-blue-600",
-    bg: "bg-blue-50",
+    badge: "bg-primary/10 text-primary border-primary/30",
+    dot: "bg-primary",
+    border: "border-primary/20",
+    icon: "text-primary",
+    bg: "bg-primary/5",
   },
   yellow: {
-    badge: "bg-yellow-100 text-yellow-700 border-yellow-200",
-    dot: "bg-yellow-500",
-    border: "border-yellow-200",
-    icon: "text-yellow-600",
-    bg: "bg-yellow-50",
+    badge: "bg-warning/10 text-warning border-warning/30",
+    dot: "bg-warning",
+    border: "border-warning/20",
+    icon: "text-warning",
+    bg: "bg-warning/5",
   },
   orange: {
     badge: "bg-orange-100 text-orange-700 border-orange-200",
@@ -409,11 +310,11 @@ const colorClasses: Record<
     bg: "bg-orange-50",
   },
   red: {
-    badge: "bg-red-100 text-red-700 border-red-200",
-    dot: "bg-red-500",
-    border: "border-red-200",
-    icon: "text-red-600",
-    bg: "bg-red-50",
+    badge: "bg-destructive/10 text-destructive border-destructive/30",
+    dot: "bg-destructive",
+    border: "border-destructive/20",
+    icon: "text-destructive",
+    bg: "bg-destructive/5",
   },
 };
 
@@ -430,7 +331,7 @@ const getEtapaBadgeClass = (etapa: string) => {
   return colorClasses[color].badge;
 };
 
-// ─── Sub-component: Timeline Step ────────────────────────────────────────────
+// --- Sub-component: Timeline Step ---
 
 interface TimelineStepProps {
   etapa: EtapaRegua;
@@ -531,7 +432,7 @@ const TimelineStep = ({ etapa, isLast, onToggle, onEditMessage }: TimelineStepPr
   );
 };
 
-// ─── Main Component ───────────────────────────────────────────────────────────
+// --- Main Component ---
 
 const ReguaCobranca = () => {
   const { toast } = useToast();
@@ -569,7 +470,7 @@ const ReguaCobranca = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [isTesting, setIsTesting] = useState(false);
 
-  // ── Toggle etapa ────────────────────────────────────────────────────────────
+  // -- Toggle etapa --
 
   const toggleEtapaPre = (id: string) =>
     setEtapasPre((prev) =>
@@ -581,7 +482,7 @@ const ReguaCobranca = () => {
       prev.map((e) => (e.id === id ? { ...e, ativo: !e.ativo } : e))
     );
 
-  // ── Edit message dialog ─────────────────────────────────────────────────────
+  // -- Edit message dialog --
 
   const openEditDialog = (etapa: EtapaRegua) => {
     setEditingEtapa(etapa);
@@ -607,7 +508,7 @@ const ReguaCobranca = () => {
     });
   };
 
-  // ── WhatsApp test connection ─────────────────────────────────────────────────
+  // -- WhatsApp test connection --
 
   const handleTestarConexao = () => {
     setIsTesting(true);
@@ -615,7 +516,7 @@ const ReguaCobranca = () => {
       setIsTesting(false);
       setIsConnected(true);
       toast({
-        title: "✅ Conexão estabelecida!",
+        title: "Conexão estabelecida!",
         description: "WhatsApp API conectada com sucesso.",
       });
     }, 2000);
@@ -628,7 +529,7 @@ const ReguaCobranca = () => {
     });
   };
 
-  // ── Associados filtrados ────────────────────────────────────────────────────
+  // -- Associados filtrados --
 
   const associadosFiltrados = mockAssociados.filter((a) => {
     const matchEtapa = filtroEtapa === "all" || a.etapaAtual === filtroEtapa;
@@ -644,7 +545,7 @@ const ReguaCobranca = () => {
     ...etaposPosVencimento.map((e) => e.dia),
   ];
 
-  // ── Toggle dia da semana ────────────────────────────────────────────────────
+  // -- Toggle dia da semana --
 
   const toggleDiaSemana = (dia: string) => {
     setHorarioConfig((prev) => ({
@@ -665,17 +566,22 @@ const ReguaCobranca = () => {
     { value: "dom", label: "Dom" },
   ];
 
-  // ── Render ──────────────────────────────────────────────────────────────────
+  // -- Render --
 
   return (
-    <div className="space-y-6">
-      {/* ── Header ── */}
+    <div className="p-6 space-y-6">
+      {/* -- Header -- */}
       <div className="flex flex-wrap justify-between items-start gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Régua de Cobrança</h1>
-          <p className="text-muted-foreground mt-1">
-            Configure os disparos automáticos de cobrança via WhatsApp
-          </p>
+        <div className="flex items-center gap-3">
+          <div className="rounded-xl p-2.5 bg-primary/10">
+            <Gauge className="h-6 w-6 text-primary" />
+          </div>
+          <div>
+            <h1 className="font-heading text-2xl font-bold">Régua de Cobrança</h1>
+            <p className="text-sm text-muted-foreground">
+              Configure os disparos automáticos de cobrança via WhatsApp
+            </p>
+          </div>
         </div>
         <Button
           variant="outline"
@@ -686,7 +592,7 @@ const ReguaCobranca = () => {
         </Button>
       </div>
 
-      {/* ── Tabs ── */}
+      {/* -- Tabs -- */}
       <Tabs defaultValue="pre-vencimento" className="w-full">
         <TabsList className="grid grid-cols-4 w-full max-w-2xl">
           <TabsTrigger value="pre-vencimento">Pré-Vencimento</TabsTrigger>
@@ -695,18 +601,16 @@ const ReguaCobranca = () => {
           <TabsTrigger value="config-whatsapp">Configuração WhatsApp</TabsTrigger>
         </TabsList>
 
-        {/* ═══════════════════════════════════════════════════════
-            TAB: PRÉ-VENCIMENTO
-        ════════════════════════════════════════════════════════ */}
+        {/* TAB: PRE-VENCIMENTO */}
         <TabsContent value="pre-vencimento" className="mt-6">
-          <Card>
+          <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
             <CardHeader>
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                  <Bell className="h-5 w-5 text-blue-600" />
+                <div className="rounded-xl p-2.5 bg-primary/10">
+                  <Bell className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <CardTitle>Pré-Vencimento — Envio de Boleto</CardTitle>
+                  <CardTitle className="font-heading">Pré-Vencimento — Envio de Boleto</CardTitle>
                   <CardDescription>
                     Disparos preventivos antes do vencimento para garantir o pagamento em dia
                   </CardDescription>
@@ -729,18 +633,16 @@ const ReguaCobranca = () => {
           </Card>
         </TabsContent>
 
-        {/* ═══════════════════════════════════════════════════════
-            TAB: PÓS-VENCIMENTO
-        ════════════════════════════════════════════════════════ */}
+        {/* TAB: POS-VENCIMENTO */}
         <TabsContent value="pos-vencimento" className="mt-6">
-          <Card>
+          <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
             <CardHeader>
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center">
-                  <AlertTriangle className="h-5 w-5 text-orange-600" />
+                <div className="rounded-xl p-2.5 bg-warning/10">
+                  <AlertTriangle className="h-5 w-5 text-warning" />
                 </div>
                 <div>
-                  <CardTitle>Pós-Vencimento — Cobrança</CardTitle>
+                  <CardTitle className="font-heading">Pós-Vencimento — Cobrança</CardTitle>
                   <CardDescription>
                     Régua de cobrança progressiva após o vencimento até a negativação
                   </CardDescription>
@@ -763,15 +665,13 @@ const ReguaCobranca = () => {
           </Card>
         </TabsContent>
 
-        {/* ═══════════════════════════════════════════════════════
-            TAB: ASSOCIADOS NA RÉGUA
-        ════════════════════════════════════════════════════════ */}
+        {/* TAB: ASSOCIADOS NA REGUA */}
         <TabsContent value="associados" className="mt-6">
-          <Card>
+          <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
             <CardHeader>
               <div className="flex items-center justify-between flex-wrap gap-4">
                 <div>
-                  <CardTitle>Associados na Régua de Cobrança</CardTitle>
+                  <CardTitle className="font-heading">Associados na Régua de Cobrança</CardTitle>
                   <CardDescription>
                     Acompanhe em qual etapa cada associado está e faça disparos manuais
                   </CardDescription>
@@ -783,11 +683,11 @@ const ReguaCobranca = () => {
                       placeholder="Buscar por nome ou CPF..."
                       value={busca}
                       onChange={(e) => setBusca(e.target.value)}
-                      className="pl-9 w-64"
+                      className="pl-9 w-64 rounded-lg"
                     />
                   </div>
                   <Select value={filtroEtapa} onValueChange={setFiltroEtapa}>
-                    <SelectTrigger className="w-40">
+                    <SelectTrigger className="w-40 rounded-lg">
                       <SelectValue placeholder="Filtrar etapa" />
                     </SelectTrigger>
                     <SelectContent>
@@ -831,11 +731,11 @@ const ReguaCobranca = () => {
                       </TableCell>
                       <TableCell>
                         {assoc.diasAtraso < 0 ? (
-                          <span className="text-blue-600 font-medium">
+                          <span className="text-primary font-medium">
                             {Math.abs(assoc.diasAtraso)}d antes
                           </span>
                         ) : assoc.diasAtraso === 0 ? (
-                          <span className="text-blue-600 font-medium">Vence hoje</span>
+                          <span className="text-primary font-medium">Vence hoje</span>
                         ) : (
                           <span className="text-destructive font-medium">
                             {assoc.diasAtraso}d em atraso
@@ -900,17 +800,15 @@ const ReguaCobranca = () => {
           </Card>
         </TabsContent>
 
-        {/* ═══════════════════════════════════════════════════════
-            TAB: CONFIGURAÇÃO WHATSAPP
-        ════════════════════════════════════════════════════════ */}
+        {/* TAB: CONFIGURAÇÃO WHATSAPP */}
         <TabsContent value="config-whatsapp" className="mt-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Conexão */}
-            <Card>
+            <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle>Configuração da API</CardTitle>
+                    <CardTitle className="font-heading">Configuração da API</CardTitle>
                     <CardDescription>
                       Configure o provedor de WhatsApp para disparos automáticos
                     </CardDescription>
@@ -919,8 +817,8 @@ const ReguaCobranca = () => {
                     variant="outline"
                     className={
                       isConnected
-                        ? "bg-green-100 text-green-700 border-green-200"
-                        : "bg-red-100 text-red-700 border-red-200"
+                        ? "bg-success/10 text-success border-success/30"
+                        : "bg-destructive/10 text-destructive border-destructive/30"
                     }
                   >
                     {isConnected ? (
@@ -944,7 +842,7 @@ const ReguaCobranca = () => {
                       setWhatsappConfig({ ...whatsappConfig, provedor: v })
                     }
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="rounded-lg">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -960,6 +858,7 @@ const ReguaCobranca = () => {
                   <Label>URL da API</Label>
                   <Input
                     placeholder="https://api.z-api.io/instances/..."
+                    className="rounded-lg"
                     value={whatsappConfig.apiUrl}
                     onChange={(e) =>
                       setWhatsappConfig({ ...whatsappConfig, apiUrl: e.target.value })
@@ -972,6 +871,7 @@ const ReguaCobranca = () => {
                   <Input
                     type="password"
                     placeholder="••••••••••••••••"
+                    className="rounded-lg"
                     value={whatsappConfig.token}
                     onChange={(e) =>
                       setWhatsappConfig({ ...whatsappConfig, token: e.target.value })
@@ -983,6 +883,7 @@ const ReguaCobranca = () => {
                   <Label>Instância / Número</Label>
                   <Input
                     placeholder="Ex: 5511999999999"
+                    className="rounded-lg"
                     value={whatsappConfig.instancia}
                     onChange={(e) =>
                       setWhatsappConfig({ ...whatsappConfig, instancia: e.target.value })
@@ -995,7 +896,7 @@ const ReguaCobranca = () => {
                   <Input
                     readOnly
                     value={whatsappConfig.webhookUrl}
-                    className="bg-muted text-muted-foreground cursor-default text-sm"
+                    className="bg-muted text-muted-foreground cursor-default text-sm rounded-lg"
                   />
                   <p className="text-xs text-muted-foreground">
                     Configure este webhook no painel do seu provedor
@@ -1030,9 +931,9 @@ const ReguaCobranca = () => {
             </Card>
 
             {/* Horários de Envio */}
-            <Card>
+            <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
               <CardHeader>
-                <CardTitle>Horários de Envio</CardTitle>
+                <CardTitle className="font-heading">Horários de Envio</CardTitle>
                 <CardDescription>
                   Defina quando os disparos automáticos serão realizados
                 </CardDescription>
@@ -1058,6 +959,7 @@ const ReguaCobranca = () => {
                     <Label>Horário de início</Label>
                     <Input
                       type="time"
+                      className="rounded-lg"
                       value={horarioConfig.inicio}
                       onChange={(e) =>
                         setHorarioConfig({ ...horarioConfig, inicio: e.target.value })
@@ -1068,6 +970,7 @@ const ReguaCobranca = () => {
                     <Label>Horário de fim</Label>
                     <Input
                       type="time"
+                      className="rounded-lg"
                       value={horarioConfig.fim}
                       onChange={(e) =>
                         setHorarioConfig({ ...horarioConfig, fim: e.target.value })
@@ -1118,16 +1021,16 @@ const ReguaCobranca = () => {
         </TabsContent>
       </Tabs>
 
-      {/* ── Estatísticas (sempre visível) ── */}
+      {/* -- Estatísticas (sempre visível) -- */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
-                <Check className="h-6 w-6 text-blue-600" />
+              <div className="rounded-xl p-2.5 bg-primary/10 shrink-0">
+                <Check className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <div className="text-3xl font-bold text-blue-700">92%</div>
+                <div className="text-3xl font-bold text-primary">92%</div>
                 <p className="text-sm text-muted-foreground">
                   Taxa de Recuperação Pré-Vencimento
                 </p>
@@ -1136,14 +1039,14 @@ const ReguaCobranca = () => {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-full bg-warning/10 flex items-center justify-center shrink-0">
+              <div className="rounded-xl p-2.5 bg-warning/10 shrink-0">
                 <Clock className="h-6 w-6 text-warning" />
               </div>
               <div>
-                <div className="text-3xl font-bold text-yellow-600">45%</div>
+                <div className="text-3xl font-bold text-warning">45%</div>
                 <p className="text-sm text-muted-foreground">
                   Taxa de Recuperação Pós-Vencimento
                 </p>
@@ -1152,10 +1055,10 @@ const ReguaCobranca = () => {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-full bg-destructive/10 flex items-center justify-center shrink-0">
+              <div className="rounded-xl p-2.5 bg-destructive/10 shrink-0">
                 <AlertTriangle className="h-6 w-6 text-destructive" />
               </div>
               <div>
@@ -1169,11 +1072,11 @@ const ReguaCobranca = () => {
         </Card>
       </div>
 
-      {/* ── Dialog: Editar Mensagem ── */}
+      {/* -- Dialog: Editar Mensagem -- */}
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>
+            <DialogTitle className="font-heading">
               Editar Mensagem —{" "}
               <span className="text-primary">{editingEtapa?.dia}</span>
             </DialogTitle>
@@ -1187,7 +1090,7 @@ const ReguaCobranca = () => {
               value={editingMensagem}
               onChange={(e) => setEditingMensagem(e.target.value)}
               rows={6}
-              className="resize-none"
+              className="resize-none rounded-lg"
               placeholder="Digite a mensagem..."
             />
             <div className="flex flex-wrap gap-1">
@@ -1219,12 +1122,12 @@ const ReguaCobranca = () => {
         </DialogContent>
       </Dialog>
 
-      {/* ── Dialog: Configurar WhatsApp API (header button) ── */}
+      {/* -- Dialog: Configurar WhatsApp API (header button) -- */}
       <Dialog open={configDialogOpen} onOpenChange={setConfigDialogOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <MessageSquare className="h-5 w-5 text-green-600" />
+            <DialogTitle className="font-heading flex items-center gap-2">
+              <MessageSquare className="h-5 w-5 text-success" />
               Configurar WhatsApp API
             </DialogTitle>
             <DialogDescription>
@@ -1240,7 +1143,7 @@ const ReguaCobranca = () => {
                   setWhatsappConfig({ ...whatsappConfig, provedor: v })
                 }
               >
-                <SelectTrigger>
+                <SelectTrigger className="rounded-lg">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -1256,13 +1159,14 @@ const ReguaCobranca = () => {
               <Input
                 type="password"
                 placeholder="Cole seu token aqui"
+                className="rounded-lg"
                 value={whatsappConfig.token}
                 onChange={(e) =>
                   setWhatsappConfig({ ...whatsappConfig, token: e.target.value })
                 }
               />
             </div>
-            <div className="p-3 bg-blue-50 rounded-lg border border-blue-200 text-sm text-blue-700">
+            <div className="p-3 bg-primary/5 rounded-lg border border-primary/20 text-sm text-primary">
               <ChevronRight className="h-4 w-4 inline mr-1" />
               Acesse a aba "Configuração WhatsApp" para configurações avançadas de horários e instância.
             </div>

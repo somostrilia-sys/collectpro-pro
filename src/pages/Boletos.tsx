@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Filter, Send, Eye, RefreshCw, Copy, MessageCircle, Mail, FileDown } from "lucide-react";
+import { Search, Filter, Send, Eye, RefreshCw, Copy, MessageCircle, Mail, FileDown, Receipt, CheckCircle2, AlertTriangle, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -135,29 +135,17 @@ function formatCurrency(value: number) {
   return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
-function StatusBadge({ status }: { status: string }) {
-  const variants: Record<string, { variant: "default" | "secondary" | "destructive" | "outline"; className: string }> = {
-    Pago: {
-      variant: "default",
-      className: "bg-green-100 text-green-800 border-green-200 hover:bg-green-100",
-    },
-    Pendente: {
-      variant: "default",
-      className: "bg-yellow-100 text-yellow-800 border-yellow-200 hover:bg-yellow-100",
-    },
-    Vencido: {
-      variant: "destructive",
-      className: "bg-red-100 text-red-800 border-red-200 hover:bg-red-100",
-    },
-    Cancelado: {
-      variant: "secondary",
-      className: "bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-100",
-    },
+function StatusPill({ status }: { status: string }) {
+  const config: Record<string, string> = {
+    Pago: "bg-success/10 text-success border-success/20",
+    Pendente: "bg-warning/10 text-warning border-warning/20",
+    Vencido: "bg-destructive/10 text-destructive border-destructive/20",
+    Cancelado: "bg-muted text-muted-foreground border-muted",
   };
 
-  const config = variants[status] || variants["Cancelado"];
+  const cls = config[status] || config["Cancelado"];
   return (
-    <Badge variant="outline" className={config.className}>
+    <Badge variant="outline" className={`${cls} text-xs font-medium`}>
       {status}
     </Badge>
   );
@@ -263,8 +251,8 @@ const Boletos = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Boletos</h1>
-          <p className="text-muted-foreground">
+          <h1 className="font-heading text-2xl font-bold">Boletos</h1>
+          <p className="text-sm text-muted-foreground">
             Gestão de cobranças mensais — boletos gerados no GIA
           </p>
         </div>
@@ -290,59 +278,69 @@ const Boletos = () => {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>Total de Boletos</CardDescription>
-            <CardTitle className="text-3xl">{totalBoletos}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xs text-muted-foreground">no filtro atual</p>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-4">
+              <div className="rounded-xl p-2.5 bg-primary/10">
+                <Receipt className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Total de Boletos</p>
+                <p className="text-2xl font-bold">{totalBoletos}</p>
+                <p className="text-xs text-muted-foreground">no filtro atual</p>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>Boletos Pagos</CardDescription>
-            <CardTitle className="text-3xl text-green-600">
-              {boletosPagos.length}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm font-medium text-green-600">
-              {formatCurrency(valorPagos)}
-            </p>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-4">
+              <div className="rounded-xl p-2.5 bg-success/10">
+                <CheckCircle2 className="h-5 w-5 text-success" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Boletos Pagos</p>
+                <p className="text-2xl font-bold text-success">{boletosPagos.length}</p>
+                <p className="text-sm font-medium text-success">{formatCurrency(valorPagos)}</p>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>Boletos em Aberto</CardDescription>
-            <CardTitle className="text-3xl text-red-600">
-              {boletosEmAberto.length}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm font-medium text-red-600">
-              {formatCurrency(valorEmAberto)}
-            </p>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-4">
+              <div className="rounded-xl p-2.5 bg-destructive/10">
+                <AlertTriangle className="h-5 w-5 text-destructive" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Boletos em Aberto</p>
+                <p className="text-2xl font-bold text-destructive">{boletosEmAberto.length}</p>
+                <p className="text-sm font-medium text-destructive">{formatCurrency(valorEmAberto)}</p>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>Taxa de Pagamento</CardDescription>
-            <CardTitle className="text-3xl">{taxaPagamento}%</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xs text-muted-foreground">
-              {boletosPagos.length} de {totalBoletos} pagos
-            </p>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-4">
+              <div className="rounded-xl p-2.5 bg-primary/10">
+                <TrendingUp className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Taxa de Pagamento</p>
+                <p className="text-2xl font-bold">{taxaPagamento}%</p>
+                <p className="text-xs text-muted-foreground">{boletosPagos.length} de {totalBoletos} pagos</p>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
 
       {/* Filters */}
-      <Card>
+      <Card className="border-0 shadow-sm">
         <CardContent className="pt-6">
           <div className="flex gap-4 flex-wrap">
             <div className="relative flex-1 min-w-[200px]">
@@ -388,9 +386,9 @@ const Boletos = () => {
       </Card>
 
       {/* Table */}
-      <Card>
+      <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
         <CardHeader>
-          <CardTitle>Lista de Boletos</CardTitle>
+          <CardTitle className="font-heading">Lista de Boletos</CardTitle>
           <CardDescription>
             {filteredBoletos.length} boleto(s) encontrado(s)
           </CardDescription>
@@ -427,7 +425,7 @@ const Boletos = () => {
                       {formatCurrency(boleto.valor)}
                     </TableCell>
                     <TableCell>
-                      <StatusBadge status={boleto.status} />
+                      <StatusPill status={boleto.status} />
                     </TableCell>
                     <TableCell className="text-muted-foreground">
                       {formatDate(boleto.dataPagamento)}
@@ -437,6 +435,7 @@ const Boletos = () => {
                         <Button
                           variant="ghost"
                           size="icon"
+                          className="h-8 w-8"
                           title="Visualizar boleto"
                           onClick={() => setViewBoleto(boleto)}
                         >
@@ -445,6 +444,7 @@ const Boletos = () => {
                         <Button
                           variant="ghost"
                           size="icon"
+                          className="h-8 w-8"
                           title="Enviar boleto"
                           onClick={() => {
                             setSendBoleto(boleto);
@@ -452,7 +452,7 @@ const Boletos = () => {
                             setSendEmail(false);
                           }}
                         >
-                          <Send className="h-4 w-4 text-blue-500" />
+                          <Send className="h-4 w-4 text-primary" />
                         </Button>
                       </div>
                     </TableCell>
@@ -464,11 +464,16 @@ const Boletos = () => {
         </CardContent>
       </Card>
 
-      {/* ── Modal: Visualizar Boleto ── */}
+      {/* Modal: Visualizar Boleto */}
       <Dialog open={!!viewBoleto} onOpenChange={(open) => !open && setViewBoleto(null)}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Detalhes do Boleto</DialogTitle>
+            <DialogTitle className="font-heading flex items-center gap-2">
+              <div className="rounded-xl p-2.5 bg-primary/10">
+                <Receipt className="h-4 w-4 text-primary" />
+              </div>
+              Detalhes do Boleto
+            </DialogTitle>
             <DialogDescription>
               Informações completas do boleto mensal
             </DialogDescription>
@@ -476,37 +481,37 @@ const Boletos = () => {
 
           {viewBoleto && (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="grid grid-cols-2 gap-4 text-sm p-4 rounded-lg bg-muted/30">
                 <div>
-                  <p className="text-muted-foreground mb-1">Associado</p>
+                  <p className="text-muted-foreground text-xs mb-1">Associado</p>
                   <p className="font-medium">{viewBoleto.associado}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground mb-1">CPF</p>
+                  <p className="text-muted-foreground text-xs mb-1">CPF</p>
                   <p className="font-medium">{viewBoleto.cpf}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground mb-1">Cooperativa</p>
+                  <p className="text-muted-foreground text-xs mb-1">Cooperativa</p>
                   <p className="font-medium">{viewBoleto.cooperativa}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground mb-1">Valor</p>
-                  <p className="font-medium text-lg">{formatCurrency(viewBoleto.valor)}</p>
+                  <p className="text-muted-foreground text-xs mb-1">Valor</p>
+                  <p className="font-bold text-lg">{formatCurrency(viewBoleto.valor)}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground mb-1">Vencimento</p>
+                  <p className="text-muted-foreground text-xs mb-1">Vencimento</p>
                   <p className="font-medium">{formatDate(viewBoleto.vencimento)}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground mb-1">Emissão</p>
+                  <p className="text-muted-foreground text-xs mb-1">Emissão</p>
                   <p className="font-medium">{formatDate(viewBoleto.dataEmissao)}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground mb-1">Status</p>
-                  <StatusBadge status={viewBoleto.status} />
+                  <p className="text-muted-foreground text-xs mb-1">Status</p>
+                  <StatusPill status={viewBoleto.status} />
                 </div>
                 <div>
-                  <p className="text-muted-foreground mb-1">Data Pagamento</p>
+                  <p className="text-muted-foreground text-xs mb-1">Data Pagamento</p>
                   <p className="font-medium">{formatDate(viewBoleto.dataPagamento)}</p>
                 </div>
               </div>
@@ -518,28 +523,28 @@ const Boletos = () => {
                     variant="outline"
                     size="sm"
                     onClick={handleCopyLink}
-                    className="flex gap-2"
+                    className="gap-2"
                   >
                     <Copy className="h-4 w-4" />
-                    Copiar Link do Boleto
+                    Copiar Link
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => handleSendWhatsAppAction(viewBoleto)}
-                    className="flex gap-2 text-green-700 border-green-300 hover:bg-green-50"
+                    className="gap-2 text-success border-success/30 hover:bg-success/5"
                   >
                     <MessageCircle className="h-4 w-4" />
-                    Enviar por WhatsApp
+                    WhatsApp
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => handleSendEmailAction(viewBoleto)}
-                    className="flex gap-2"
+                    className="gap-2"
                   >
                     <Mail className="h-4 w-4" />
-                    Enviar por Email
+                    E-mail
                   </Button>
                 </div>
               </div>
@@ -554,11 +559,11 @@ const Boletos = () => {
         </DialogContent>
       </Dialog>
 
-      {/* ── Modal: Enviar Boleto ── */}
+      {/* Modal: Enviar Boleto */}
       <Dialog open={!!sendBoleto} onOpenChange={(open) => !open && setSendBoleto(null)}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
-            <DialogTitle>Enviar Boleto</DialogTitle>
+            <DialogTitle className="font-heading">Enviar Boleto</DialogTitle>
             <DialogDescription>
               {sendBoleto
                 ? `Enviar boleto para ${sendBoleto.associado}?`
@@ -568,11 +573,11 @@ const Boletos = () => {
 
           {sendBoleto && (
             <div className="space-y-4 py-2">
-              <div className="text-sm text-muted-foreground">
+              <div className="text-sm text-muted-foreground p-3 rounded-lg bg-muted/30">
                 <span className="font-medium text-foreground">
                   {formatCurrency(sendBoleto.valor)}
                 </span>{" "}
-                • Vencimento {formatDate(sendBoleto.vencimento)}
+                — Vencimento {formatDate(sendBoleto.vencimento)}
               </div>
 
               <div className="space-y-3">
@@ -586,7 +591,7 @@ const Boletos = () => {
                     }
                   />
                   <Label htmlFor="send-whatsapp" className="flex items-center gap-2 cursor-pointer">
-                    <MessageCircle className="h-4 w-4 text-green-600" />
+                    <MessageCircle className="h-4 w-4 text-success" />
                     WhatsApp
                   </Label>
                 </div>
@@ -599,7 +604,7 @@ const Boletos = () => {
                     }
                   />
                   <Label htmlFor="send-email" className="flex items-center gap-2 cursor-pointer">
-                    <Mail className="h-4 w-4 text-blue-600" />
+                    <Mail className="h-4 w-4 text-primary" />
                     E-mail
                   </Label>
                 </div>
@@ -619,11 +624,11 @@ const Boletos = () => {
         </DialogContent>
       </Dialog>
 
-      {/* ── Modal: Importar Boletos (GIA) ── */}
+      {/* Modal: Importar Boletos (GIA) */}
       <Dialog open={importOpen} onOpenChange={setImportOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Importar Boletos do GIA</DialogTitle>
+            <DialogTitle className="font-heading">Importar Boletos do GIA</DialogTitle>
             <DialogDescription>
               Os boletos são gerados no sistema GIA e importados para o
               CollectPro para envio aos associados.

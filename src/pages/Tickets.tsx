@@ -101,13 +101,13 @@ const Tickets = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "Aberto":
-        return <Badge className="bg-primary/10 text-primary">Aberto</Badge>;
+        return <Badge className="bg-primary/10 text-primary border-0">Aberto</Badge>;
       case "Em andamento":
-        return <Badge className="bg-warning/10 text-warning">Em andamento</Badge>;
+        return <Badge className="bg-warning/10 text-warning border-0">Em andamento</Badge>;
       case "Aguardando cliente":
-        return <Badge className="bg-muted text-muted-foreground">Aguardando</Badge>;
+        return <Badge className="bg-muted text-muted-foreground border-0">Aguardando</Badge>;
       case "Resolvido":
-        return <Badge className="bg-success/10 text-success">Resolvido</Badge>;
+        return <Badge className="bg-success/10 text-success border-0">Resolvido</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -115,7 +115,7 @@ const Tickets = () => {
 
   const getPrioridadeBadge = (prioridade: string) => {
     return prioridade === "Alta" ? (
-      <Badge variant="destructive">Alta</Badge>
+      <Badge className="bg-destructive/10 text-destructive border-0">Alta</Badge>
     ) : (
       <Badge variant="outline">Normal</Badge>
     );
@@ -123,7 +123,7 @@ const Tickets = () => {
 
   const handleSendMessage = () => {
     if (!selectedTicket || !newMessage.trim()) return;
-    
+
     const updatedTickets = tickets.map((t) =>
       t.id === selectedTicket.id
         ? {
@@ -158,8 +158,8 @@ const Tickets = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Tickets Desk</h1>
-          <p className="text-muted-foreground">Sistema de atendimento ao associado</p>
+          <h1 className="font-heading text-2xl font-bold">Tickets Desk</h1>
+          <p className="text-sm text-muted-foreground">Sistema de atendimento ao associado</p>
         </div>
         <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
           <DialogTrigger asChild>
@@ -170,7 +170,7 @@ const Tickets = () => {
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Criar Novo Ticket</DialogTitle>
+              <DialogTitle className="font-heading">Criar Novo Ticket</DialogTitle>
               <DialogDescription>
                 Registre um novo atendimento
               </DialogDescription>
@@ -178,16 +178,16 @@ const Tickets = () => {
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
                 <Label>Associado</Label>
-                <Input placeholder="Nome do associado" />
+                <Input placeholder="Nome do associado" className="rounded-lg" />
               </div>
               <div className="grid gap-2">
                 <Label>Assunto</Label>
-                <Input placeholder="Assunto do ticket" />
+                <Input placeholder="Assunto do ticket" className="rounded-lg" />
               </div>
               <div className="grid gap-2">
                 <Label>Prioridade</Label>
                 <Select defaultValue="Normal">
-                  <SelectTrigger>
+                  <SelectTrigger className="rounded-lg">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -198,7 +198,7 @@ const Tickets = () => {
               </div>
               <div className="grid gap-2">
                 <Label>Descrição</Label>
-                <Textarea placeholder="Descreva o motivo do atendimento..." />
+                <Textarea placeholder="Descreva o motivo do atendimento..." className="rounded-lg" />
               </div>
             </div>
             <DialogFooter>
@@ -213,10 +213,10 @@ const Tickets = () => {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
-              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <div className="rounded-xl p-2.5 bg-primary/10">
                 <MessageSquare className="h-5 w-5 text-primary" />
               </div>
               <div>
@@ -226,10 +226,10 @@ const Tickets = () => {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
-              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <div className="rounded-xl p-2.5 bg-primary/10">
                 <AlertCircle className="h-5 w-5 text-primary" />
               </div>
               <div>
@@ -239,10 +239,10 @@ const Tickets = () => {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
-              <div className="h-10 w-10 rounded-full bg-warning/10 flex items-center justify-center">
+              <div className="rounded-xl p-2.5 bg-warning/10">
                 <Clock className="h-5 w-5 text-warning" />
               </div>
               <div>
@@ -252,10 +252,10 @@ const Tickets = () => {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
-              <div className="h-10 w-10 rounded-full bg-success/10 flex items-center justify-center">
+              <div className="rounded-xl p-2.5 bg-success/10">
                 <CheckCircle className="h-5 w-5 text-success" />
               </div>
               <div>
@@ -271,7 +271,7 @@ const Tickets = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Ticket List */}
         <div className="lg:col-span-1 space-y-4">
-          <Card>
+          <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
             <CardContent className="pt-4">
               <div className="space-y-4">
                 <div className="relative">
@@ -280,11 +280,11 @@ const Tickets = () => {
                     placeholder="Buscar ticket..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 rounded-lg"
                   />
                 </div>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger>
+                  <SelectTrigger className="rounded-lg">
                     <SelectValue placeholder="Filtrar por status" />
                   </SelectTrigger>
                   <SelectContent>
@@ -304,8 +304,8 @@ const Tickets = () => {
               {filteredTickets.map((ticket) => (
                 <Card
                   key={ticket.id}
-                  className={`cursor-pointer transition-colors hover:bg-accent ${
-                    selectedTicket?.id === ticket.id ? "border-primary" : ""
+                  className={`cursor-pointer border-0 shadow-sm hover:shadow-md transition-shadow ${
+                    selectedTicket?.id === ticket.id ? "ring-2 ring-primary" : ""
                   }`}
                   onClick={() => setSelectedTicket(ticket)}
                 >
@@ -328,15 +328,15 @@ const Tickets = () => {
         </div>
 
         {/* Chat Area */}
-        <Card className="lg:col-span-2">
+        <Card className="lg:col-span-2 border-0 shadow-sm hover:shadow-md transition-shadow">
           {selectedTicket ? (
             <>
               <CardHeader className="border-b">
                 <div className="flex justify-between items-start">
                   <div>
-                    <CardTitle className="text-lg">{selectedTicket.assunto}</CardTitle>
+                    <CardTitle className="font-heading text-lg">{selectedTicket.assunto}</CardTitle>
                     <CardDescription>
-                      {selectedTicket.associado} • {selectedTicket.id}
+                      {selectedTicket.associado} - {selectedTicket.id}
                     </CardDescription>
                   </div>
                   <div className="flex gap-2">
@@ -394,7 +394,7 @@ const Tickets = () => {
                       placeholder="Digite sua mensagem..."
                       value={newMessage}
                       onChange={(e) => setNewMessage(e.target.value)}
-                      className="min-h-[80px]"
+                      className="min-h-[80px] rounded-lg"
                     />
                     <Button onClick={handleSendMessage} className="h-auto">
                       Enviar

@@ -1,4 +1,4 @@
-import { History, User, Calendar, Filter } from "lucide-react";
+import { History, User, Calendar, Search } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -19,11 +19,11 @@ const logs = [
 ];
 
 const acaoBadge = (acao: string) => {
-  if (acao.includes("Alteração")) return <Badge className="bg-primary text-primary-foreground">Alteração</Badge>;
-  if (acao.includes("Criação")) return <Badge className="bg-emerald-500 text-white">Criação</Badge>;
-  if (acao.includes("Exclusão")) return <Badge variant="destructive">Exclusão</Badge>;
-  if (acao.includes("Negativação")) return <Badge variant="destructive">Negativação</Badge>;
-  if (acao.includes("Envio")) return <Badge className="bg-amber-500 text-white">Envio</Badge>;
+  if (acao.includes("Alteração")) return <Badge className="bg-primary/10 text-primary border-0">Alteração</Badge>;
+  if (acao.includes("Criação")) return <Badge className="bg-success/10 text-success border-0">Criação</Badge>;
+  if (acao.includes("Exclusão")) return <Badge className="bg-destructive/10 text-destructive border-0">Exclusão</Badge>;
+  if (acao.includes("Negativação")) return <Badge className="bg-destructive/10 text-destructive border-0">Negativação</Badge>;
+  if (acao.includes("Envio")) return <Badge className="bg-warning/10 text-warning border-0">Envio</Badge>;
   return <Badge variant="secondary">{acao}</Badge>;
 };
 
@@ -42,19 +42,22 @@ export default function LogAuditoria() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-foreground">Log de Auditoria</h1>
-        <p className="text-muted-foreground">Registro completo de todas as alterações no sistema</p>
+        <h1 className="font-heading text-2xl font-bold">Log de Auditoria</h1>
+        <p className="text-sm text-muted-foreground">Registro completo de todas as alterações no sistema</p>
       </div>
 
       <div className="flex gap-4 flex-wrap">
-        <Input
-          placeholder="Buscar no log..."
-          value={busca}
-          onChange={(e) => setBusca(e.target.value)}
-          className="max-w-xs"
-        />
+        <div className="relative max-w-xs flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Buscar no log..."
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+            className="pl-10 rounded-lg"
+          />
+        </div>
         <Select value={filtroUsuario} onValueChange={setFiltroUsuario}>
-          <SelectTrigger className="w-[200px]">
+          <SelectTrigger className="w-[200px] rounded-lg">
             <SelectValue placeholder="Filtrar por usuário" />
           </SelectTrigger>
           <SelectContent>
@@ -66,9 +69,9 @@ export default function LogAuditoria() {
         </Select>
       </div>
 
-      <Card>
+      <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="font-heading flex items-center gap-2">
             <History className="h-5 w-5" />
             Registros ({filtered.length})
           </CardTitle>
@@ -77,7 +80,7 @@ export default function LogAuditoria() {
           <div className="space-y-0 divide-y">
             {filtered.map((log) => (
               <div key={log.id} className="py-4 flex items-start gap-4">
-                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <div className="rounded-xl p-2.5 bg-primary/10 flex-shrink-0">
                   <User className="h-5 w-5 text-primary" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -90,11 +93,11 @@ export default function LogAuditoria() {
                     <span className="font-medium">{log.alvo}</span>
                     {log.de !== "-" && (
                       <span className="text-muted-foreground">
-                        {" "}— de <span className="line-through">{log.de}</span> para <span className="font-medium text-primary">{log.para}</span>
+                        {" "} -- de <span className="line-through">{log.de}</span> para <span className="font-medium text-primary">{log.para}</span>
                       </span>
                     )}
                     {log.de === "-" && (
-                      <span className="text-muted-foreground"> — {log.para}</span>
+                      <span className="text-muted-foreground"> -- {log.para}</span>
                     )}
                   </p>
                   <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">

@@ -548,8 +548,8 @@ const Cancelamentos = () => {
       {/* Header */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Cancelamentos</h1>
-          <p className="text-muted-foreground">Gestão de solicitações de cancelamento de associados</p>
+          <h1 className="font-heading text-2xl font-bold">Cancelamentos</h1>
+          <p className="text-sm text-muted-foreground">Gestão de solicitações de cancelamento de associados</p>
         </div>
         <Button
           variant="outline"
@@ -564,10 +564,10 @@ const Cancelamentos = () => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <div className="rounded-xl p-2.5 bg-primary/10">
                 <UserMinus className="h-5 w-5 text-primary" />
               </div>
               <div>
@@ -577,10 +577,10 @@ const Cancelamentos = () => {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-warning/10 flex items-center justify-center">
+              <div className="rounded-xl p-2.5 bg-warning/10">
                 <Clock className="h-5 w-5 text-warning" />
               </div>
               <div>
@@ -590,23 +590,23 @@ const Cancelamentos = () => {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-blue-500/10 flex items-center justify-center">
-                <AlertCircle className="h-5 w-5 text-blue-500" />
+              <div className="rounded-xl p-2.5 bg-primary/10">
+                <AlertCircle className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <div className="text-2xl font-bold text-blue-500">{stats.emAtendimento}</div>
+                <div className="text-2xl font-bold text-primary">{stats.emAtendimento}</div>
                 <p className="text-xs text-muted-foreground">Em Atendimento</p>
               </div>
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-destructive/10 flex items-center justify-center">
+              <div className="rounded-xl p-2.5 bg-destructive/10">
                 <AlertTriangle className="h-5 w-5 text-destructive" />
               </div>
               <div>
@@ -616,10 +616,10 @@ const Cancelamentos = () => {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-success/10 flex items-center justify-center">
+              <div className="rounded-xl p-2.5 bg-success/10">
                 <CheckCircle className="h-5 w-5 text-success" />
               </div>
               <div>
@@ -632,9 +632,9 @@ const Cancelamentos = () => {
       </div>
 
       {/* Busca de Associado */}
-      <Card>
+      <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
         <CardHeader>
-          <CardTitle className="text-base">Buscar Associado</CardTitle>
+          <CardTitle className="font-heading text-base">Buscar Associado</CardTitle>
           <CardDescription>Pesquise por nome, CPF ou placa para abrir uma nova solicitação</CardDescription>
         </CardHeader>
         <CardContent>
@@ -688,9 +688,9 @@ const Cancelamentos = () => {
       </Card>
 
       {/* Filtros + Tabela */}
-      <Card>
+      <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
         <CardHeader>
-          <CardTitle className="text-base">Solicitações de Cancelamento</CardTitle>
+          <CardTitle className="font-heading text-base">Solicitações de Cancelamento</CardTitle>
         </CardHeader>
         <CardContent>
           {/* Filtros */}
@@ -813,7 +813,7 @@ const Cancelamentos = () => {
       <Dialog open={openNovaSolicitacao} onOpenChange={setOpenNovaSolicitacao}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Abrir Solicitação de Cancelamento</DialogTitle>
+            <DialogTitle className="font-heading">Abrir Solicitação de Cancelamento</DialogTitle>
             <DialogDescription>
               Confirme os dados e informe o motivo do cancelamento
             </DialogDescription>
@@ -1042,7 +1042,7 @@ const Cancelamentos = () => {
       <Dialog open={openTermo} onOpenChange={setOpenTermo}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Termo de Cancelamento</DialogTitle>
+            <DialogTitle className="font-heading">Termo de Cancelamento</DialogTitle>
             <DialogDescription>
               {termoSolicitacao?.nome} — Solicitação {termoSolicitacao?.id}
             </DialogDescription>

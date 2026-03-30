@@ -168,11 +168,11 @@ const statusColor = (status: string) => {
 const statusIcon = (status: string) => {
   switch (status) {
     case "Sucesso":
-      return <CheckCircle2 className="h-4 w-4 text-green-500" />;
+      return <CheckCircle2 className="h-4 w-4 text-success" />;
     case "Erro":
       return <XCircle className="h-4 w-4 text-destructive" />;
     case "Parcial":
-      return <AlertCircle className="h-4 w-4 text-yellow-500" />;
+      return <AlertCircle className="h-4 w-4 text-warning" />;
     default:
       return null;
   }
@@ -229,7 +229,7 @@ const Integracoes = () => {
     await new Promise((r) => setTimeout(r, 1500));
     setTestingConnection(false);
     toast({
-      title: "✅ Conexão bem-sucedida",
+      title: "Conexão bem-sucedida",
       description: "GIA respondeu em 320ms. Credenciais válidas.",
     });
   };
@@ -247,7 +247,7 @@ const Integracoes = () => {
     await new Promise((r) => setTimeout(r, 2000));
     setSyncing(false);
     toast({
-      title: "🔄 Sincronização iniciada",
+      title: "Sincronização iniciada",
       description: "Sincronização com o GIA iniciada. Você será notificado ao concluir.",
     });
   };
@@ -261,8 +261,8 @@ const Integracoes = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-foreground">Integrações</h1>
-        <p className="text-muted-foreground">Gerencie conexões com sistemas externos</p>
+        <h1 className="font-heading text-2xl font-bold">Integrações</h1>
+        <p className="text-sm text-muted-foreground">Gerencie conexões com sistemas externos</p>
       </div>
 
       {/* KPI Cards */}
@@ -322,12 +322,12 @@ const Integracoes = () => {
                   </div>
                   <div>
                     <div className="flex items-center gap-2 flex-wrap">
-                      <CardTitle className="text-xl">GIA — Gestão Integrada de Associações</CardTitle>
+                      <CardTitle className="font-heading text-xl">GIA -- Gestão Integrada de Associações</CardTitle>
                       <Badge
                         className={
                           giaConnected
-                            ? "bg-green-100 text-green-700 border-green-200"
-                            : "bg-red-100 text-red-700 border-red-200"
+                            ? "bg-success/10 text-success border-success/30"
+                            : "bg-destructive/10 text-destructive border-destructive/30"
                         }
                         variant="outline"
                       >
@@ -358,7 +358,7 @@ const Integracoes = () => {
             <CardContent>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="flex items-center gap-3 p-3 rounded-lg bg-card border">
-                  <Activity className="h-5 w-5 text-green-500" />
+                  <Activity className="h-5 w-5 text-success" />
                   <div>
                     <p className="text-xs text-muted-foreground">Última sincronização</p>
                     <p className="font-medium text-sm">28/03/2026 às 21:45</p>
@@ -384,7 +384,7 @@ const Integracoes = () => {
 
           {/* Outras integrações futuras */}
           <div>
-            <h2 className="text-lg font-semibold text-foreground mb-3">Outras Integrações</h2>
+            <h2 className="font-heading text-lg font-semibold mb-3">Outras Integrações</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {[
                 { icon: Mail, label: "Email (SMTP)", description: "Disparos de email automatizados para cobrança" },
@@ -441,7 +441,7 @@ const Integracoes = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     {item.enabled ? (
-                      <span className="text-xs text-green-600 font-medium hidden sm:inline">Ativo</span>
+                      <span className="text-xs text-success font-medium hidden sm:inline">Ativo</span>
                     ) : (
                       <span className="text-xs text-muted-foreground font-medium hidden sm:inline">Inativo</span>
                     )}
@@ -483,7 +483,7 @@ const Integracoes = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     {item.enabled ? (
-                      <span className="text-xs text-green-600 font-medium hidden sm:inline">Ativo</span>
+                      <span className="text-xs text-success font-medium hidden sm:inline">Ativo</span>
                     ) : (
                       <span className="text-xs text-muted-foreground font-medium hidden sm:inline">Inativo</span>
                     )}
@@ -548,10 +548,10 @@ const Integracoes = () => {
                           <span
                             className={`text-sm font-medium ${
                               log.status === "Sucesso"
-                                ? "text-green-600"
+                                ? "text-success"
                                 : log.status === "Erro"
                                 ? "text-destructive"
-                                : "text-yellow-600"
+                                : "text-warning"
                             }`}
                           >
                             {log.status}
@@ -574,7 +574,7 @@ const Integracoes = () => {
       <Dialog open={configOpen} onOpenChange={setConfigOpen}>
         <DialogContent className="sm:max-w-[520px]">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
+            <DialogTitle className="font-heading flex items-center gap-2">
               <Shield className="h-5 w-5 text-primary" />
               Configurar Integração GIA
             </DialogTitle>

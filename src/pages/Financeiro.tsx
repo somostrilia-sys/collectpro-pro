@@ -1,7 +1,7 @@
 import { useState } from "react";
 import {
   Eye, RotateCcw, QrCode, FileText, Copy, Download,
-  DollarSign, AlertCircle, ArrowDownCircle,
+  DollarSign, AlertCircle, ArrowDownCircle, Wallet, CreditCard, BarChart3,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -64,25 +64,25 @@ const fmt = (v: number) => v.toLocaleString("pt-BR", { style:"currency", currenc
 
 function FormaBadge({ forma }: { forma: FormaPagamento }) {
   if (forma === "PIX QR Code")
-    return <Badge className="bg-purple-100 text-purple-700 border-purple-200 gap-1 text-xs"><QrCode className="h-3 w-3" />PIX QR Code</Badge>;
+    return <Badge variant="outline" className="bg-purple-500/10 text-purple-600 border-purple-200 gap-1 text-xs"><QrCode className="h-3 w-3" />PIX QR Code</Badge>;
   if (forma === "Boleto Código de Barras")
-    return <Badge className="bg-blue-100 text-blue-700 border-blue-200 gap-1 text-xs"><FileText className="h-3 w-3" />Boleto</Badge>;
+    return <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 gap-1 text-xs"><FileText className="h-3 w-3" />Boleto</Badge>;
   if (forma === "Transferência")
-    return <Badge className="bg-green-100 text-green-700 border-green-200 gap-1 text-xs"><ArrowDownCircle className="h-3 w-3" />Transferência</Badge>;
-  return <Badge className="bg-gray-100 text-gray-600 border-gray-200 text-xs">Outros</Badge>;
+    return <Badge variant="outline" className="bg-success/10 text-success border-success/20 gap-1 text-xs"><ArrowDownCircle className="h-3 w-3" />Transferência</Badge>;
+  return <Badge variant="outline" className="bg-muted text-muted-foreground text-xs">Outros</Badge>;
 }
 
 function StatusBadge({ status }: { status: StatusRec }) {
-  if (status === "Confirmado") return <Badge className="bg-green-100 text-green-700 border-green-200 text-xs">Confirmado</Badge>;
-  if (status === "Pendente")   return <Badge className="bg-yellow-100 text-yellow-700 border-yellow-200 text-xs">Pendente</Badge>;
-  return <Badge className="bg-red-100 text-red-700 border-red-200 text-xs">Estornado</Badge>;
+  if (status === "Confirmado") return <Badge variant="outline" className="bg-success/10 text-success border-success/20 text-xs">Confirmado</Badge>;
+  if (status === "Pendente")   return <Badge variant="outline" className="bg-warning/10 text-warning border-warning/20 text-xs">Pendente</Badge>;
+  return <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/20 text-xs">Estornado</Badge>;
 }
 
 function ConcBadge({ status }: { status: string }) {
-  if (status === "Conciliado")   return <Badge className="bg-green-100 text-green-700 border-green-200 text-xs">Conciliado</Badge>;
-  if (status === "Parcial")      return <Badge className="bg-yellow-100 text-yellow-700 border-yellow-200 text-xs">Parcial</Badge>;
-  if (status === "Excedente")    return <Badge className="bg-blue-100 text-blue-700 border-blue-200 text-xs">Excedente</Badge>;
-  return <Badge className="bg-red-100 text-red-700 border-red-200 text-xs">Não recebido</Badge>;
+  if (status === "Conciliado")   return <Badge variant="outline" className="bg-success/10 text-success border-success/20 text-xs">Conciliado</Badge>;
+  if (status === "Parcial")      return <Badge variant="outline" className="bg-warning/10 text-warning border-warning/20 text-xs">Parcial</Badge>;
+  if (status === "Excedente")    return <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 text-xs">Excedente</Badge>;
+  return <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/20 text-xs">Não recebido</Badge>;
 }
 
 export default function Financeiro() {
@@ -171,71 +171,107 @@ export default function Financeiro() {
     toast({ title:"Estorno solicitado", description:"Recebimento estornado com sucesso.", variant:"destructive" });
   }
   function exportar(tipo: string) {
-    toast({ title:`Exportando ${tipo}…`, description:"O arquivo será baixado em instantes." });
+    toast({ title:`Exportando ${tipo}...`, description:"O arquivo será baixado em instantes." });
   }
 
+  const recCount = filtered.length;
+  const concCount = mockConc.length;
+  const extCount = extrato.length;
+
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
+      {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold flex items-center gap-2">
-          <DollarSign className="h-6 w-6 text-primary" /> Financeiro
+        <h1 className="font-heading text-2xl font-bold flex items-center gap-3">
+          <div className="rounded-xl p-2.5 bg-primary/10">
+            <DollarSign className="h-5 w-5 text-primary" />
+          </div>
+          Financeiro
         </h1>
-        <p className="text-muted-foreground text-sm">Recebimentos, conciliação e extrato financeiro</p>
+        <p className="text-sm text-muted-foreground mt-1">Recebimentos, conciliação e extrato financeiro</p>
       </div>
 
       <Tabs defaultValue="recebimentos">
         <TabsList className="mb-4">
-          <TabsTrigger value="recebimentos">Recebimentos</TabsTrigger>
-          <TabsTrigger value="conciliacao">Conciliação Diária</TabsTrigger>
-          <TabsTrigger value="extrato">Extrato</TabsTrigger>
+          <TabsTrigger value="recebimentos" className="gap-1.5">
+            Recebimentos
+            <Badge variant="secondary" className="text-xs h-5 px-1.5">{recCount}</Badge>
+          </TabsTrigger>
+          <TabsTrigger value="conciliacao" className="gap-1.5">
+            Conciliação Diária
+            <Badge variant="secondary" className="text-xs h-5 px-1.5">{concCount}</Badge>
+          </TabsTrigger>
+          <TabsTrigger value="extrato" className="gap-1.5">
+            Extrato
+            <Badge variant="secondary" className="text-xs h-5 px-1.5">{extCount}</Badge>
+          </TabsTrigger>
           <TabsTrigger value="relatorios">Relatórios</TabsTrigger>
         </TabsList>
 
-        {/* ══ TAB 1: RECEBIMENTOS ══════════════════════════════════════════ */}
-        <TabsContent value="recebimentos" className="space-y-4">
+        {/* TAB 1: RECEBIMENTOS */}
+        <TabsContent value="recebimentos" className="space-y-6">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            <Card>
-              <CardHeader className="pb-1 pt-4 px-4"><CardTitle className="text-xs text-muted-foreground">Recebido Hoje</CardTitle></CardHeader>
-              <CardContent className="px-4 pb-4"><p className="text-xl font-bold text-green-600">{fmt(totalHoje)}</p></CardContent>
+            <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
+              <CardContent className="pt-5 pb-4">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="rounded-xl p-2 bg-success/10">
+                    <Wallet className="h-4 w-4 text-success" />
+                  </div>
+                  <span className="text-xs text-muted-foreground">Recebido Hoje</span>
+                </div>
+                <p className="text-xl font-bold text-success">{fmt(totalHoje)}</p>
+              </CardContent>
             </Card>
-            <Card>
-              <CardHeader className="pb-1 pt-4 px-4"><CardTitle className="text-xs text-muted-foreground">Recebido no Mês</CardTitle></CardHeader>
-              <CardContent className="px-4 pb-4"><p className="text-xl font-bold">{fmt(285620)}</p></CardContent>
+            <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
+              <CardContent className="pt-5 pb-4">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="rounded-xl p-2 bg-primary/10">
+                    <DollarSign className="h-4 w-4 text-primary" />
+                  </div>
+                  <span className="text-xs text-muted-foreground">Recebido no Mês</span>
+                </div>
+                <p className="text-xl font-bold">{fmt(285620)}</p>
+              </CardContent>
             </Card>
-            <Card>
-              <CardHeader className="pb-1 pt-4 px-4">
-                <CardTitle className="text-xs text-muted-foreground flex items-center gap-1">
-                  <QrCode className="h-3 w-3 text-purple-500" />Via PIX/QR Code
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="px-4 pb-4">
+            <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
+              <CardContent className="pt-5 pb-4">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="rounded-xl p-2 bg-purple-500/10">
+                    <QrCode className="h-4 w-4 text-purple-500" />
+                  </div>
+                  <span className="text-xs text-muted-foreground">Via PIX/QR Code</span>
+                </div>
                 <p className="text-xl font-bold text-purple-600">{fmt(totalPix)}</p>
                 <p className="text-xs text-muted-foreground">hoje</p>
               </CardContent>
             </Card>
-            <Card>
-              <CardHeader className="pb-1 pt-4 px-4">
-                <CardTitle className="text-xs text-muted-foreground flex items-center gap-1">
-                  <FileText className="h-3 w-3 text-blue-500" />Via Boleto
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="px-4 pb-4">
-                <p className="text-xl font-bold text-blue-600">{fmt(totalBoleto)}</p>
+            <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
+              <CardContent className="pt-5 pb-4">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="rounded-xl p-2 bg-primary/10">
+                    <CreditCard className="h-4 w-4 text-primary" />
+                  </div>
+                  <span className="text-xs text-muted-foreground">Via Boleto</span>
+                </div>
+                <p className="text-xl font-bold text-primary">{fmt(totalBoleto)}</p>
                 <p className="text-xs text-muted-foreground">hoje</p>
               </CardContent>
             </Card>
-            <Card>
-              <CardHeader className="pb-1 pt-4 px-4">
-                <CardTitle className="text-xs text-muted-foreground flex items-center gap-1">
-                  <AlertCircle className="h-3 w-3 text-yellow-500" />Pendentes ID
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="px-4 pb-4"><p className="text-xl font-bold text-yellow-600">{pendId}</p></CardContent>
+            <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
+              <CardContent className="pt-5 pb-4">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="rounded-xl p-2 bg-warning/10">
+                    <AlertCircle className="h-4 w-4 text-warning" />
+                  </div>
+                  <span className="text-xs text-muted-foreground">Pendentes ID</span>
+                </div>
+                <p className="text-xl font-bold text-warning">{pendId}</p>
+              </CardContent>
             </Card>
           </div>
 
-          <Card>
-            <CardContent className="pt-4 pb-4">
+          <Card className="border-0 shadow-sm">
+            <CardContent className="pt-5 pb-4">
               <div className="flex flex-wrap gap-3 items-end">
                 <div>
                   <Label className="text-xs mb-1 block">Data</Label>
@@ -281,13 +317,13 @@ export default function Financeiro() {
                 </div>
                 <div className="flex-1 min-w-[200px]">
                   <Label className="text-xs mb-1 block">Buscar nome / CPF / código</Label>
-                  <Input placeholder="Buscar…" value={search} onChange={e => setSearch(e.target.value)} />
+                  <Input placeholder="Buscar..." value={search} onChange={e => setSearch(e.target.value)} />
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
             <CardContent className="p-0">
               <div className="overflow-x-auto">
                 <Table>
@@ -307,7 +343,7 @@ export default function Financeiro() {
                   </TableHeader>
                   <TableBody>
                     {filtered.map(r => (
-                      <TableRow key={r.id} className={r.associado === "Não identificado" ? "bg-yellow-50" : ""}>
+                      <TableRow key={r.id} className={r.associado === "Não identificado" ? "bg-warning/5" : ""}>
                         <TableCell className="whitespace-nowrap text-sm">{r.dataHora}</TableCell>
                         <TableCell className="font-medium text-sm">{r.associado}</TableCell>
                         <TableCell className="text-sm text-muted-foreground">{r.cpf}</TableCell>
@@ -336,38 +372,44 @@ export default function Financeiro() {
           </Card>
         </TabsContent>
 
-        {/* ══ TAB 2: CONCILIAÇÃO DIÁRIA ══════════════════════════════════ */}
-        <TabsContent value="conciliacao" className="space-y-4">
+        {/* TAB 2: CONCILIAÇÃO DIÁRIA */}
+        <TabsContent value="conciliacao" className="space-y-6">
           <div className="flex items-center gap-3">
             <Label className="text-sm font-medium">Data da Conciliação:</Label>
             <Input type="date" value={dataCon} onChange={e => setDataCon(e.target.value)} className="w-40" />
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Card>
-              <CardHeader className="pb-1 pt-4 px-4"><CardTitle className="text-xs text-muted-foreground">Total Esperado</CardTitle></CardHeader>
-              <CardContent className="px-4 pb-4">
+            <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
+              <CardContent className="pt-5 pb-4">
+                <p className="text-xs text-muted-foreground mb-1">Total Esperado</p>
                 <p className="text-xl font-bold">{fmt(18500)}</p>
                 <p className="text-xs text-muted-foreground">boletos vencidos</p>
               </CardContent>
             </Card>
-            <Card>
-              <CardHeader className="pb-1 pt-4 px-4"><CardTitle className="text-xs text-muted-foreground">Total Recebido</CardTitle></CardHeader>
-              <CardContent className="px-4 pb-4"><p className="text-xl font-bold text-green-600">{fmt(12450)}</p></CardContent>
+            <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
+              <CardContent className="pt-5 pb-4">
+                <p className="text-xs text-muted-foreground mb-1">Total Recebido</p>
+                <p className="text-xl font-bold text-success">{fmt(12450)}</p>
+              </CardContent>
             </Card>
-            <Card>
-              <CardHeader className="pb-1 pt-4 px-4"><CardTitle className="text-xs text-muted-foreground">Diferença</CardTitle></CardHeader>
-              <CardContent className="px-4 pb-4"><p className="text-xl font-bold text-red-600">−{fmt(6050)}</p></CardContent>
+            <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
+              <CardContent className="pt-5 pb-4">
+                <p className="text-xs text-muted-foreground mb-1">Diferença</p>
+                <p className="text-xl font-bold text-destructive">-{fmt(6050)}</p>
+              </CardContent>
             </Card>
-            <Card>
-              <CardHeader className="pb-1 pt-4 px-4"><CardTitle className="text-xs text-muted-foreground">Taxa de Recebimento</CardTitle></CardHeader>
-              <CardContent className="px-4 pb-4"><p className="text-xl font-bold text-blue-600">67,3%</p></CardContent>
+            <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
+              <CardContent className="pt-5 pb-4">
+                <p className="text-xs text-muted-foreground mb-1">Taxa de Recebimento</p>
+                <p className="text-xl font-bold text-primary">67,3%</p>
+              </CardContent>
             </Card>
           </div>
 
-          <Card>
+          <Card className="border-0 shadow-sm">
             <CardHeader className="pb-2 pt-4 px-4">
-              <CardTitle className="text-sm">Recebido vs Esperado</CardTitle>
+              <CardTitle className="text-sm font-heading">Recebido vs Esperado</CardTitle>
             </CardHeader>
             <CardContent className="px-4 pb-4 space-y-1">
               <Progress value={67.3} className="h-4" />
@@ -379,7 +421,7 @@ export default function Financeiro() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
             <CardContent className="p-0">
               <div className="overflow-x-auto">
                 <Table>
@@ -398,7 +440,7 @@ export default function Financeiro() {
                         <TableCell className="font-medium text-sm">{c.associado}</TableCell>
                         <TableCell className="text-sm">{fmt(c.esperado)}</TableCell>
                         <TableCell className="text-sm">{c.recebido > 0 ? fmt(c.recebido) : "—"}</TableCell>
-                        <TableCell className={`text-sm font-medium ${c.recebido >= c.esperado ? "text-green-600" : "text-red-600"}`}>
+                        <TableCell className={`text-sm font-medium ${c.recebido >= c.esperado ? "text-success" : "text-destructive"}`}>
                           {c.recebido >= c.esperado ? "+" : ""}{fmt(c.recebido - c.esperado)}
                         </TableCell>
                         <TableCell><ConcBadge status={c.status} /></TableCell>
@@ -412,7 +454,7 @@ export default function Financeiro() {
         </TabsContent>
 
         {/* TAB 3: EXTRATO */}
-        <TabsContent value="extrato" className="space-y-4">
+        <TabsContent value="extrato" className="space-y-6">
           <div className="flex flex-wrap items-end gap-3">
             <div>
               <Label className="text-xs mb-1 block">De</Label>
@@ -430,14 +472,14 @@ export default function Financeiro() {
             </Button>
           </div>
 
-          <Card>
+          <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
             <CardContent className="p-0">
               <div className="divide-y">
                 {extrato.map(e => (
-                  <div key={e.id} className="flex items-center justify-between px-4 py-3 hover:bg-muted/30">
+                  <div key={e.id} className="flex items-center justify-between px-4 py-3 hover:bg-muted/30 transition-colors">
                     <div className="flex items-start gap-3">
-                      <div className={`mt-0.5 h-8 w-8 rounded-full flex items-center justify-center ${e.tipo === "entrada" ? "bg-green-100" : "bg-red-100"}`}>
-                        <ArrowDownCircle className={`h-4 w-4 ${e.tipo === "entrada" ? "text-green-600" : "text-red-600 rotate-180"}`} />
+                      <div className={`mt-0.5 rounded-xl p-2 ${e.tipo === "entrada" ? "bg-success/10" : "bg-destructive/10"}`}>
+                        <ArrowDownCircle className={`h-4 w-4 ${e.tipo === "entrada" ? "text-success" : "text-destructive rotate-180"}`} />
                       </div>
                       <div>
                         <p className="text-sm font-medium">{e.desc}</p>
@@ -445,8 +487,8 @@ export default function Financeiro() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className={`font-semibold text-sm ${e.tipo === "entrada" ? "text-green-600" : "text-red-600"}`}>
-                        {e.tipo === "entrada" ? "+" : "−"}{fmt(e.valor)}
+                      <p className={`font-semibold text-sm ${e.tipo === "entrada" ? "text-success" : "text-destructive"}`}>
+                        {e.tipo === "entrada" ? "+" : "-"}{fmt(e.valor)}
                       </p>
                       <p className="text-xs text-muted-foreground">{e.dataHora}</p>
                       <p className="text-xs text-muted-foreground">Saldo: {fmt(e.saldo)}</p>
@@ -457,16 +499,16 @@ export default function Financeiro() {
             </CardContent>
           </Card>
 
-          <Card>
-            <CardContent className="pt-4 pb-4">
+          <Card className="border-0 shadow-sm">
+            <CardContent className="pt-5 pb-4">
               <div className="flex flex-wrap gap-6">
                 <div>
                   <p className="text-xs text-muted-foreground">Total de Entradas</p>
-                  <p className="text-lg font-bold text-green-600">+{fmt(totEntradas)}</p>
+                  <p className="text-lg font-bold text-success">+{fmt(totEntradas)}</p>
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Total de Estornos</p>
-                  <p className="text-lg font-bold text-red-600">−{fmt(totEstornos)}</p>
+                  <p className="text-lg font-bold text-destructive">-{fmt(totEstornos)}</p>
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Saldo Líquido</p>
@@ -478,11 +520,16 @@ export default function Financeiro() {
         </TabsContent>
 
         {/* TAB 4: RELATÓRIOS */}
-        <TabsContent value="relatorios" className="space-y-4">
+        <TabsContent value="relatorios" className="space-y-6">
           <div className="grid md:grid-cols-2 gap-4">
-            <Card>
+            <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
               <CardHeader className="pb-2 pt-4 px-4">
-                <CardTitle className="text-sm">Por Forma de Pagamento</CardTitle>
+                <CardTitle className="text-sm font-heading flex items-center gap-2">
+                  <div className="rounded-xl p-1.5 bg-purple-500/10">
+                    <BarChart3 className="h-3.5 w-3.5 text-purple-500" />
+                  </div>
+                  Por Forma de Pagamento
+                </CardTitle>
               </CardHeader>
               <CardContent className="px-4 pb-4">
                 <Table>
@@ -508,9 +555,14 @@ export default function Financeiro() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
               <CardHeader className="pb-2 pt-4 px-4">
-                <CardTitle className="text-sm">Por Cooperativa</CardTitle>
+                <CardTitle className="text-sm font-heading flex items-center gap-2">
+                  <div className="rounded-xl p-1.5 bg-primary/10">
+                    <BarChart3 className="h-3.5 w-3.5 text-primary" />
+                  </div>
+                  Por Cooperativa
+                </CardTitle>
               </CardHeader>
               <CardContent className="px-4 pb-4">
                 <Table>
@@ -536,9 +588,9 @@ export default function Financeiro() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
               <CardHeader className="pb-2 pt-4 px-4">
-                <CardTitle className="text-sm">Evolução Diária (últimos 7 dias)</CardTitle>
+                <CardTitle className="text-sm font-heading">Evolução Diária (últimos 7 dias)</CardTitle>
               </CardHeader>
               <CardContent className="px-4 pb-4">
                 <Table>
@@ -556,7 +608,7 @@ export default function Financeiro() {
                         <TableCell className="text-xs font-medium">{e.data}</TableCell>
                         <TableCell className="text-xs">{e.rec}</TableCell>
                         <TableCell className="text-xs font-medium">{fmt(e.valor)}</TableCell>
-                        <TableCell className={`text-xs font-medium ${e.neg ? "text-red-600" : "text-green-600"}`}>{e.comp}</TableCell>
+                        <TableCell className={`text-xs font-medium ${e.neg ? "text-destructive" : "text-success"}`}>{e.comp}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -564,9 +616,9 @@ export default function Financeiro() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
               <CardHeader className="pb-2 pt-4 px-4">
-                <CardTitle className="text-sm">Horários de Pico</CardTitle>
+                <CardTitle className="text-sm font-heading">Horários de Pico</CardTitle>
               </CardHeader>
               <CardContent className="px-4 pb-4 space-y-3">
                 {horarios.map(h => (
@@ -588,25 +640,30 @@ export default function Financeiro() {
       <Dialog open={!!detalhe} onOpenChange={o => { if (!o) { setDetalhe(null); setVinc(""); } }}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Detalhes do Recebimento</DialogTitle>
+            <DialogTitle className="font-heading flex items-center gap-2">
+              <div className="rounded-xl p-2.5 bg-primary/10">
+                <DollarSign className="h-4 w-4 text-primary" />
+              </div>
+              Detalhes do Recebimento
+            </DialogTitle>
             <DialogDescription>Informações completas da transação</DialogDescription>
           </DialogHeader>
           {detalhe && (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="grid grid-cols-2 gap-3 text-sm p-4 rounded-lg bg-muted/30">
                 <div><p className="text-xs text-muted-foreground">Data/Hora</p><p className="font-medium">{detalhe.dataHora}</p></div>
                 <div><p className="text-xs text-muted-foreground">Status</p><StatusBadge status={detalhe.status} /></div>
                 <div><p className="text-xs text-muted-foreground">Associado</p><p className="font-medium">{detalhe.associado}</p></div>
                 <div><p className="text-xs text-muted-foreground">CPF</p><p className="font-medium">{detalhe.cpf}</p></div>
                 <div><p className="text-xs text-muted-foreground">Cooperativa</p><p className="font-medium">{detalhe.cooperativa}</p></div>
-                <div><p className="text-xs text-muted-foreground">Valor</p><p className="font-bold text-green-600">{fmt(detalhe.valor)}</p></div>
+                <div><p className="text-xs text-muted-foreground">Valor</p><p className="font-bold text-success">{fmt(detalhe.valor)}</p></div>
                 <div className="col-span-2"><p className="text-xs text-muted-foreground">Forma de Pagamento</p><FormaBadge forma={detalhe.forma} /></div>
               </div>
 
               {detalhe.codigoTransacao !== "—" && (
                 <div>
                   <p className="text-xs text-muted-foreground mb-1">Código da Transação</p>
-                  <div className="flex items-center gap-2 bg-muted rounded px-3 py-2">
+                  <div className="flex items-center gap-2 bg-muted/50 rounded-lg px-3 py-2">
                     {detalhe.forma === "PIX QR Code" && (
                       <QrCode className="h-8 w-8 text-purple-500 flex-shrink-0" />
                     )}
@@ -621,8 +678,8 @@ export default function Financeiro() {
               {detalhe.referenciaBoleto !== "—" && (
                 <div>
                   <p className="text-xs text-muted-foreground mb-1">Código de Barras</p>
-                  <div className="flex items-start gap-2 bg-muted rounded px-3 py-2">
-                    <FileText className="h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" />
+                  <div className="flex items-start gap-2 bg-muted/50 rounded-lg px-3 py-2">
+                    <FileText className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
                     <code className="text-xs font-mono flex-1 break-all">{detalhe.referenciaBoleto}</code>
                     <Button size="icon" variant="ghost" className="h-7 w-7 flex-shrink-0" onClick={() => copiar(detalhe.referenciaBoleto, "Código de barras")}>
                       <Copy className="h-3.5 w-3.5" />
@@ -632,11 +689,11 @@ export default function Financeiro() {
               )}
 
               {detalhe.associado === "Não identificado" && (
-                <div className="border border-yellow-200 rounded-lg p-3 bg-yellow-50 space-y-2">
-                  <p className="text-xs font-medium text-yellow-800">Recebimento pendente de identificação</p>
+                <div className="rounded-lg p-3 bg-warning/5 border border-warning/20 space-y-2">
+                  <p className="text-xs font-medium text-warning">Recebimento pendente de identificação</p>
                   <Label className="text-xs">Vincular a Associado (nome ou CPF)</Label>
                   <Input
-                    placeholder="Buscar associado…"
+                    placeholder="Buscar associado..."
                     value={vincBusca}
                     onChange={e => setVinc(e.target.value)}
                     className="h-8 text-sm"
@@ -655,7 +712,7 @@ export default function Financeiro() {
             </div>
           )}
           <DialogFooter className="flex-col sm:flex-row gap-2">
-            <Button variant="outline" onClick={() => { toast({ title:"Gerando comprovante…", description:"O comprovante PDF será baixado em instantes." }); }}>
+            <Button variant="outline" onClick={() => { toast({ title:"Gerando comprovante...", description:"O comprovante PDF será baixado em instantes." }); }}>
               <Download className="h-4 w-4 mr-1" />Gerar Comprovante PDF
             </Button>
             <Button variant="outline" onClick={() => { setDetalhe(null); setVinc(""); }}>Fechar</Button>
@@ -667,15 +724,15 @@ export default function Financeiro() {
       <Dialog open={!!estorno} onOpenChange={o => { if (!o) setEstorno(null); }}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Confirmar Estorno</DialogTitle>
+            <DialogTitle className="font-heading">Confirmar Estorno</DialogTitle>
             <DialogDescription>
               Tem certeza que deseja estornar este recebimento? Esta ação não pode ser desfeita.
             </DialogDescription>
           </DialogHeader>
           {estorno && (
-            <div className="bg-muted rounded-lg p-3 space-y-1 text-sm">
+            <div className="rounded-lg p-3 bg-muted/50 space-y-1 text-sm">
               <p><span className="text-muted-foreground">Associado:</span> <strong>{estorno.associado}</strong></p>
-              <p><span className="text-muted-foreground">Valor:</span> <strong className="text-green-600">{fmt(estorno.valor)}</strong></p>
+              <p><span className="text-muted-foreground">Valor:</span> <strong className="text-success">{fmt(estorno.valor)}</strong></p>
               <p><span className="text-muted-foreground">Data/Hora:</span> {estorno.dataHora}</p>
               <p><span className="text-muted-foreground">Cód. Transação:</span> <code className="text-xs">{estorno.codigoTransacao}</code></p>
             </div>

@@ -80,14 +80,14 @@ const notificacoes = [
 ];
 
 const prioridadeBadge = (p: string) => {
-  if (p === "alta") return <Badge variant="destructive">Alta</Badge>;
-  if (p === "media") return <Badge className="bg-amber-500 text-white hover:bg-amber-600">Média</Badge>;
+  if (p === "alta") return <Badge className="bg-destructive/10 text-destructive border-0">Alta</Badge>;
+  if (p === "media") return <Badge className="bg-warning/10 text-warning border-0">Média</Badge>;
   return <Badge variant="secondary">Baixa</Badge>;
 };
 
 const tipoIcon = (t: string) => {
-  if (t === "inatividade") return <Clock className="h-5 w-5 text-amber-500" />;
-  if (t === "acordo_vencimento") return <FileWarning className="h-5 w-5 text-orange-500" />;
+  if (t === "inatividade") return <Clock className="h-5 w-5 text-warning" />;
+  if (t === "acordo_vencimento") return <FileWarning className="h-5 w-5 text-warning" />;
   return <AlertTriangle className="h-5 w-5 text-destructive" />;
 };
 
@@ -99,19 +99,19 @@ export default function NotificacoesInternas() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Notificações Internas</h1>
-          <p className="text-muted-foreground">Alertas automáticos para gestão da equipe</p>
+          <h1 className="font-heading text-2xl font-bold">Notificações Internas</h1>
+          <p className="text-sm text-muted-foreground">Alertas automáticos para gestão da equipe</p>
         </div>
-        <Badge variant="destructive" className="text-base px-3 py-1">
+        <Badge className="bg-destructive/10 text-destructive border-0 text-base px-3 py-1">
           {naoLidas.length} não lidas
         </Badge>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6 flex items-center gap-4">
-            <div className="h-12 w-12 rounded-full bg-amber-100 flex items-center justify-center">
-              <Clock className="h-6 w-6 text-amber-600" />
+            <div className="rounded-xl p-2.5 bg-warning/10">
+              <Clock className="h-6 w-6 text-warning" />
             </div>
             <div>
               <p className="text-2xl font-bold">
@@ -121,10 +121,10 @@ export default function NotificacoesInternas() {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6 flex items-center gap-4">
-            <div className="h-12 w-12 rounded-full bg-orange-100 flex items-center justify-center">
-              <FileWarning className="h-6 w-6 text-orange-600" />
+            <div className="rounded-xl p-2.5 bg-warning/10">
+              <FileWarning className="h-6 w-6 text-warning" />
             </div>
             <div>
               <p className="text-2xl font-bold">
@@ -134,9 +134,9 @@ export default function NotificacoesInternas() {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6 flex items-center gap-4">
-            <div className="h-12 w-12 rounded-full bg-red-100 flex items-center justify-center">
+            <div className="rounded-xl p-2.5 bg-destructive/10">
               <AlertTriangle className="h-6 w-6 text-destructive" />
             </div>
             <div>
@@ -162,9 +162,11 @@ export default function NotificacoesInternas() {
           return (
             <TabsContent key={tab} value={tab} className="space-y-3">
               {items.map((n) => (
-                <Card key={n.id} className={!n.lida ? "border-l-4 border-l-primary" : ""}>
+                <Card key={n.id} className={`border-0 shadow-sm hover:shadow-md transition-shadow ${!n.lida ? "border-l-4 border-l-primary" : ""}`}>
                   <CardContent className="pt-4 pb-4 flex items-start gap-4">
-                    {tipoIcon(n.tipo)}
+                    <div className="rounded-xl p-2 bg-muted/50">
+                      {tipoIcon(n.tipo)}
+                    </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
                         <h3 className="font-semibold">{n.titulo}</h3>

@@ -142,22 +142,27 @@ const Ligacoes = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Ligações</h1>
-          <p className="text-muted-foreground">Registro e histórico de chamadas</p>
+        <div className="flex items-center gap-3">
+          <div className="rounded-xl p-2.5 bg-primary/10">
+            <Phone className="h-6 w-6 text-primary" />
+          </div>
+          <div>
+            <h1 className="font-heading text-2xl font-bold">Ligações</h1>
+            <p className="text-sm text-muted-foreground">Registro e histórico de chamadas</p>
+          </div>
         </div>
         <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-primary hover:bg-primary/90">
+            <Button>
               <Plus className="h-4 w-4 mr-2" />
               Registrar Ligação
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Registrar Nova Ligação</DialogTitle>
+              <DialogTitle className="font-heading">Registrar Nova Ligação</DialogTitle>
               <DialogDescription>
                 Preencha os dados da ligação realizada
               </DialogDescription>
@@ -171,6 +176,7 @@ const Ligacoes = () => {
                     setNewLigacao({ ...newLigacao, associado: e.target.value })
                   }
                   placeholder="Nome do associado"
+                  className="rounded-lg"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -182,6 +188,7 @@ const Ligacoes = () => {
                       setNewLigacao({ ...newLigacao, telefone: e.target.value })
                     }
                     placeholder="(00) 00000-0000"
+                    className="rounded-lg"
                   />
                 </div>
                 <div className="grid gap-2">
@@ -192,7 +199,7 @@ const Ligacoes = () => {
                       setNewLigacao({ ...newLigacao, tipo: value })
                     }
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="rounded-lg">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -210,7 +217,7 @@ const Ligacoes = () => {
                     setNewLigacao({ ...newLigacao, resultado: value })
                   }
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="rounded-lg">
                     <SelectValue placeholder="Selecione o resultado" />
                   </SelectTrigger>
                   <SelectContent>
@@ -230,6 +237,7 @@ const Ligacoes = () => {
                     setNewLigacao({ ...newLigacao, observacoes: e.target.value })
                   }
                   placeholder="Detalhes da conversa..."
+                  className="rounded-lg"
                 />
               </div>
             </div>
@@ -245,9 +253,9 @@ const Ligacoes = () => {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6 flex items-center gap-4">
-            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+            <div className="rounded-xl p-2.5 bg-primary/10">
               <Phone className="h-5 w-5 text-primary" />
             </div>
             <div>
@@ -256,9 +264,9 @@ const Ligacoes = () => {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6 flex items-center gap-4">
-            <div className="h-10 w-10 rounded-full bg-success/10 flex items-center justify-center">
+            <div className="rounded-xl p-2.5 bg-success/10">
               <Phone className="h-5 w-5 text-success" />
             </div>
             <div>
@@ -267,9 +275,9 @@ const Ligacoes = () => {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6 flex items-center gap-4">
-            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+            <div className="rounded-xl p-2.5 bg-primary/10">
               <Phone className="h-5 w-5 text-primary" />
             </div>
             <div>
@@ -278,9 +286,9 @@ const Ligacoes = () => {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6 flex items-center gap-4">
-            <div className="h-10 w-10 rounded-full bg-warning/10 flex items-center justify-center">
+            <div className="rounded-xl p-2.5 bg-warning/10">
               <PhoneMissed className="h-5 w-5 text-warning" />
             </div>
             <div>
@@ -292,7 +300,7 @@ const Ligacoes = () => {
       </div>
 
       {/* Search */}
-      <Card>
+      <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
         <CardContent className="pt-6">
           <div className="relative max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -300,16 +308,16 @@ const Ligacoes = () => {
               placeholder="Buscar por associado..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              className="pl-10 rounded-lg"
             />
           </div>
         </CardContent>
       </Card>
 
       {/* Table */}
-      <Card>
+      <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
         <CardHeader>
-          <CardTitle>Histórico de Ligações</CardTitle>
+          <CardTitle className="font-heading">Histórico de Ligações</CardTitle>
           <CardDescription>
             {filteredLigacoes.length} ligação(ões) registrada(s)
           </CardDescription>

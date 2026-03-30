@@ -175,7 +175,7 @@ const PERFIS_DEF = [
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 const permBadge = (p: NivelAcesso) => {
-  if (p === "total") return <Badge className="bg-emerald-500 text-white text-xs">Total</Badge>;
+  if (p === "total") return <Badge className="bg-success/10 text-success text-xs">Total</Badge>;
   if (p === "proprio") return <Badge className="bg-primary text-primary-foreground text-xs">Próprio</Badge>;
   if (p === "visualizar") return <Badge variant="secondary" className="text-xs">Visualizar</Badge>;
   return <Badge variant="outline" className="text-muted-foreground text-xs">Nenhum</Badge>;
@@ -381,21 +381,21 @@ export default function ControleAcesso() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-foreground">Controle de Acesso</h1>
-        <p className="text-muted-foreground">Gerencie perfis e permissões dos usuários do sistema</p>
+        <h1 className="font-heading text-2xl font-bold">Controle de Acesso</h1>
+        <p className="text-sm text-muted-foreground">Gerencie perfis e permissões dos usuários do sistema</p>
       </div>
 
       {/* Profile Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {PERFIS_DEF.map((p) => (
-          <Card key={p.nome}>
+          <Card key={p.nome} className="border-0 shadow-sm hover:shadow-md transition-shadow">
             <CardContent className="pt-6">
               <div className="flex items-center gap-3 mb-3">
-                <div className={`h-10 w-10 rounded-full ${p.cor} flex items-center justify-center`}>
-                  <Shield className="h-5 w-5" />
+                <div className="rounded-xl p-2.5 bg-primary/10">
+                  <Shield className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg">{p.nome}</h3>
+                  <h3 className="font-heading font-bold text-lg">{p.nome}</h3>
                   <p className="text-xs text-muted-foreground">{contagem(p.nome)} usuário(s)</p>
                 </div>
               </div>
@@ -414,10 +414,10 @@ export default function ControleAcesso() {
 
         {/* Tab: Usuários */}
         <TabsContent value="usuarios">
-          <Card>
+          <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="font-heading flex items-center gap-2">
                   <Users className="h-5 w-5" />
                   Usuários do Sistema
                 </CardTitle>
@@ -452,7 +452,7 @@ export default function ControleAcesso() {
                       </TableCell>
                       <TableCell className="text-sm">{u.cooperativa}</TableCell>
                       <TableCell>
-                        <Badge className={u.status === "Ativo" ? "bg-emerald-500 text-white" : "bg-muted text-muted-foreground"}>
+                        <Badge className={u.status === "Ativo" ? "bg-success/10 text-success" : "bg-muted text-muted-foreground"}>
                           {u.status}
                         </Badge>
                       </TableCell>
@@ -470,7 +470,7 @@ export default function ControleAcesso() {
                             size="sm"
                             title={u.status === "Ativo" ? "Bloquear" : "Reativar"}
                             onClick={() => abrirBloquear(u)}
-                            className={u.status === "Inativo" ? "text-emerald-600" : "text-destructive hover:text-destructive"}
+                            className={u.status === "Inativo" ? "text-success" : "text-destructive hover:text-destructive"}
                           >
                             {u.status === "Ativo" ? <Lock className="h-4 w-4" /> : <RefreshCw className="h-4 w-4" />}
                           </Button>
@@ -486,9 +486,9 @@ export default function ControleAcesso() {
 
         {/* Tab: Matriz de Permissões */}
         <TabsContent value="permissoes">
-          <Card>
+          <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="font-heading flex items-center gap-2">
                 <Shield className="h-5 w-5" />
                 Matriz de Permissões por Perfil
               </CardTitle>
@@ -527,7 +527,7 @@ export default function ControleAcesso() {
       <Dialog open={dialogAdicionar} onOpenChange={setDialogAdicionar}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Adicionar Usuário</DialogTitle>
+            <DialogTitle className="font-heading">Adicionar Usuário</DialogTitle>
           </DialogHeader>
           <ScrollArea className="max-h-[70vh] pr-4">
             <div className="space-y-4 py-2">
@@ -638,7 +638,7 @@ export default function ControleAcesso() {
       <Dialog open={dialogEditar} onOpenChange={setDialogEditar}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Editar Usuário</DialogTitle>
+            <DialogTitle className="font-heading">Editar Usuário</DialogTitle>
           </DialogHeader>
           <ScrollArea className="max-h-[70vh] pr-4">
             <div className="space-y-4 py-2">
@@ -727,7 +727,7 @@ export default function ControleAcesso() {
       <Dialog open={dialogVisualizar} onOpenChange={setDialogVisualizar}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Detalhes do Usuário</DialogTitle>
+            <DialogTitle className="font-heading">Detalhes do Usuário</DialogTitle>
           </DialogHeader>
           {usuarioSelecionado && (
             <ScrollArea className="max-h-[70vh] pr-4">
@@ -754,7 +754,7 @@ export default function ControleAcesso() {
                   </div>
                   <div>
                     <p className="text-muted-foreground text-xs mb-0.5">Status</p>
-                    <Badge className={usuarioSelecionado.status === "Ativo" ? "bg-emerald-500 text-white" : "bg-muted text-muted-foreground"}>
+                    <Badge className={usuarioSelecionado.status === "Ativo" ? "bg-success/10 text-success" : "bg-muted text-muted-foreground"}>
                       {usuarioSelecionado.status}
                     </Badge>
                   </div>
@@ -789,7 +789,7 @@ export default function ControleAcesso() {
       <Dialog open={dialogBloquear} onOpenChange={setDialogBloquear}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
-            <DialogTitle>
+            <DialogTitle className="font-heading">
               {usuarioSelecionado?.status === "Ativo" ? "Bloquear Usuário" : "Reativar Usuário"}
             </DialogTitle>
           </DialogHeader>

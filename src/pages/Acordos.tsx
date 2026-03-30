@@ -12,6 +12,7 @@ import {
   Filter,
   MessageSquare,
   History,
+  AlertTriangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -102,13 +103,13 @@ const atendentes = ["Rayanne Donato", "Laleska Gelinske", "Carla Mendes", "Ferna
 const StatusBadgeAcordo = ({ status }: { status: StatusAcordo }) => {
   switch (status) {
     case "Pago":
-      return <Badge className="bg-success/10 text-success border-success/30">Pago</Badge>;
+      return <Badge variant="outline" className="bg-success/10 text-success border-success/20 text-xs">Pago</Badge>;
     case "Pendente":
-      return <Badge className="bg-warning/10 text-warning border-warning/30">Pendente</Badge>;
+      return <Badge variant="outline" className="bg-warning/10 text-warning border-warning/20 text-xs">Pendente</Badge>;
     case "Cancelado":
-      return <Badge variant="destructive">Cancelado</Badge>;
+      return <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/20 text-xs">Cancelado</Badge>;
     case "Vencido":
-      return <Badge className="bg-orange-500/10 text-orange-500 border-orange-300/30">Vencido</Badge>;
+      return <Badge variant="outline" className="bg-orange-500/10 text-orange-500 border-orange-300/30 text-xs">Vencido</Badge>;
     default:
       return <Badge variant="outline">{status}</Badge>;
   }
@@ -280,18 +281,20 @@ const DescontoInfo = ({
   if (!o || !a) return null;
   if (a > o) {
     return (
-      <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20">
-        <p className="text-sm text-destructive font-medium">
-          ⚠️ Valor acordado maior que o original
+      <div className="p-3 rounded-lg bg-destructive/5 border border-destructive/20">
+        <p className="text-sm text-destructive font-medium flex items-center gap-2">
+          <AlertTriangle className="h-4 w-4" />
+          Valor acordado maior que o original
         </p>
       </div>
     );
   }
   const desconto = calcDesconto(o, a);
   return (
-    <div className="p-3 rounded-lg bg-success/10 border border-success/20">
-      <p className="text-sm text-success font-medium">
-        ✅ Desconto: <span className="text-base font-bold">{desconto.toFixed(1)}%</span>
+    <div className="p-3 rounded-lg bg-success/5 border border-success/20">
+      <p className="text-sm text-success font-medium flex items-center gap-2">
+        <Check className="h-4 w-4" />
+        Desconto: <span className="text-base font-bold">{desconto.toFixed(1)}%</span>
         <span className="ml-2 text-muted-foreground font-normal">
           (economia de {formatCurrency(o - a)})
         </span>
@@ -482,7 +485,7 @@ const Acordos = () => {
 
     if (formEditar.status === "Pago") {
       toast({
-        title: "✅ Acordo marcado como pago!",
+        title: "Acordo marcado como pago!",
         description: `Acordo de ${formEditar.associado} foi quitado com sucesso.`,
       });
     } else {
@@ -497,11 +500,10 @@ const Acordos = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Acordos</h1>
-          <p className="text-muted-foreground">Gestão de acordos com desconto à vista</p>
+          <h1 className="font-heading text-2xl font-bold">Acordos</h1>
+          <p className="text-sm text-muted-foreground">Gestão de acordos com desconto à vista</p>
         </div>
         <Button
-          className="bg-primary hover:bg-primary/90"
           onClick={() => {
             setFormNovo(emptyForm);
             setOpenNovo(true);
@@ -514,10 +516,10 @@ const Acordos = () => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
-              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <div className="rounded-xl p-2.5 bg-primary/10">
                 <Handshake className="h-5 w-5 text-primary" />
               </div>
               <div>
@@ -527,10 +529,10 @@ const Acordos = () => {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
-              <div className="h-10 w-10 rounded-full bg-success/10 flex items-center justify-center">
+              <div className="rounded-xl p-2.5 bg-success/10">
                 <Check className="h-5 w-5 text-success" />
               </div>
               <div>
@@ -540,10 +542,10 @@ const Acordos = () => {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
-              <div className="h-10 w-10 rounded-full bg-warning/10 flex items-center justify-center">
+              <div className="rounded-xl p-2.5 bg-warning/10">
                 <Clock className="h-5 w-5 text-warning" />
               </div>
               <div>
@@ -553,10 +555,10 @@ const Acordos = () => {
             </div>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
-              <div className="h-10 w-10 rounded-full bg-success/10 flex items-center justify-center">
+              <div className="rounded-xl p-2.5 bg-success/10">
                 <DollarSign className="h-5 w-5 text-success" />
               </div>
               <div>
@@ -571,7 +573,7 @@ const Acordos = () => {
       </div>
 
       {/* Barra de progresso de recuperação */}
-      <Card>
+      <Card className="border-0 shadow-sm">
         <CardContent className="pt-6">
           <div className="flex items-center justify-between mb-3">
             <div>
@@ -603,7 +605,7 @@ const Acordos = () => {
       </Card>
 
       {/* Filtros */}
-      <Card>
+      <Card className="border-0 shadow-sm">
         <CardContent className="pt-6">
           <div className="flex gap-3 flex-wrap">
             <div className="relative flex-1 min-w-[200px]">
@@ -647,9 +649,9 @@ const Acordos = () => {
       </Card>
 
       {/* Tabela */}
-      <Card>
+      <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
         <CardHeader>
-          <CardTitle>Lista de Acordos</CardTitle>
+          <CardTitle className="font-heading">Lista de Acordos</CardTitle>
           <CardDescription>{acordosFiltrados.length} acordo(s) encontrado(s)</CardDescription>
         </CardHeader>
         <CardContent>
@@ -691,7 +693,7 @@ const Acordos = () => {
                       </TableCell>
                       <TableCell>
                         {desconto > 0 ? (
-                          <Badge className="bg-success/10 text-success border-success/30">
+                          <Badge variant="outline" className="bg-success/10 text-success border-success/20 text-xs">
                             -{desconto.toFixed(1)}%
                           </Badge>
                         ) : (
@@ -715,6 +717,7 @@ const Acordos = () => {
                           <Button
                             variant="ghost"
                             size="icon"
+                            className="h-8 w-8"
                             title="Visualizar"
                             onClick={() => handleVisualizar(acordo)}
                           >
@@ -723,6 +726,7 @@ const Acordos = () => {
                           <Button
                             variant="ghost"
                             size="icon"
+                            className="h-8 w-8"
                             title="Editar"
                             onClick={() => handleAbrirEditar(acordo)}
                           >
@@ -743,7 +747,12 @@ const Acordos = () => {
       <Dialog open={openNovo} onOpenChange={setOpenNovo}>
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Criar Novo Acordo</DialogTitle>
+            <DialogTitle className="font-heading flex items-center gap-2">
+              <div className="rounded-xl p-2.5 bg-primary/10">
+                <Handshake className="h-4 w-4 text-primary" />
+              </div>
+              Criar Novo Acordo
+            </DialogTitle>
             <DialogDescription>
               Registre um acordo com desconto à vista para o associado
             </DialogDescription>
@@ -853,8 +862,10 @@ const Acordos = () => {
           {acordoVisualizado && (
             <>
               <DialogHeader>
-                <DialogTitle className="flex items-center gap-2">
-                  <Handshake className="h-5 w-5 text-primary" />
+                <DialogTitle className="font-heading flex items-center gap-2">
+                  <div className="rounded-xl p-2.5 bg-primary/10">
+                    <Handshake className="h-4 w-4 text-primary" />
+                  </div>
                   Acordo #{acordoVisualizado.id}
                 </DialogTitle>
                 <DialogDescription>
@@ -864,7 +875,7 @@ const Acordos = () => {
 
               <div className="space-y-6 py-2">
                 {/* Dados do acordo */}
-                <div className="grid grid-cols-2 gap-4 p-4 rounded-lg border bg-muted/20">
+                <div className="grid grid-cols-2 gap-4 p-4 rounded-lg bg-muted/30">
                   <div>
                     <Label className="text-xs text-muted-foreground">Associado</Label>
                     <p className="text-sm font-medium">{acordoVisualizado.associado}</p>
@@ -912,80 +923,88 @@ const Acordos = () => {
                 </div>
 
                 {/* Comentários Internos */}
-                <div className="space-y-3 p-4 rounded-lg border">
-                  <h3 className="font-semibold flex items-center gap-2">
-                    <MessageSquare className="h-4 w-4 text-primary" />
-                    Comentários Internos
-                  </h3>
-                  <ScrollArea className="h-[200px] pr-2">
-                    {acordoVisualizado.comentarios.length === 0 ? (
-                      <div className="text-center py-8 text-muted-foreground text-sm">
-                        Nenhum comentário ainda.
+                <Card className="border-0 shadow-sm">
+                  <CardContent className="pt-4">
+                    <h3 className="font-heading font-semibold flex items-center gap-2 mb-3">
+                      <div className="rounded-xl p-1.5 bg-primary/10">
+                        <MessageSquare className="h-3.5 w-3.5 text-primary" />
                       </div>
-                    ) : (
-                      <div className="space-y-3">
-                        {acordoVisualizado.comentarios.map((c) => (
-                          <div key={c.id} className="flex gap-3">
-                            <Avatar className="h-8 w-8 flex-shrink-0">
-                              <AvatarFallback className="bg-primary text-primary-foreground text-xs">
-                                {c.autor
-                                  .split(" ")
-                                  .map((n) => n[0])
-                                  .slice(0, 2)
-                                  .join("")}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div className="flex-1 rounded-lg bg-muted p-3">
-                              <div className="flex items-center justify-between mb-1">
-                                <span className="text-xs font-semibold">{c.autor}</span>
-                                <span className="text-xs text-muted-foreground">{c.dataHora}</span>
+                      Comentários Internos
+                    </h3>
+                    <ScrollArea className="h-[200px] pr-2">
+                      {acordoVisualizado.comentarios.length === 0 ? (
+                        <div className="text-center py-8 text-muted-foreground text-sm">
+                          Nenhum comentário ainda.
+                        </div>
+                      ) : (
+                        <div className="space-y-3">
+                          {acordoVisualizado.comentarios.map((c) => (
+                            <div key={c.id} className="flex gap-3">
+                              <Avatar className="h-8 w-8 flex-shrink-0">
+                                <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
+                                  {c.autor
+                                    .split(" ")
+                                    .map((n) => n[0])
+                                    .slice(0, 2)
+                                    .join("")}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div className="flex-1 rounded-lg bg-muted/50 p-3">
+                                <div className="flex items-center justify-between mb-1">
+                                  <span className="text-xs font-semibold">{c.autor}</span>
+                                  <span className="text-xs text-muted-foreground">{c.dataHora}</span>
+                                </div>
+                                <p className="text-sm">{c.texto}</p>
                               </div>
-                              <p className="text-sm">{c.texto}</p>
                             </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </ScrollArea>
-                  <div className="flex gap-2">
-                    <Textarea
-                      placeholder="Adicionar comentário interno..."
-                      value={novoComentario}
-                      onChange={(e) => setNovoComentario(e.target.value)}
-                      className="min-h-[70px] text-sm"
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && e.ctrlKey) handleAdicionarComentario();
-                      }}
-                    />
-                    <Button
-                      onClick={handleAdicionarComentario}
-                      disabled={!novoComentario.trim()}
-                      className="h-auto"
-                    >
-                      <Send className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  <p className="text-xs text-muted-foreground">Ctrl+Enter para enviar</p>
-                </div>
+                          ))}
+                        </div>
+                      )}
+                    </ScrollArea>
+                    <div className="flex gap-2 mt-3">
+                      <Textarea
+                        placeholder="Adicionar comentário interno..."
+                        value={novoComentario}
+                        onChange={(e) => setNovoComentario(e.target.value)}
+                        className="min-h-[70px] text-sm"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && e.ctrlKey) handleAdicionarComentario();
+                        }}
+                      />
+                      <Button
+                        onClick={handleAdicionarComentario}
+                        disabled={!novoComentario.trim()}
+                        className="h-auto"
+                      >
+                        <Send className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">Ctrl+Enter para enviar</p>
+                  </CardContent>
+                </Card>
 
                 {/* Histórico */}
-                <div className="space-y-3 p-4 rounded-lg border">
-                  <h3 className="font-semibold flex items-center gap-2">
-                    <History className="h-4 w-4 text-primary" />
-                    Histórico
-                  </h3>
-                  <div className="space-y-2">
-                    {acordoVisualizado.historico.map((h) => (
-                      <div key={h.id} className="flex items-start gap-3 text-sm">
-                        <div className="h-2 w-2 rounded-full bg-primary mt-1.5 flex-shrink-0" />
-                        <div className="flex-1">
-                          <p>{h.descricao}</p>
-                          <p className="text-xs text-muted-foreground">{h.dataHora}</p>
-                        </div>
+                <Card className="border-0 shadow-sm">
+                  <CardContent className="pt-4">
+                    <h3 className="font-heading font-semibold flex items-center gap-2 mb-3">
+                      <div className="rounded-xl p-1.5 bg-primary/10">
+                        <History className="h-3.5 w-3.5 text-primary" />
                       </div>
-                    ))}
-                  </div>
-                </div>
+                      Histórico
+                    </h3>
+                    <div className="space-y-3 relative before:absolute before:left-[7px] before:top-2 before:bottom-2 before:w-px before:bg-border">
+                      {acordoVisualizado.historico.map((h) => (
+                        <div key={h.id} className="flex items-start gap-3 text-sm relative">
+                          <div className="h-4 w-4 rounded-full bg-primary/20 border-2 border-primary flex-shrink-0 mt-0.5 z-10" />
+                          <div className="flex-1">
+                            <p>{h.descricao}</p>
+                            <p className="text-xs text-muted-foreground">{h.dataHora}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
 
               <DialogFooter>
@@ -1011,7 +1030,7 @@ const Acordos = () => {
       <Dialog open={openEditar} onOpenChange={setOpenEditar}>
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Editar Acordo</DialogTitle>
+            <DialogTitle className="font-heading">Editar Acordo</DialogTitle>
             <DialogDescription>
               Atualize os dados do acordo
             </DialogDescription>

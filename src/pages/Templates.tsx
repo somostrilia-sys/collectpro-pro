@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Search, Edit, Trash2, Copy, MessageSquare, Mail, Smartphone, Sparkles } from "lucide-react";
+import { Plus, Search, Edit, Trash2, Copy, MessageSquare, Mail, Smartphone, Sparkles, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -30,7 +30,7 @@ const mockTemplates = [
     nome: "Lembrete D+1",
     canal: "WhatsApp",
     categoria: "Utilidade",
-    mensagem: "Olá {nome}! 👋\n\nSeu boleto de R$ {valor} vence amanhã ({vencimento}).\n\n🔗 Link para pagamento: {link_boleto}\n\nQualquer dúvida, estamos à disposição!",
+    mensagem: "Olá {nome}!\n\nSeu boleto de R$ {valor} vence amanhã ({vencimento}).\n\nLink para pagamento: {link_boleto}\n\nQualquer dúvida, estamos à disposição!",
     variaveis: ["nome", "valor", "vencimento", "link_boleto"],
   },
   {
@@ -38,7 +38,7 @@ const mockTemplates = [
     nome: "Lembrete D+5",
     canal: "WhatsApp",
     categoria: "Utilidade",
-    mensagem: "Olá {nome}!\n\nIdentificamos que seu boleto no valor de R$ {valor} está pendente desde {vencimento}.\n\nPara sua comodidade, segue o link atualizado: {link_boleto}\n\nPrecisa de ajuda? Estamos aqui! 😊",
+    mensagem: "Olá {nome}!\n\nIdentificamos que seu boleto no valor de R$ {valor} está pendente desde {vencimento}.\n\nPara sua comodidade, segue o link atualizado: {link_boleto}\n\nPrecisa de ajuda? Estamos aqui!",
     variaveis: ["nome", "valor", "vencimento", "link_boleto"],
   },
   {
@@ -46,7 +46,7 @@ const mockTemplates = [
     nome: "Confirmação de Acordo",
     canal: "WhatsApp",
     categoria: "Utilidade",
-    mensagem: "Olá {nome}! ✅\n\nSeu acordo foi registrado com sucesso!\n\n📋 Detalhes:\n- Valor total: R$ {valor_acordo}\n- Parcelas: {parcelas}x de R$ {valor_parcela}\n- 1ª parcela: {data_primeira_parcela}\n\nObrigado pela confiança!",
+    mensagem: "Olá {nome}!\n\nSeu acordo foi registrado com sucesso!\n\nDetalhes:\n- Valor total: R$ {valor_acordo}\n- Parcelas: {parcelas}x de R$ {valor_parcela}\n- 1ª parcela: {data_primeira_parcela}\n\nObrigado pela confiança!",
     variaveis: ["nome", "valor_acordo", "parcelas", "valor_parcela", "data_primeira_parcela"],
   },
   {
@@ -129,7 +129,7 @@ const Templates = () => {
       nome: "Template Gerado por IA",
       canal: "WhatsApp",
       categoria: "Utilidade",
-      mensagem: "Olá {nome}! 👋\n\nEsperamos que esteja bem! Passando para lembrar que seu compromisso financeiro no valor de R$ {valor} encontra-se em aberto.\n\nSabemos que imprevistos acontecem, por isso estamos aqui para ajudar! 💪\n\n📎 Acesse seu boleto: {link_boleto}\n\nPrecisa de condições especiais? Responda esta mensagem que nossa equipe entrará em contato.\n\nContamos com você! 🤝",
+      mensagem: "Olá {nome}!\n\nEsperamos que esteja bem! Passando para lembrar que seu compromisso financeiro no valor de R$ {valor} encontra-se em aberto.\n\nSabemos que imprevistos acontecem, por isso estamos aqui para ajudar!\n\nAcesse seu boleto: {link_boleto}\n\nPrecisa de condições especiais? Responda esta mensagem que nossa equipe entrará em contato.\n\nContamos com você!",
       id: String(templates.length + 1),
       variaveis: ["nome", "valor", "link_boleto"],
     };
@@ -142,11 +142,16 @@ const Templates = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Templates</h1>
-          <p className="text-muted-foreground">Gestão de mensagens SMS, E-mail e WhatsApp</p>
+        <div className="flex items-center gap-3">
+          <div className="rounded-xl p-2.5 bg-primary/10">
+            <FileText className="h-6 w-6 text-primary" />
+          </div>
+          <div>
+            <h1 className="font-heading text-2xl font-bold">Templates</h1>
+            <p className="text-sm text-muted-foreground">Gestão de mensagens SMS, E-mail e WhatsApp</p>
+          </div>
         </div>
         <div className="flex gap-2">
           <Dialog open={isAIModalOpen} onOpenChange={setIsAIModalOpen}>
@@ -158,7 +163,7 @@ const Templates = () => {
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle className="flex items-center gap-2">
+                <DialogTitle className="font-heading flex items-center gap-2">
                   <Sparkles className="h-5 w-5 text-primary" />
                   Gerador de Templates com IA
                 </DialogTitle>
@@ -168,20 +173,26 @@ const Templates = () => {
               </DialogHeader>
               <div className="py-6 space-y-4">
                 <div className="p-4 bg-success/10 rounded-lg border border-success/20">
-                  <h4 className="font-semibold text-success mb-2">✅ Práticas Anti-Ban</h4>
+                  <h4 className="font-semibold text-success mb-2 flex items-center gap-2">
+                    <Sparkles className="h-4 w-4" />
+                    Práticas Anti-Ban
+                  </h4>
                   <ul className="text-sm space-y-1 text-muted-foreground">
-                    <li>• Mensagens de utilidade (não marketing)</li>
-                    <li>• Tom amigável e não ameaçador</li>
-                    <li>• Variáveis dinâmicas personalizadas</li>
-                    <li>• Opção de resposta/contato</li>
+                    <li>- Mensagens de utilidade (não marketing)</li>
+                    <li>- Tom amigável e não ameaçador</li>
+                    <li>- Variáveis dinâmicas personalizadas</li>
+                    <li>- Opção de resposta/contato</li>
                   </ul>
                 </div>
                 <div className="p-4 bg-destructive/10 rounded-lg border border-destructive/20">
-                  <h4 className="font-semibold text-destructive mb-2">❌ Evitar</h4>
+                  <h4 className="font-semibold text-destructive mb-2 flex items-center gap-2">
+                    <Sparkles className="h-4 w-4" />
+                    Evitar
+                  </h4>
                   <ul className="text-sm space-y-1 text-muted-foreground">
-                    <li>• Ameaças ou linguagem agressiva</li>
-                    <li>• Spam ou mensagens em massa</li>
-                    <li>• Conteúdo promocional excessivo</li>
+                    <li>- Ameaças ou linguagem agressiva</li>
+                    <li>- Spam ou mensagens em massa</li>
+                    <li>- Conteúdo promocional excessivo</li>
                   </ul>
                 </div>
               </div>
@@ -189,7 +200,7 @@ const Templates = () => {
                 <Button variant="outline" onClick={() => setIsAIModalOpen(false)}>
                   Cancelar
                 </Button>
-                <Button onClick={generateAITemplate} className="bg-primary hover:bg-primary/90">
+                <Button onClick={generateAITemplate}>
                   <Sparkles className="h-4 w-4 mr-2" />
                   Gerar Template
                 </Button>
@@ -198,14 +209,14 @@ const Templates = () => {
           </Dialog>
           <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-primary hover:bg-primary/90">
+              <Button>
                 <Plus className="h-4 w-4 mr-2" />
                 Novo Template
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-2xl">
               <DialogHeader>
-                <DialogTitle>Criar Novo Template</DialogTitle>
+                <DialogTitle className="font-heading">Criar Novo Template</DialogTitle>
                 <DialogDescription>
                   Use variáveis no formato {"{nome}"} para personalização
                 </DialogDescription>
@@ -220,6 +231,7 @@ const Templates = () => {
                         setNewTemplate({ ...newTemplate, nome: e.target.value })
                       }
                       placeholder="Ex: Lembrete D+7"
+                      className="rounded-lg"
                     />
                   </div>
                   <div className="grid gap-2">
@@ -230,7 +242,7 @@ const Templates = () => {
                         setNewTemplate({ ...newTemplate, canal: value })
                       }
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="rounded-lg">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -250,6 +262,7 @@ const Templates = () => {
                     }
                     placeholder="Digite a mensagem do template..."
                     rows={6}
+                    className="rounded-lg"
                   />
                 </div>
                 <div className="text-sm text-muted-foreground">
@@ -268,7 +281,7 @@ const Templates = () => {
       </div>
 
       {/* Search */}
-      <Card>
+      <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
         <CardContent className="pt-6">
           <div className="relative max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -276,7 +289,7 @@ const Templates = () => {
               placeholder="Buscar template..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              className="pl-10 rounded-lg"
             />
           </div>
         </CardContent>
@@ -285,12 +298,12 @@ const Templates = () => {
       {/* Templates Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {filteredTemplates.map((template) => (
-          <Card key={template.id}>
+          <Card key={template.id} className="border-0 shadow-sm hover:shadow-md transition-shadow">
             <CardHeader className="pb-2">
               <div className="flex justify-between items-start">
                 <div className="flex items-center gap-2">
                   {getCanalIcon(template.canal)}
-                  <CardTitle className="text-lg">{template.nome}</CardTitle>
+                  <CardTitle className="font-heading text-lg">{template.nome}</CardTitle>
                 </div>
                 <div className="flex gap-1">
                   <Button variant="ghost" size="icon" onClick={() => handleCopy(template.mensagem)}>

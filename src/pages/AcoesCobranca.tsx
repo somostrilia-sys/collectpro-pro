@@ -91,7 +91,7 @@ const AcoesCobranca = () => {
       case "WhatsApp":
         return <MessageSquare className="h-4 w-4 text-success" />;
       case "Ligação":
-        return <Phone className="h-4 w-4 text-collectpro-blue-accent" />;
+        return <Phone className="h-4 w-4 text-primary" />;
       case "SMS":
         return <MessageSquare className="h-4 w-4 text-warning" />;
       case "E-mail":
@@ -104,7 +104,7 @@ const AcoesCobranca = () => {
   const getStatusBadge = (status: string) => {
     const colors: Record<string, string> = {
       "Enviado": "bg-success/10 text-success",
-      "Concluído": "bg-collectpro-blue-accent/10 text-collectpro-blue-accent",
+      "Concluído": "bg-primary/10 text-primary",
       "Pendente": "bg-warning/10 text-warning",
       "Lido": "bg-muted text-muted-foreground",
     };
@@ -151,11 +151,11 @@ const AcoesCobranca = () => {
         </Card>
         <Card>
           <CardContent className="pt-6 flex items-center gap-4">
-            <div className="h-10 w-10 rounded-full bg-collectpro-blue-accent/10 flex items-center justify-center">
-              <Phone className="h-5 w-5 text-collectpro-blue-accent" />
+            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <Phone className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <div className="text-2xl font-bold text-collectpro-blue-accent">{stats.ligacoes}</div>
+              <div className="text-2xl font-bold text-primary">{stats.ligacoes}</div>
               <p className="text-sm text-muted-foreground">Ligações</p>
             </div>
           </CardContent>

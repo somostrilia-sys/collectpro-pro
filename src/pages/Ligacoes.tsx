@@ -121,7 +121,7 @@ const Ligacoes = () => {
   const getResultadoBadge = (resultado: string) => {
     const colors: Record<string, string> = {
       "Acordo": "bg-success/10 text-success",
-      "Promessa": "bg-collectpro-blue-accent/10 text-collectpro-blue-accent",
+      "Promessa": "bg-primary/10 text-primary",
       "Não atendeu": "bg-warning/10 text-warning",
       "Recusou": "bg-destructive/10 text-destructive",
       "Informações": "bg-muted text-muted-foreground",
@@ -131,7 +131,7 @@ const Ligacoes = () => {
 
   const getTipoIcon = (tipo: string) => {
     if (tipo === "Entrada") return <PhoneIncoming className="h-4 w-4 text-success" />;
-    return <PhoneOutgoing className="h-4 w-4 text-collectpro-blue-accent" />;
+    return <PhoneOutgoing className="h-4 w-4 text-primary" />;
   };
 
   const stats = {
@@ -269,11 +269,11 @@ const Ligacoes = () => {
         </Card>
         <Card>
           <CardContent className="pt-6 flex items-center gap-4">
-            <div className="h-10 w-10 rounded-full bg-collectpro-blue-accent/10 flex items-center justify-center">
-              <Phone className="h-5 w-5 text-collectpro-blue-accent" />
+            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <Phone className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <div className="text-2xl font-bold text-collectpro-blue-accent">{stats.promessas}</div>
+              <div className="text-2xl font-bold text-primary">{stats.promessas}</div>
               <p className="text-sm text-muted-foreground">Promessas</p>
             </div>
           </CardContent>

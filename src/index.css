@@ -1,120 +1,110 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
-
 @layer base {
   :root {
-    /* CollectPro Color Palette */
-    --background: 210 33% 97%; /* #F5F8FA */
-    --foreground: 210 20% 15%;
+    /* CollectPro Indigo Theme */
+    --background: 210 40% 98%; /* #F8FAFC */
+    --foreground: 215 25% 15%; /* #1E293B */
 
     --card: 0 0% 100%;
-    --card-foreground: 210 20% 15%;
+    --card-foreground: 215 25% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 210 20% 15%;
+    --popover-foreground: 215 25% 15%;
 
-    --primary: 210 64% 22%; /* #1A3A5C - Azul escuro */
-    --primary-foreground: 0 0% 98%;
+    --primary: 239 84% 67%; /* #6366F1 Indigo */
+    --primary-foreground: 0 0% 100%;
 
     --secondary: 210 40% 96%;
-    --secondary-foreground: 210 64% 22%;
+    --secondary-foreground: 215 25% 25%;
 
     --muted: 210 40% 96%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted-foreground: 215 16% 47%;
 
-    --accent: 196 85% 45%; /* #087DBE - Azul accent */
-    --accent-foreground: 0 0% 98%;
+    --accent: 239 84% 74%; /* #818CF8 Light Indigo */
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84.2% 60.2%; /* Vermelho para inadimplência */
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 72% 51%; /* #EF4444 */
+    --destructive-foreground: 0 0% 100%;
 
-    --success: 142 76% 36%; /* Verde para status positivos */
-    --success-foreground: 0 0% 98%;
+    --success: 142 71% 45%; /* #22C55E */
+    --success-foreground: 0 0% 100%;
 
-    --warning: 45 93% 47%;
-    --warning-foreground: 0 0% 98%;
+    --warning: 38 92% 50%; /* #F59E0B */
+    --warning-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 210 64% 22%;
+    --info: 217 91% 60%; /* #3B82F6 */
+    --info-foreground: 0 0% 100%;
+
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 239 84% 67%;
 
     --radius: 0.75rem;
 
-    /* CollectPro Specific Colors */
-    --collectpro-blue-dark: 210 64% 22%; /* #1A3A5C */
-    --collectpro-blue-accent: 196 85% 45%; /* #087DBE */
-    --collectpro-background: 210 33% 97%; /* #F5F8FA */
-    --collectpro-green: 142 76% 36%;
-    --collectpro-red: 0 84.2% 60.2%;
+    --sidebar-background: 234 47% 12%; /* #0F172A Dark */
+    --sidebar-foreground: 210 40% 80%;
+    --sidebar-primary: 239 84% 67%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 234 35% 18%;
+    --sidebar-accent-foreground: 210 40% 92%;
+    --sidebar-border: 234 35% 20%;
+    --sidebar-ring: 239 84% 67%;
 
-    /* Gradients for KPIs */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--collectpro-blue-dark)), hsl(var(--collectpro-blue-accent)));
-    --gradient-success: linear-gradient(135deg, hsl(var(--collectpro-green)), hsl(120 76% 45%));
-    --gradient-danger: linear-gradient(135deg, hsl(var(--collectpro-red)), hsl(0 84% 70%));
-    --gradient-warning: linear-gradient(135deg, hsl(var(--warning)), hsl(45 93% 60%));
-
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 210 20% 15%;
-    --sidebar-primary: 210 64% 22%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 210 40% 96%;
-    --sidebar-accent-foreground: 210 64% 22%;
-    --sidebar-border: 214.3 31.8% 91.4%;
-    --sidebar-ring: 196 85% 45%;
+    --chart-1: 239 84% 67%;
+    --chart-2: 142 71% 45%;
+    --chart-3: 38 92% 50%;
+    --chart-4: 0 72% 51%;
+    --chart-5: 217 91% 60%;
   }
 
   .dark {
-    /* CollectPro Dark Mode */
-    --background: 210 64% 8%;
+    --background: 234 47% 7%;
     --foreground: 210 40% 98%;
 
-    --card: 210 64% 12%;
+    --card: 234 47% 10%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 210 64% 12%;
+    --popover: 234 47% 10%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 196 85% 45%; /* Azul accent no modo escuro */
-    --primary-foreground: 210 64% 8%;
+    --primary: 239 84% 67%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 50% 20%;
+    --secondary: 234 35% 18%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 210 50% 20%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 234 35% 18%;
+    --muted-foreground: 215 20% 65%;
 
-    --accent: 196 85% 45%;
-    --accent-foreground: 210 64% 8%;
+    --accent: 239 84% 74%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
 
-    --success: 142 76% 36%;
-    --success-foreground: 0 0% 98%;
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
 
-    --border: 210 50% 25%;
-    --input: 210 50% 25%;
-    --ring: 196 85% 45%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
 
-    --collectpro-blue-dark: 210 64% 22%;
-    --collectpro-blue-accent: 196 85% 45%;
-    --collectpro-background: 210 64% 8%;
-    --collectpro-green: 142 76% 36%;
-    --collectpro-red: 0 84.2% 60.2%;
+    --border: 234 35% 22%;
+    --input: 234 35% 22%;
+    --ring: 239 84% 67%;
 
-    --sidebar-background: 210 64% 10%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 196 85% 45%;
-    --sidebar-primary-foreground: 210 64% 8%;
-    --sidebar-accent: 210 50% 20%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 210 50% 25%;
-    --sidebar-ring: 196 85% 45%;
+    --sidebar-background: 234 47% 8%;
+    --sidebar-foreground: 210 40% 80%;
+    --sidebar-primary: 239 84% 67%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 234 35% 15%;
+    --sidebar-accent-foreground: 210 40% 92%;
+    --sidebar-border: 234 35% 18%;
+    --sidebar-ring: 239 84% 67%;
   }
 }
 
@@ -124,6 +114,11 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
   }
 }

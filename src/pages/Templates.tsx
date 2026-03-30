@@ -116,7 +116,7 @@ const Templates = () => {
       case "WhatsApp":
         return <MessageSquare className="h-4 w-4 text-success" />;
       case "E-mail":
-        return <Mail className="h-4 w-4 text-collectpro-blue-accent" />;
+        return <Mail className="h-4 w-4 text-primary" />;
       case "SMS":
         return <Smartphone className="h-4 w-4 text-warning" />;
       default:
@@ -151,7 +151,7 @@ const Templates = () => {
         <div className="flex gap-2">
           <Dialog open={isAIModalOpen} onOpenChange={setIsAIModalOpen}>
             <DialogTrigger asChild>
-              <Button variant="outline" className="border-collectpro-blue-accent text-collectpro-blue-accent">
+              <Button variant="outline" className="border-primary text-primary">
                 <Sparkles className="h-4 w-4 mr-2" />
                 Gerar com IA
               </Button>
@@ -159,7 +159,7 @@ const Templates = () => {
             <DialogContent>
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-collectpro-blue-accent" />
+                  <Sparkles className="h-5 w-5 text-primary" />
                   Gerador de Templates com IA
                 </DialogTitle>
                 <DialogDescription>
@@ -189,7 +189,7 @@ const Templates = () => {
                 <Button variant="outline" onClick={() => setIsAIModalOpen(false)}>
                   Cancelar
                 </Button>
-                <Button onClick={generateAITemplate} className="bg-collectpro-blue-accent hover:bg-collectpro-blue-accent/90">
+                <Button onClick={generateAITemplate} className="bg-primary hover:bg-primary/90">
                   <Sparkles className="h-4 w-4 mr-2" />
                   Gerar Template
                 </Button>

@@ -127,8 +127,8 @@ const Metricas = () => {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-full bg-collectpro-blue-accent/10 flex items-center justify-center">
-                <Users className="h-6 w-6 text-collectpro-blue-accent" />
+              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <Users className="h-6 w-6 text-primary" />
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Acordos Fechados</p>
@@ -158,7 +158,7 @@ const Metricas = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-collectpro-blue-accent" />
+              <TrendingUp className="h-5 w-5 text-primary" />
               Evolução da Arrecadação
             </CardTitle>
             <CardDescription>
@@ -204,7 +204,7 @@ const Metricas = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5 text-collectpro-blue-accent" />
+              <Users className="h-5 w-5 text-primary" />
               Acordos e Ligações por Mês
             </CardTitle>
             <CardDescription>
@@ -223,7 +223,7 @@ const Metricas = () => {
                 <Bar
                   yAxisId="left"
                   dataKey="acordos"
-                  fill="hsl(var(--collectpro-blue-accent))"
+                  fill="hsl(var(--primary))"
                   name="Acordos"
                   radius={[4, 4, 0, 0]}
                 />
@@ -256,7 +256,7 @@ const Metricas = () => {
                 className="p-4 border rounded-lg text-center"
               >
                 <p className="text-sm text-muted-foreground mb-2">{channel.canal}</p>
-                <div className="text-3xl font-bold text-collectpro-blue-accent mb-1">
+                <div className="text-3xl font-bold text-primary mb-1">
                   {channel.efetividade}%
                 </div>
                 <p className="text-xs text-muted-foreground">

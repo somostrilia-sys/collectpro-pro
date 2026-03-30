@@ -101,7 +101,7 @@ const Tickets = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "Aberto":
-        return <Badge className="bg-collectpro-blue-accent/10 text-collectpro-blue-accent">Aberto</Badge>;
+        return <Badge className="bg-primary/10 text-primary">Aberto</Badge>;
       case "Em andamento":
         return <Badge className="bg-warning/10 text-warning">Em andamento</Badge>;
       case "Aguardando cliente":
@@ -229,11 +229,11 @@ const Tickets = () => {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
-              <div className="h-10 w-10 rounded-full bg-collectpro-blue-accent/10 flex items-center justify-center">
-                <AlertCircle className="h-5 w-5 text-collectpro-blue-accent" />
+              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <AlertCircle className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <div className="text-2xl font-bold text-collectpro-blue-accent">{stats.abertos}</div>
+                <div className="text-2xl font-bold text-primary">{stats.abertos}</div>
                 <p className="text-sm text-muted-foreground">Abertos</p>
               </div>
             </div>

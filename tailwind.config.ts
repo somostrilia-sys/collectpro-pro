@@ -65,13 +65,14 @@ export default {
           DEFAULT: "hsl(var(--warning))",
           foreground: "hsl(var(--warning-foreground))",
         },
-        collectpro: {
-          "blue-dark": "hsl(var(--collectpro-blue-dark))",
-          "blue-accent": "hsl(var(--collectpro-blue-accent))",
-          background: "hsl(var(--collectpro-background))",
-          green: "hsl(var(--collectpro-green))",
-          red: "hsl(var(--collectpro-red))",
+        info: {
+          DEFAULT: "hsl(var(--info))",
+          foreground: "hsl(var(--info-foreground))",
         },
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        heading: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'],
       },
       borderRadius: {
         lg: "var(--radius)",

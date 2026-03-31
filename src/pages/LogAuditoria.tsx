@@ -78,7 +78,12 @@ export default function LogAuditoria() {
         </CardHeader>
         <CardContent>
           <div className="space-y-0 divide-y">
-            {filtered.map((log) => (
+            {filtered.length === 0 ? (
+              <div className="flex flex-col items-center gap-2 text-muted-foreground py-12">
+                <History className="h-8 w-8 opacity-40" />
+                <p className="text-sm">Nenhum registro encontrado.</p>
+              </div>
+            ) : filtered.map((log) => (
               <div key={log.id} className="py-4 flex items-start gap-4">
                 <div className="rounded-xl p-2.5 bg-primary/10 flex-shrink-0">
                   <User className="h-5 w-5 text-primary" />

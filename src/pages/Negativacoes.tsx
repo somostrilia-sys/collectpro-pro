@@ -362,7 +362,16 @@ const Negativacoes = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredNegativacoes.map((neg) => (
+              {filteredNegativacoes.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={8} className="h-32 text-center">
+                    <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                      <AlertTriangle className="h-8 w-8 opacity-40" />
+                      <p className="text-sm">Nenhuma negativação encontrada.</p>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : filteredNegativacoes.map((neg) => (
                 <TableRow key={neg.id}>
                   <TableCell className="font-medium">{neg.associado}</TableCell>
                   <TableCell>{neg.cpf}</TableCell>

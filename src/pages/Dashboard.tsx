@@ -8,6 +8,8 @@ import {
   Sparkles,
   ArrowUpRight,
   ArrowDownRight,
+  Handshake,
+  Loader2,
 } from "lucide-react";
 import { KPICard } from "@/components/ui/kpi-card";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,6 +29,7 @@ import {
   Bar,
   Legend,
 } from "recharts";
+import { useAcordosStats } from "@/hooks/useCollectData";
 
 const monthlyData = [
   { mes: "Out", arrecadacao: 151000, meta: 155000 },
@@ -51,6 +54,8 @@ const collaboratorData = [
 ];
 
 const Dashboard = () => {
+  const { data: stats, isLoading } = useAcordosStats();
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -62,7 +67,11 @@ const Dashboard = () => {
           </p>
         </div>
         <Badge variant="secondary" className="text-xs font-medium">
-          <span className="h-1.5 w-1.5 rounded-full bg-success mr-1.5 inline-block" />
+          {isLoading ? (
+            <Loader2 className="h-3 w-3 animate-spin mr-1.5" />
+          ) : (
+            <span className="h-1.5 w-1.5 rounded-full bg-success mr-1.5 inline-block" />
+          )}
           Atualizado agora
         </Badge>
       </div>
@@ -71,7 +80,7 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <KPICard
           title="Total em Aberto"
-          value="R$ 1.247.000"
+          value={`R$ ${stats?.totalEmAberto.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) ?? '0'}`}
           change="+8% vs mês anterior"
           changeType="negative"
           icon={DollarSign}
@@ -79,7 +88,7 @@ const Dashboard = () => {
         />
         <KPICard
           title="Taxa de Recuperação"
-          value="68%"
+          value={`${stats?.taxaRecuperacao ?? 0}%`}
           change="+4pp vs mês anterior"
           changeType="positive"
           icon={TrendingUp}
@@ -87,18 +96,18 @@ const Dashboard = () => {
         />
         <KPICard
           title="Acordos esta Semana"
-          value="47"
+          value={String(stats?.acordosSemana ?? 0)}
           change="+12 vs semana passada"
           changeType="positive"
           icon={Users}
           gradient="success"
         />
         <KPICard
-          title="NPS Cobrança"
-          value="72"
+          title="Total de Acordos"
+          value={String(stats?.total ?? 0)}
           change="+3 pts vs mês anterior"
           changeType="positive"
-          icon={BarChart3}
+          icon={Handshake}
           gradient="primary"
         />
       </div>

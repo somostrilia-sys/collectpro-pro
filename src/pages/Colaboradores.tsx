@@ -324,7 +324,16 @@ const Colaboradores = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {sortedByRecovery.map((colaborador, index) => (
+              {sortedByRecovery.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={8} className="h-32 text-center">
+                    <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                      <Users className="h-8 w-8 opacity-40" />
+                      <p className="text-sm">Nenhum colaborador cadastrado.</p>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : sortedByRecovery.map((colaborador, index) => (
                 <TableRow key={colaborador.id}>
                   <TableCell>{getRankingBadge(index)}</TableCell>
                   <TableCell>

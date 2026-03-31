@@ -336,7 +336,16 @@ const Ligacoes = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredLigacoes.map((ligacao) => (
+              {filteredLigacoes.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="h-32 text-center">
+                    <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                      <Phone className="h-8 w-8 opacity-40" />
+                      <p className="text-sm">Nenhuma ligação registrada.</p>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : filteredLigacoes.map((ligacao) => (
                 <TableRow key={ligacao.id}>
                   <TableCell>{getTipoIcon(ligacao.tipo)}</TableCell>
                   <TableCell className="font-medium">{ligacao.associado}</TableCell>

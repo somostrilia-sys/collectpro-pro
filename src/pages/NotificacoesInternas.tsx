@@ -161,7 +161,12 @@ export default function NotificacoesInternas() {
             tab === "nao-lidas" ? naoLidas : tab === "lidas" ? lidas : notificacoes;
           return (
             <TabsContent key={tab} value={tab} className="space-y-3">
-              {items.map((n) => (
+              {items.length === 0 ? (
+                <div className="flex flex-col items-center gap-2 text-muted-foreground py-12">
+                  <Bell className="h-8 w-8 opacity-40" />
+                  <p className="text-sm">Nenhuma notificação encontrada.</p>
+                </div>
+              ) : items.map((n) => (
                 <Card key={n.id} className={`border-0 shadow-sm hover:shadow-md transition-shadow ${!n.lida ? "border-l-4 border-l-primary" : ""}`}>
                   <CardContent className="pt-4 pb-4 flex items-start gap-4">
                     <div className="rounded-xl p-2 bg-muted/50">

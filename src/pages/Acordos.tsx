@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Plus,
   Search,
@@ -13,7 +13,9 @@ import {
   MessageSquare,
   History,
   AlertTriangle,
+  Loader2,
 } from "lucide-react";
+import { useAcordosList, useCreateAcordo, useUpdateAcordo } from "@/hooks/useCollectData";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -115,144 +117,7 @@ const StatusBadgeAcordo = ({ status }: { status: StatusAcordo }) => {
   }
 };
 
-// ─── Mock Data ────────────────────────────────────────────────────────────────
-
-const mockAcordos: Acordo[] = [
-  {
-    id: "1",
-    associado: "Maria Aparecida Santos",
-    cpf: "987.654.321-00",
-    valorOriginal: 890.0,
-    valorAcordo: 750.0,
-    status: "Pago",
-    dataAcordo: "2024-01-05",
-    dataVencimento: "2024-01-20",
-    atendente: "Rayanne Donato",
-    observacao: "Associado vendeu o veículo, quitou pendência com desconto",
-    comentarios: [
-      {
-        id: "cm1",
-        autor: "Rayanne Donato",
-        dataHora: "2024-01-05 09:15",
-        texto: "Acordo firmado via WhatsApp. Associada confirmou pagamento via PIX.",
-      },
-      {
-        id: "cm2",
-        autor: "Laleska Gelinske",
-        dataHora: "2024-01-20 11:00",
-        texto: "Pagamento confirmado. Baixa realizada no sistema.",
-      },
-    ],
-    historico: [
-      { id: "h1", descricao: "Acordo criado por Rayanne Donato", dataHora: "2024-01-05 09:00" },
-      { id: "h2", descricao: "Status alterado para Pago", dataHora: "2024-01-20 11:00" },
-    ],
-  },
-  {
-    id: "2",
-    associado: "Ana Beatriz Lima",
-    cpf: "321.654.987-00",
-    valorOriginal: 1250.0,
-    valorAcordo: 1000.0,
-    status: "Pendente",
-    dataAcordo: "2024-01-10",
-    dataVencimento: "2024-02-10",
-    atendente: "Laleska Gelinske",
-    observacao: "Associada com dificuldades financeiras, solicitou desconto",
-    comentarios: [
-      {
-        id: "cm3",
-        autor: "Laleska Gelinske",
-        dataHora: "2024-01-10 14:30",
-        texto: "Associada comprometeu pagamento para dia 10/02. Aguardando confirmação.",
-      },
-    ],
-    historico: [
-      { id: "h3", descricao: "Acordo criado por Laleska Gelinske", dataHora: "2024-01-10 14:00" },
-    ],
-  },
-  {
-    id: "3",
-    associado: "João Carlos da Silva",
-    cpf: "123.456.789-00",
-    valorOriginal: 450.0,
-    valorAcordo: 450.0,
-    status: "Pago",
-    dataAcordo: "2023-12-15",
-    dataVencimento: "2023-12-30",
-    atendente: "Carla Mendes",
-    observacao: "Pagou sem desconto, apenas renegociou prazo",
-    comentarios: [],
-    historico: [
-      { id: "h4", descricao: "Acordo criado por Carla Mendes", dataHora: "2023-12-15 10:00" },
-      { id: "h5", descricao: "Status alterado para Pago", dataHora: "2023-12-30 16:30" },
-    ],
-  },
-  {
-    id: "4",
-    associado: "Pedro Henrique Oliveira",
-    cpf: "456.789.123-00",
-    valorOriginal: 680.0,
-    valorAcordo: 570.0,
-    status: "Vencido",
-    dataAcordo: "2024-01-02",
-    dataVencimento: "2024-01-15",
-    atendente: "Fernanda Lima",
-    observacao: "Associado não retornou após aceite do acordo",
-    comentarios: [
-      {
-        id: "cm4",
-        autor: "Fernanda Lima",
-        dataHora: "2024-01-16 09:00",
-        texto: "Tentei contato via WhatsApp e ligação. Sem retorno. Acordo venceu ontem.",
-      },
-    ],
-    historico: [
-      { id: "h6", descricao: "Acordo criado por Fernanda Lima", dataHora: "2024-01-02 08:00" },
-      { id: "h7", descricao: "Status alterado para Vencido", dataHora: "2024-01-16 09:00" },
-    ],
-  },
-  {
-    id: "5",
-    associado: "Carlos Eduardo Ferreira",
-    cpf: "654.321.098-00",
-    valorOriginal: 920.0,
-    valorAcordo: 736.0,
-    status: "Pendente",
-    dataAcordo: "2024-01-18",
-    dataVencimento: "2024-02-05",
-    atendente: "Rayanne Donato",
-    observacao: "Desconto de 20% concedido. Associado confirmará pagamento na próxima semana.",
-    comentarios: [],
-    historico: [
-      { id: "h8", descricao: "Acordo criado por Rayanne Donato", dataHora: "2024-01-18 11:00" },
-    ],
-  },
-  {
-    id: "6",
-    associado: "Fernanda Costa Ribeiro",
-    cpf: "741.852.963-00",
-    valorOriginal: 560.0,
-    valorAcordo: 476.0,
-    status: "Cancelado",
-    dataAcordo: "2024-01-08",
-    dataVencimento: "2024-01-22",
-    atendente: "Carla Mendes",
-    observacao: "Associada desistiu do acordo após negociação",
-    comentarios: [
-      {
-        id: "cm5",
-        autor: "Carla Mendes",
-        dataHora: "2024-01-09 15:00",
-        texto: "Associada ligou desistindo. Disse que vai regularizar de outra forma.",
-      },
-    ],
-    historico: [
-      { id: "h9", descricao: "Acordo criado por Carla Mendes", dataHora: "2024-01-08 10:00" },
-      { id: "h10", descricao: "Status alterado para Cancelado", dataHora: "2024-01-09 15:30" },
-    ],
-  },
-];
+// ─── (mock data removed — data now comes from Supabase) ──────────────────────
 
 // ─── Form vazio ───────────────────────────────────────────────────────────────
 
@@ -308,7 +173,19 @@ const DescontoInfo = ({
 const Acordos = () => {
   const { toast } = useToast();
 
-  const [acordos, setAcordos] = useState<Acordo[]>(mockAcordos);
+  const { data: acordosData = [], isLoading: loadingAcordos } = useAcordosList();
+  const createAcordo = useCreateAcordo();
+  const updateAcordo = useUpdateAcordo();
+
+  // local overlay for comments and historico (these aren't persisted to DB):
+  const [localOverlays, setLocalOverlays] = useState<Record<string, { comentarios: Comentario[]; historico: HistoricoItem[] }>>({});
+
+  // Merge overlays into acordos for display
+  const acordos: Acordo[] = acordosData.map((a) => ({
+    ...a,
+    comentarios: localOverlays[a.id]?.comentarios ?? a.comentarios,
+    historico: localOverlays[a.id]?.historico ?? a.historico,
+  }));
 
   // Filtros
   const [searchTerm, setSearchTerm] = useState("");
@@ -358,41 +235,37 @@ const Acordos = () => {
   const handleCriarAcordo = () => {
     const vOrig = Number(formNovo.valorOriginal);
     const vAcord = Number(formNovo.valorAcordo);
-    if (!formNovo.associado.trim() || !vOrig || !vAcord || !formNovo.dataVencimento) {
+    if (!vOrig || !vAcord || !formNovo.dataVencimento) {
       toast({
         title: "Campos obrigatórios",
-        description: "Preencha associado, valores e data de vencimento.",
+        description: "Preencha valores e data de vencimento.",
         variant: "destructive",
       });
       return;
     }
-    const agora = new Date().toISOString().slice(0, 16).replace("T", " ");
-    const novo: Acordo = {
-      id: String(acordos.length + 1),
-      associado: formNovo.associado,
-      cpf: formNovo.cpf,
+    createAcordo.mutate({
       valorOriginal: vOrig,
       valorAcordo: vAcord,
-      status: "Pendente",
-      dataAcordo: new Date().toISOString().split("T")[0],
       dataVencimento: formNovo.dataVencimento,
+      associadoNome: formNovo.associado,
       atendente: formNovo.atendente,
       observacao: formNovo.observacao,
-      comentarios: [],
-      historico: [
-        {
-          id: `h${Date.now()}`,
-          descricao: `Acordo criado por ${formNovo.atendente}`,
-          dataHora: agora,
-        },
-      ],
-    };
-    setAcordos([novo, ...acordos]);
-    setOpenNovo(false);
-    setFormNovo(emptyForm);
-    toast({
-      title: "Acordo criado!",
-      description: `Acordo para ${novo.associado} registrado com sucesso.`,
+    }, {
+      onSuccess: () => {
+        setOpenNovo(false);
+        setFormNovo(emptyForm);
+        toast({
+          title: "Acordo criado!",
+          description: "Acordo registrado com sucesso.",
+        });
+      },
+      onError: () => {
+        toast({
+          title: "Erro ao criar acordo",
+          description: "Não foi possível salvar o acordo. Tente novamente.",
+          variant: "destructive",
+        });
+      },
     });
   };
 
@@ -412,12 +285,12 @@ const Acordos = () => {
       dataHora: new Date().toISOString().slice(0, 16).replace("T", " "),
       texto: novoComentario,
     };
-    const updated = acordos.map((a) =>
-      a.id === acordoVisualizado.id
-        ? { ...a, comentarios: [comentario, ...a.comentarios] }
-        : a
-    );
-    setAcordos(updated);
+    const id = acordoVisualizado.id;
+    const existing = localOverlays[id] ?? { comentarios: acordoVisualizado.comentarios, historico: acordoVisualizado.historico };
+    setLocalOverlays((prev) => ({
+      ...prev,
+      [id]: { ...existing, comentarios: [comentario, ...existing.comentarios] },
+    }));
     setAcordoVisualizado((prev) =>
       prev ? { ...prev, comentarios: [comentario, ...prev.comentarios] } : prev
     );
@@ -452,45 +325,52 @@ const Acordos = () => {
     const statusMudou = acordoAtual.status !== formEditar.status;
     const agora = new Date().toISOString().slice(0, 16).replace("T", " ");
 
-    const novoHistorico: HistoricoItem[] = statusMudou
-      ? [
-          ...acordoAtual.historico,
-          {
-            id: `h${Date.now()}`,
-            descricao: `Status alterado para ${formEditar.status}`,
-            dataHora: agora,
-          },
-        ]
-      : acordoAtual.historico;
-
-    const updated = acordos.map((a) =>
-      a.id === editandoId
-        ? {
-            ...a,
-            associado: formEditar.associado,
-            cpf: formEditar.cpf,
-            valorOriginal: vOrig,
-            valorAcordo: vAcord,
-            dataVencimento: formEditar.dataVencimento,
-            atendente: formEditar.atendente,
-            observacao: formEditar.observacao,
-            status: formEditar.status,
-            historico: novoHistorico,
-          }
-        : a
-    );
-    setAcordos(updated);
-    setOpenEditar(false);
-    setEditandoId(null);
-
-    if (formEditar.status === "Pago") {
-      toast({
-        title: "Acordo marcado como pago!",
-        description: `Acordo de ${formEditar.associado} foi quitado com sucesso.`,
-      });
-    } else {
-      toast({ title: "Acordo atualizado!", description: "As alterações foram salvas." });
+    // Update historico overlay locally
+    if (statusMudou) {
+      const existing = localOverlays[editandoId] ?? { comentarios: acordoAtual.comentarios, historico: acordoAtual.historico };
+      setLocalOverlays((prev) => ({
+        ...prev,
+        [editandoId]: {
+          ...existing,
+          historico: [
+            ...existing.historico,
+            {
+              id: `h${Date.now()}`,
+              descricao: `Status alterado para ${formEditar.status}`,
+              dataHora: agora,
+            },
+          ],
+        },
+      }));
     }
+
+    updateAcordo.mutate({
+      id: editandoId,
+      status: formEditar.status,
+      valorOriginal: vOrig,
+      valorAcordo: vAcord,
+      dataVencimento: formEditar.dataVencimento,
+    }, {
+      onSuccess: () => {
+        setOpenEditar(false);
+        setEditandoId(null);
+        if (formEditar.status === "Pago") {
+          toast({
+            title: "Acordo marcado como pago!",
+            description: `Acordo de ${formEditar.associado} foi quitado com sucesso.`,
+          });
+        } else {
+          toast({ title: "Acordo atualizado!", description: "As alterações foram salvas." });
+        }
+      },
+      onError: () => {
+        toast({
+          title: "Erro ao atualizar acordo",
+          description: "Não foi possível salvar as alterações. Tente novamente.",
+          variant: "destructive",
+        });
+      },
+    });
   };
 
   // ── Render ─────────────────────────────────────────────────────────────────
@@ -672,13 +552,25 @@ const Acordos = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {acordosFiltrados.length === 0 && (
+                {loadingAcordos ? (
                   <TableRow>
-                    <TableCell colSpan={10} className="text-center py-10 text-muted-foreground">
-                      Nenhum acordo encontrado.
+                    <TableCell colSpan={10} className="h-32 text-center">
+                      <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                        <Loader2 className="h-8 w-8 opacity-40 animate-spin" />
+                        <p className="text-sm">Carregando acordos...</p>
+                      </div>
                     </TableCell>
                   </TableRow>
-                )}
+                ) : acordosFiltrados.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={10} className="h-32 text-center">
+                      <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                        <Handshake className="h-8 w-8 opacity-40" />
+                        <p className="text-sm">Nenhum acordo encontrado.</p>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : null}
                 {acordosFiltrados.map((acordo) => {
                   const desconto = calcDesconto(acordo.valorOriginal, acordo.valorAcordo);
                   return (

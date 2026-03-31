@@ -110,8 +110,11 @@ export function DataTable<TData, TValue>({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
-                  Nenhum resultado encontrado.
+                <TableCell colSpan={columns.length} className="h-32 text-center">
+                  <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                    <Search className="h-8 w-8 opacity-40" />
+                    <p className="text-sm">Nenhum resultado encontrado.</p>
+                  </div>
                 </TableCell>
               </TableRow>
             )}

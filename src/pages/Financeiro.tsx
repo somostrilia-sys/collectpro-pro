@@ -342,7 +342,16 @@ export default function Financeiro() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filtered.map(r => (
+                    {filtered.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={10} className="h-32 text-center">
+                          <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                            <DollarSign className="h-8 w-8 opacity-40" />
+                            <p className="text-sm">Nenhum recebimento encontrado.</p>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ) : filtered.map(r => (
                       <TableRow key={r.id} className={r.associado === "Não identificado" ? "bg-warning/5" : ""}>
                         <TableCell className="whitespace-nowrap text-sm">{r.dataHora}</TableCell>
                         <TableCell className="font-medium text-sm">{r.associado}</TableCell>

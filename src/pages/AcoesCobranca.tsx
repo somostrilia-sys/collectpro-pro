@@ -229,7 +229,16 @@ const AcoesCobranca = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredAcoes.map((acao) => (
+              {filteredAcoes.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="h-32 text-center">
+                    <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                      <Zap className="h-8 w-8 opacity-40" />
+                      <p className="text-sm">Nenhuma ação de cobrança encontrada.</p>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : filteredAcoes.map((acao) => (
                 <TableRow key={acao.id}>
                   <TableCell>
                     <div className="flex items-center gap-2">

@@ -301,7 +301,12 @@ const Tickets = () => {
 
           <ScrollArea className="h-[500px]">
             <div className="space-y-2">
-              {filteredTickets.map((ticket) => (
+              {filteredTickets.length === 0 ? (
+                <div className="flex flex-col items-center gap-2 text-muted-foreground py-12">
+                  <MessageSquare className="h-8 w-8 opacity-40" />
+                  <p className="text-sm">Nenhum ticket encontrado.</p>
+                </div>
+              ) : filteredTickets.map((ticket) => (
                 <Card
                   key={ticket.id}
                   className={`cursor-pointer border-0 shadow-sm hover:shadow-md transition-shadow ${

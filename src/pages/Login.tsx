@@ -76,14 +76,12 @@ export default function Login() {
       >
         <div className="w-full max-w-md">
           {/* Logo + subtítulo */}
-          <div className="flex flex-col items-center mb-8 gap-2">
+          <div className="flex flex-col items-center mb-6">
             <img
               src="/logo-collectpro.png"
               alt="CollectPro"
-              className="h-16 object-contain"
-              style={{ maxWidth: '240px' }}
+              className="w-full object-contain"
             />
-            <p className="text-sm text-white/40 mt-1">Bem-vindo de volta</p>
           </div>
 
           {/* Card do formulário */}

@@ -67,7 +67,7 @@ export default function Login() {
 
           {/* Logo */}
           <div className="flex flex-col items-center gap-3">
-            <img src="/logo-collectpro.png" alt="CollectPro" className="h-24 object-contain" />
+            <img src="/logo-collectpro.png" alt="CollectPro" className="w-full max-w-xs object-contain" />
             <p className="text-sm text-white/50">Acesse sua conta para continuar</p>
           </div>
 

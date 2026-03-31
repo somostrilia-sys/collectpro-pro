@@ -55,81 +55,168 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex">
-      {/* Left Panel - Designer image */}
+      {/* Left Panel - Designer image fullscreen */}
       <div
-        className="hidden lg:block lg:w-1/2 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: "url('/login-bg.png')" }}
-      />
+        className="hidden lg:flex lg:w-1/2 relative"
+        style={{
+          backgroundImage: "url('/login-bg.png')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+        }}
+      >
+        {/* Overlay sutil para garantir legibilidade */}
+        <div className="absolute inset-0 bg-black/10" />
+      </div>
 
       {/* Right Panel - Form */}
-      <div className="flex-1 flex items-center justify-center p-6 sm:p-12" style={{ backgroundColor: '#0f1623' }}>
-        <div className="w-full max-w-md space-y-8">
-
-          {/* Logo */}
-          <div className="flex flex-col items-center gap-3">
-            <img src="/logo-collectpro.png" alt="CollectPro" className="w-full max-w-xs object-contain" />
-            <p className="text-sm text-white/50">Acesse sua conta para continuar</p>
+      <div
+        className="flex-1 flex items-center justify-center p-6 sm:p-12"
+        style={{ backgroundColor: '#0d1117' }}
+      >
+        <div className="w-full max-w-sm">
+          {/* Logo + subtítulo */}
+          <div className="flex flex-col items-center mb-8 gap-2">
+            <img
+              src="/logo-collectpro.png"
+              alt="CollectPro"
+              className="h-12 object-contain"
+              style={{ maxWidth: '200px' }}
+            />
+            <p className="text-xs text-white/40 tracking-wide uppercase mt-1">Gestão de cobrança inteligente</p>
           </div>
 
-          <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 h-11" style={{ backgroundColor: 'rgba(255,255,255,0.07)' }}>
-              <TabsTrigger value="login" className="text-sm font-medium text-white data-[state=active]:bg-[#2e5ac1] data-[state=active]:text-white">Entrar</TabsTrigger>
-              <TabsTrigger value="signup" className="text-sm font-medium text-white/60 data-[state=active]:bg-[#2e5ac1] data-[state=active]:text-white">Criar Conta</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="login">
-              <form onSubmit={handleLogin} className="space-y-4 pt-6">
-                <div className="space-y-2">
-                  <Label htmlFor="login-email" className="text-sm font-medium text-white/80">E-mail</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
-                    <Input id="login-email" type="email" placeholder="seu@email.com" className="pl-10 h-11 bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-[#2e5ac1]" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} required />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="login-password" className="text-sm font-medium text-white/80">Senha</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
-                    <Input id="login-password" type="password" placeholder="Sua senha" className="pl-10 h-11 bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-[#2e5ac1]" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} required minLength={6} />
-                  </div>
-                </div>
-                <Button type="submit" className="w-full h-11 font-medium text-white" style={{ backgroundColor: '#2e5ac1' }} disabled={loading}>
-                  {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ArrowRight className="mr-2 h-4 w-4" />}
+          {/* Card do formulário */}
+          <div
+            className="rounded-2xl p-7"
+            style={{ backgroundColor: '#161b22', border: '1px solid rgba(255,255,255,0.06)' }}
+          >
+            <Tabs defaultValue="login" className="w-full">
+              <TabsList
+                className="grid w-full grid-cols-2 h-10 mb-6 rounded-lg"
+                style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}
+              >
+                <TabsTrigger
+                  value="login"
+                  className="text-sm font-medium rounded-md text-white/50 data-[state=active]:text-white data-[state=active]:shadow-none"
+                  style={{ ['--tw-data-active-bg' as any]: '#2e5ac1' }}
+                >
                   Entrar
-                </Button>
-              </form>
-            </TabsContent>
-
-            <TabsContent value="signup">
-              <form onSubmit={handleSignUp} className="space-y-4 pt-6">
-                <div className="space-y-2">
-                  <Label htmlFor="signup-name" className="text-sm font-medium text-white/80">Nome completo</Label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
-                    <Input id="signup-name" type="text" placeholder="Seu nome" className="pl-10 h-11 bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-[#2e5ac1]" value={signupName} onChange={(e) => setSignupName(e.target.value)} required />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-email" className="text-sm font-medium text-white/80">E-mail</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
-                    <Input id="signup-email" type="email" placeholder="seu@email.com" className="pl-10 h-11 bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-[#2e5ac1]" value={signupEmail} onChange={(e) => setSignupEmail(e.target.value)} required />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-password" className="text-sm font-medium text-white/80">Senha</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
-                    <Input id="signup-password" type="password" placeholder="Mínimo 6 caracteres" className="pl-10 h-11 bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-[#2e5ac1]" value={signupPassword} onChange={(e) => setSignupPassword(e.target.value)} required minLength={6} />
-                  </div>
-                </div>
-                <Button type="submit" className="w-full h-11 font-medium text-white" style={{ backgroundColor: '#2e5ac1' }} disabled={loading}>
-                  {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ArrowRight className="mr-2 h-4 w-4" />}
+                </TabsTrigger>
+                <TabsTrigger
+                  value="signup"
+                  className="text-sm font-medium rounded-md text-white/50 data-[state=active]:text-white data-[state=active]:shadow-none"
+                >
                   Criar Conta
-                </Button>
-              </form>
-            </TabsContent>
-          </Tabs>
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="login">
+                <form onSubmit={handleLogin} className="space-y-4">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-medium text-white/60">E-mail</Label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
+                      <Input
+                        type="email"
+                        placeholder="seu@email.com"
+                        className="pl-9 h-11 text-sm text-white placeholder:text-white/20 border-0 rounded-lg"
+                        style={{ backgroundColor: 'rgba(255,255,255,0.06)' }}
+                        value={loginEmail}
+                        onChange={(e) => setLoginEmail(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-medium text-white/60">Senha</Label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
+                      <Input
+                        type="password"
+                        placeholder="Sua senha"
+                        className="pl-9 h-11 text-sm text-white placeholder:text-white/20 border-0 rounded-lg"
+                        style={{ backgroundColor: 'rgba(255,255,255,0.06)' }}
+                        value={loginPassword}
+                        onChange={(e) => setLoginPassword(e.target.value)}
+                        required
+                        minLength={6}
+                      />
+                    </div>
+                  </div>
+                  <Button
+                    type="submit"
+                    className="w-full h-11 font-semibold text-white rounded-lg mt-2 flex items-center justify-center gap-2"
+                    style={{ backgroundColor: '#2e5ac1' }}
+                    disabled={loading}
+                  >
+                    {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <><ArrowRight className="h-4 w-4" /> Entrar</>}
+                  </Button>
+                </form>
+              </TabsContent>
+
+              <TabsContent value="signup">
+                <form onSubmit={handleSignUp} className="space-y-4">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-medium text-white/60">Nome completo</Label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
+                      <Input
+                        type="text"
+                        placeholder="Seu nome"
+                        className="pl-9 h-11 text-sm text-white placeholder:text-white/20 border-0 rounded-lg"
+                        style={{ backgroundColor: 'rgba(255,255,255,0.06)' }}
+                        value={signupName}
+                        onChange={(e) => setSignupName(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-medium text-white/60">E-mail</Label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
+                      <Input
+                        type="email"
+                        placeholder="seu@email.com"
+                        className="pl-9 h-11 text-sm text-white placeholder:text-white/20 border-0 rounded-lg"
+                        style={{ backgroundColor: 'rgba(255,255,255,0.06)' }}
+                        value={signupEmail}
+                        onChange={(e) => setSignupEmail(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-medium text-white/60">Senha</Label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
+                      <Input
+                        type="password"
+                        placeholder="Mínimo 6 caracteres"
+                        className="pl-9 h-11 text-sm text-white placeholder:text-white/20 border-0 rounded-lg"
+                        style={{ backgroundColor: 'rgba(255,255,255,0.06)' }}
+                        value={signupPassword}
+                        onChange={(e) => setSignupPassword(e.target.value)}
+                        required
+                        minLength={6}
+                      />
+                    </div>
+                  </div>
+                  <Button
+                    type="submit"
+                    className="w-full h-11 font-semibold text-white rounded-lg mt-2 flex items-center justify-center gap-2"
+                    style={{ backgroundColor: '#2e5ac1' }}
+                    disabled={loading}
+                  >
+                    {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <><ArrowRight className="h-4 w-4" /> Criar Conta</>}
+                  </Button>
+                </form>
+              </TabsContent>
+            </Tabs>
+          </div>
+
+          <p className="text-center text-white/20 text-xs mt-6">© {new Date().getFullYear()} CollectPro</p>
         </div>
       </div>
     </div>

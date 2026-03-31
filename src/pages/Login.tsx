@@ -74,21 +74,21 @@ export default function Login() {
         className="flex-1 flex items-center justify-center p-6 sm:p-12"
         style={{ backgroundColor: '#0d1117' }}
       >
-        <div className="w-full max-w-sm">
+        <div className="w-full max-w-md">
           {/* Logo + subtítulo */}
           <div className="flex flex-col items-center mb-8 gap-2">
             <img
               src="/logo-collectpro.png"
               alt="CollectPro"
-              className="h-12 object-contain"
-              style={{ maxWidth: '200px' }}
+              className="h-16 object-contain"
+              style={{ maxWidth: '240px' }}
             />
-            <p className="text-xs text-white/40 tracking-wide uppercase mt-1">Gestão de cobrança inteligente</p>
+            <p className="text-sm text-white/40 mt-1">Bem-vindo de volta</p>
           </div>
 
           {/* Card do formulário */}
           <div
-            className="rounded-2xl p-7"
+            className="rounded-2xl p-8"
             style={{ backgroundColor: '#161b22', border: '1px solid rgba(255,255,255,0.06)' }}
           >
             <Tabs defaultValue="login" className="w-full">

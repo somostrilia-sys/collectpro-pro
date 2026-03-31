@@ -57,9 +57,9 @@ export default function Login() {
     <div className="min-h-screen flex">
       {/* Left Panel - Designer image fullscreen */}
       <div
-        className="hidden lg:flex lg:w-1/2 relative"
+        className="hidden md:flex md:w-1/2 relative"
         style={{
-          backgroundImage: "url('/login-bg.png')",
+          backgroundImage: "url('/login-bg.png'), url('/login-bg.png')",
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',

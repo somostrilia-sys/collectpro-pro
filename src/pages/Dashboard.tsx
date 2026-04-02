@@ -29,7 +29,7 @@ import {
   Bar,
   Legend,
 } from "recharts";
-import { useAcordosStats } from "@/hooks/useCollectData";
+import { useAcordosStats, useDashboardKPIs, useSyncGIA } from "@/hooks/useCollectData";
 
 const monthlyData = [
   { mes: "Out", arrecadacao: 151000, meta: 155000 },
@@ -55,6 +55,8 @@ const collaboratorData = [
 
 const Dashboard = () => {
   const { data: stats, isLoading } = useAcordosStats();
+  const { data: kpis } = useDashboardKPIs();
+  const syncGIA = useSyncGIA();
 
   return (
     <div className="space-y-6">
@@ -80,32 +82,32 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <KPICard
           title="Total em Aberto"
-          value={`R$ ${stats?.totalEmAberto.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) ?? '0'}`}
-          change="+8% vs mês anterior"
+          value={`R$ ${(kpis?.valorEmAberto || stats?.totalEmAberto || 0).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`}
+          change={`${kpis?.inadimplentes || 0} inadimplentes`}
           changeType="negative"
           icon={DollarSign}
           gradient="primary"
         />
         <KPICard
-          title="Taxa de Recuperação"
-          value={`${stats?.taxaRecuperacao ?? 0}%`}
-          change="+4pp vs mês anterior"
-          changeType="positive"
+          title="Taxa de Inadimplência"
+          value={`${kpis?.taxaInadimplencia ?? stats?.taxaRecuperacao ?? 0}%`}
+          change={`${kpis?.totalAssociados || 0} associados`}
+          changeType={kpis?.taxaInadimplencia && kpis.taxaInadimplencia > 15 ? "negative" : "positive"}
           icon={TrendingUp}
-          gradient="success"
+          gradient={kpis?.taxaInadimplencia && kpis.taxaInadimplencia > 15 ? "primary" : "success"}
         />
         <KPICard
           title="Acordos esta Semana"
           value={String(stats?.acordosSemana ?? 0)}
-          change="+12 vs semana passada"
+          change={`${stats?.total || 0} total`}
           changeType="positive"
           icon={Users}
           gradient="success"
         />
         <KPICard
-          title="Total de Acordos"
-          value={String(stats?.total ?? 0)}
-          change="+3 pts vs mês anterior"
+          title="Revistorias Pendentes"
+          value={String(kpis?.revistoriasPendentes ?? 0)}
+          change={kpis?.ultimoSync ? `Sync: ${new Date(kpis.ultimoSync).toLocaleString('pt-BR')}` : "Nunca sincronizado"}
           changeType="positive"
           icon={Handshake}
           gradient="primary"

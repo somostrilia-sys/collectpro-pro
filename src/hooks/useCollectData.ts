@@ -127,6 +127,216 @@ export function useCreateAcordo() {
   });
 }
 
+// ── BOLETOS ──
+export interface BoletoRow {
+  id: string;
+  gia_id: string | null;
+  associado: string;
+  cpf: string;
+  cooperativa: string;
+  whatsapp: string | null;
+  vencimento: string;
+  mesReferencia: string;
+  valor: number;
+  status: string;
+  dataPagamento: string | null;
+  pdfUrl: string | null;
+  linkBoleto: string | null;
+  linhaDigitavel: string | null;
+  pixCopiaCola: string | null;
+  nossoNumero: string | null;
+}
+
+export function useBoletos(filtro?: { status?: string; mesRef?: string }) {
+  return useQuery<BoletoRow[]>({
+    queryKey: ["boletos", filtro],
+    queryFn: async () => {
+      let q = supabase
+        .from("boletos")
+        .select("id, gia_id, associado_id, valor, vencimento, mes_referencia, status, data_pagamento, pdf_url, link_boleto, linha_digitavel, pix_copia_cola, nosso_numero, associados(nome, cpf, cooperativa, whatsapp)")
+        .order("vencimento", { ascending: true });
+
+      if (filtro?.status && filtro.status !== "todos") {
+        q = q.eq("status", filtro.status);
+      }
+      if (filtro?.mesRef) {
+        q = q.eq("mes_referencia", filtro.mesRef);
+      }
+
+      const { data, error } = await q.limit(500);
+      if (error) return [];
+      return (data || []).map((b: any) => ({
+        id: b.id,
+        gia_id: b.gia_id,
+        associado: b.associados?.nome || "—",
+        cpf: b.associados?.cpf || "",
+        cooperativa: b.associados?.cooperativa || "",
+        whatsapp: b.associados?.whatsapp || null,
+        vencimento: b.vencimento || "",
+        mesReferencia: b.mes_referencia || "",
+        valor: b.valor || 0,
+        status: b.status || "aberto",
+        dataPagamento: b.data_pagamento,
+        pdfUrl: b.pdf_url,
+        linkBoleto: b.link_boleto,
+        linhaDigitavel: b.linha_digitavel,
+        pixCopiaCola: b.pix_copia_cola,
+        nossoNumero: b.nosso_numero,
+      }));
+    },
+    staleTime: 30_000,
+  });
+}
+
+export function useBoletosKPIs() {
+  return useQuery({
+    queryKey: ["boletos-kpis"],
+    queryFn: async () => {
+      const hoje = new Date().toISOString().split("T")[0];
+      const mesAtual = hoje.slice(0, 7);
+
+      const [
+        { count: totalAbertos },
+        { count: totalVencidos },
+        { count: totalPagos },
+        { count: totalMesAtual },
+      ] = await Promise.all([
+        supabase.from("boletos").select("id", { count: "exact", head: true }).eq("status", "aberto"),
+        supabase.from("boletos").select("id", { count: "exact", head: true }).eq("status", "vencido"),
+        supabase.from("boletos").select("id", { count: "exact", head: true }).eq("status", "pago"),
+        supabase.from("boletos").select("id", { count: "exact", head: true }).eq("mes_referencia", mesAtual).in("status", ["aberto", "vencido"]),
+      ]);
+
+      // Valor em aberto
+      const { data: abertos } = await supabase.from("boletos").select("valor").in("status", ["aberto", "vencido"]);
+      const valorAberto = (abertos || []).reduce((s: number, b: any) => s + (b.valor || 0), 0);
+
+      // Meses disponíveis
+      const { data: meses } = await supabase.from("boletos").select("mes_referencia").not("mes_referencia", "is", null).in("status", ["aberto", "vencido"]);
+      const mesesUnicos = [...new Set((meses || []).map((m: any) => m.mes_referencia))].sort().reverse();
+
+      return {
+        abertos: totalAbertos || 0,
+        vencidos: totalVencidos || 0,
+        pagos: totalPagos || 0,
+        mesAtual: totalMesAtual || 0,
+        valorAberto,
+        mesesDisponiveis: mesesUnicos as string[],
+      };
+    },
+    staleTime: 60_000,
+  });
+}
+
+// ── DASHBOARD ──
+export function useDashboardKPIs() {
+  return useQuery({
+    queryKey: ["dashboard-kpis"],
+    queryFn: async () => {
+      const [
+        { count: totalAssociados },
+        { count: inadimplentes },
+        { count: ativos },
+      ] = await Promise.all([
+        supabase.from("associados").select("id", { count: "exact", head: true }),
+        supabase.from("associados").select("id", { count: "exact", head: true }).eq("status", "inadimplente"),
+        supabase.from("associados").select("id", { count: "exact", head: true }).eq("status", "ativo"),
+      ]);
+
+      const { data: boletosAbertos } = await supabase.from("boletos").select("valor").in("status", ["aberto", "vencido"]);
+      const valorEmAberto = (boletosAbertos || []).reduce((s: number, b: any) => s + (b.valor || 0), 0);
+
+      const { count: revistorias } = await supabase.from("revistorias").select("id", { count: "exact", head: true }).eq("status", "pendente");
+
+      const { data: config } = await supabase.from("integracao_config").select("valor").eq("chave", "ultimo_sync").single();
+
+      return {
+        totalAssociados: totalAssociados || 0,
+        inadimplentes: inadimplentes || 0,
+        ativos: ativos || 0,
+        valorEmAberto,
+        revistoriasPendentes: revistorias || 0,
+        ultimoSync: config?.valor || null,
+        taxaInadimplencia: (totalAssociados || 0) > 0
+          ? parseFloat((((inadimplentes || 0) / (totalAssociados || 1)) * 100).toFixed(1))
+          : 0,
+      };
+    },
+    staleTime: 60_000,
+  });
+}
+
+// ── SYNC GIA ──
+export function useSyncGIA() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (tipo: string) => {
+      const { data, error } = await supabase.functions.invoke("collect-sync-gia", {
+        body: { tipo },
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["boletos"] });
+      queryClient.invalidateQueries({ queryKey: ["boletos-kpis"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-kpis"] });
+      queryClient.invalidateQueries({ queryKey: ["associados"] });
+    },
+  });
+}
+
+// ── ENVIAR AÇÃO GIA ──
+export function useEnviarAcaoGIA() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: { acao: string; associado_id?: string; boleto_id?: string; dados?: any }) => {
+      const { data, error } = await supabase.functions.invoke("collect-enviar-gia", {
+        body: payload,
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["boletos"] });
+      queryClient.invalidateQueries({ queryKey: ["boletos-kpis"] });
+      queryClient.invalidateQueries({ queryKey: ["acordos"] });
+    },
+  });
+}
+
+// ── REVISTORIAS ──
+export function useRevistorias() {
+  return useQuery({
+    queryKey: ["revistorias"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("revistorias")
+        .select("id, associado_id, gia_vistoria_id, link, status, resultado, ai_score, motivo, created_at, resolvido_em, associados(nome, cpf, placa)")
+        .order("created_at", { ascending: false });
+      if (error) return [];
+      return data || [];
+    },
+    staleTime: 30_000,
+  });
+}
+
+export function useCriarRevistoria() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: { associado_id: string; motivo?: string }) => {
+      const { data, error } = await supabase.functions.invoke("collect-revistoria-gia", {
+        body: { associado_id: payload.associado_id, motivo: payload.motivo || "boleto_vencido_5dias" },
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["revistorias"] });
+    },
+  });
+}
+
 export function useUpdateAcordo() {
   const queryClient = useQueryClient();
   return useMutation({

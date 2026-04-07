@@ -27,6 +27,8 @@ import {
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { MODULE_ROUTE_MAP } from "@/types/permissions";
 
 import {
   Sidebar,
@@ -111,8 +113,21 @@ export function AppSidebar() {
   const collapsed = state === "collapsed";
   const location = useLocation();
   const currentPath = location.pathname;
+  const { permissions } = useAuth();
 
   const isActive = (path: string) => currentPath === path;
+
+  // Filter menu groups based on permissions
+  const filteredGroups = menuGroups
+    .map((group) => ({
+      ...group,
+      items: group.items.filter((item) => {
+        const module = MODULE_ROUTE_MAP[item.url];
+        if (!module || !permissions) return true;
+        return permissions[module] !== "nenhum";
+      }),
+    }))
+    .filter((group) => group.items.length > 0);
 
   return (
     <Sidebar collapsible="icon" className="border-r-0">
@@ -137,7 +152,7 @@ export function AppSidebar() {
         </div>
 
         {/* Menu Groups */}
-        {menuGroups.map((group) => (
+        {filteredGroups.map((group) => (
           <SidebarGroup key={group.label} className="py-1">
             {!collapsed && (
               <SidebarGroupLabel className="text-sidebar-foreground/40 text-[10px] uppercase tracking-[0.15em] px-5 mb-0.5 font-medium">

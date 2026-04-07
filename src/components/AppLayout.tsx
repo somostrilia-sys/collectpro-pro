@@ -6,9 +6,10 @@ import { LogOut, Bell, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
-  const { user, signOut } = useAuth();
+  const { user, signOut, role, fullName } = useAuth();
 
-  const initials = user?.email?.charAt(0).toUpperCase() ?? "U";
+  const displayName = fullName || user?.email || "Usuário";
+  const initials = (fullName ? fullName.charAt(0) : user?.email?.charAt(0) ?? "U").toUpperCase();
 
   return (
     <SidebarProvider>
@@ -38,8 +39,8 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                   <span className="text-xs font-bold text-primary">{initials}</span>
                 </div>
                 <div className="hidden md:block">
-                  <p className="text-sm font-medium leading-none">{user?.email ?? "Usuário"}</p>
-                  <p className="text-[11px] text-muted-foreground">Colaborador</p>
+                  <p className="text-sm font-medium leading-none">{displayName}</p>
+                  <p className="text-[11px] text-muted-foreground">{role ?? "Colaborador"}</p>
                 </div>
               </div>
               <Button variant="ghost" size="icon" onClick={signOut} title="Sair" className="h-8 w-8 text-muted-foreground hover:text-destructive">

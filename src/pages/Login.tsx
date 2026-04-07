@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, supabaseAdmin } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -24,6 +24,21 @@ export default function Login() {
     try {
       const { error } = await supabase.auth.signInWithPassword({ email: loginEmail, password: loginPassword });
       if (error) throw error;
+
+      // Check if user is blocked
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (authUser) {
+        const { data: profile } = await supabaseAdmin
+          .from("profiles")
+          .select("role")
+          .eq("id", authUser.id)
+          .single();
+        if (profile?.role === "bloqueado") {
+          await supabase.auth.signOut();
+          throw new Error("Sua conta está bloqueada. Contate o administrador.");
+        }
+      }
+
       navigate('/');
     } catch (error: any) {
       toast({ title: 'Erro', description: error.message || 'Credenciais inválidas.', variant: 'destructive' });

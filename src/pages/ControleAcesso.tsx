@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase, supabaseAdmin } from "@/integrations/supabase/client";
+import { supabaseAdmin } from "@/integrations/supabase/client";
 import { Shield, Users, Eye, Edit, Lock, Plus, RefreshCw, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -14,33 +14,21 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
+import {
+  type NivelAcesso,
+  type Perfil,
+  type Permissoes,
+  MODULOS,
+  NIVEIS,
+  permissoesGestora,
+  permissoesColaborador,
+  permissoesAdmin,
+  getDefaultPermissoes,
+  mapRoleToPerfil,
+  mapPerfilToRole,
+} from "@/types/permissions";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-type NivelAcesso = "total" | "proprio" | "visualizar" | "nenhum";
-type Perfil = "Gestora" | "Colaborador" | "Admin";
-
-interface Permissoes {
-  dashboard: NivelAcesso;
-  associados: NivelAcesso;
-  boletos: NivelAcesso;
-  cooperativas: NivelAcesso;
-  colaboradores: NivelAcesso;
-  ligacoes: NivelAcesso;
-  acoes: NivelAcesso;
-  regua: NivelAcesso;
-  templates: NivelAcesso;
-  acordos: NivelAcesso;
-  negativacoes: NivelAcesso;
-  cancelamentos: NivelAcesso;
-  metricas: NivelAcesso;
-  tickets: NivelAcesso;
-  notificacoes: NivelAcesso;
-  integracoes: NivelAcesso;
-  auditoria: NivelAcesso;
-  exportacao: NivelAcesso;
-  acesso: NivelAcesso;
-}
+// ─── Local Types ──────────────────────────────────────────────────────────────
 
 interface Usuario {
   id: string;
@@ -53,93 +41,12 @@ interface Usuario {
   permissoes: Permissoes;
 }
 
-// ─── Constants ────────────────────────────────────────────────────────────────
-
-const MODULOS: { key: keyof Permissoes; label: string }[] = [
-  { key: "dashboard", label: "Dashboard" },
-  { key: "associados", label: "Associados" },
-  { key: "boletos", label: "Boletos" },
-  { key: "cooperativas", label: "Cooperativas" },
-  { key: "colaboradores", label: "Colaboradores" },
-  { key: "ligacoes", label: "Ligações" },
-  { key: "acoes", label: "Ações de Cobrança" },
-  { key: "regua", label: "Régua de Cobrança" },
-  { key: "templates", label: "Templates" },
-  { key: "acordos", label: "Acordos" },
-  { key: "negativacoes", label: "Negativações" },
-  { key: "cancelamentos", label: "Cancelamentos" },
-  { key: "metricas", label: "Métricas" },
-  { key: "tickets", label: "Tickets" },
-  { key: "notificacoes", label: "Notificações" },
-  { key: "integracoes", label: "Integrações" },
-  { key: "auditoria", label: "Log Auditoria" },
-  { key: "exportacao", label: "Exportação" },
-  { key: "acesso", label: "Controle de Acesso" },
-];
+// ─── Local Constants ──────────────────────────────────────────────────────────
 
 const COOPERATIVAS = [
   "Todas", "Central SP", "Central RJ", "Minas Proteção",
   "Sul Proteção", "Nordeste", "Centro-Oeste", "Norte", "Litoral",
 ];
-
-const NIVEIS: { value: NivelAcesso; label: string }[] = [
-  { value: "total", label: "Total" },
-  { value: "proprio", label: "Próprio" },
-  { value: "visualizar", label: "Visualizar" },
-  { value: "nenhum", label: "Nenhum" },
-];
-
-// ─── Default Permissions per Profile ─────────────────────────────────────────
-
-const permissoesGestora: Permissoes = {
-  dashboard: "total", associados: "total", boletos: "total", cooperativas: "total",
-  colaboradores: "total", ligacoes: "total", acoes: "total", regua: "total",
-  templates: "total", acordos: "total", negativacoes: "total", cancelamentos: "total",
-  metricas: "total", tickets: "total", notificacoes: "total", integracoes: "visualizar",
-  auditoria: "total", exportacao: "total", acesso: "visualizar",
-};
-
-const permissoesColaborador: Permissoes = {
-  dashboard: "proprio", associados: "visualizar", boletos: "visualizar", cooperativas: "nenhum",
-  colaboradores: "nenhum", ligacoes: "proprio", acoes: "proprio", regua: "visualizar",
-  templates: "visualizar", acordos: "proprio", negativacoes: "visualizar", cancelamentos: "proprio",
-  metricas: "proprio", tickets: "proprio", notificacoes: "proprio", integracoes: "nenhum",
-  auditoria: "nenhum", exportacao: "nenhum", acesso: "nenhum",
-};
-
-const permissoesAdmin: Permissoes = {
-  dashboard: "total", associados: "total", boletos: "total", cooperativas: "total",
-  colaboradores: "total", ligacoes: "total", acoes: "total", regua: "total",
-  templates: "total", acordos: "total", negativacoes: "total", cancelamentos: "total",
-  metricas: "total", tickets: "total", notificacoes: "total", integracoes: "total",
-  auditoria: "total", exportacao: "total", acesso: "total",
-};
-
-const getDefaultPermissoes = (perfil: Perfil): Permissoes => {
-  if (perfil === "Gestora") return { ...permissoesGestora };
-  if (perfil === "Admin") return { ...permissoesAdmin };
-  return { ...permissoesColaborador };
-};
-
-// ─── Role Mapping ────────────────────────────────────────────────────────────
-
-const mapRoleToPerfil = (role: string | null): Perfil => {
-  switch (role) {
-    case "admin": return "Admin";
-    case "gestora": return "Gestora";
-    default: return "Colaborador";
-  }
-};
-
-const mapPerfilToRole = (perfil: Perfil): string => {
-  switch (perfil) {
-    case "Admin": return "admin";
-    case "Gestora": return "gestora";
-    default: return "colaborador";
-  }
-};
-
-// ─── Perfis definition ────────────────────────────────────────────────────────
 
 const PERFIS_DEF = [
   {
@@ -238,7 +145,7 @@ export default function ControleAcesso() {
       // Busca todos os profiles usando service_role (bypass RLS)
       const { data: profiles, error } = await supabaseAdmin
         .from("profiles")
-        .select("id, full_name, avatar_url, role, created_at")
+        .select("id, full_name, avatar_url, role, permissions, created_at")
         .order("created_at", { ascending: true });
       if (error) throw error;
 
@@ -264,7 +171,7 @@ export default function ControleAcesso() {
           cooperativa: "Todas",
           status: (isBloqueado ? "Inativo" : "Ativo") as "Ativo" | "Inativo",
           ultimo: lastAccess,
-          permissoes: getDefaultPermissoes(perfil),
+          permissoes: p.permissions ? (p.permissions as Permissoes) : getDefaultPermissoes(perfil),
         };
       });
     },
@@ -334,12 +241,13 @@ export default function ControleAcesso() {
       if (authError) throw authError;
       if (!authData.user) throw new Error("Erro ao criar usuário.");
 
-      // Update the profile with the correct role
+      // Update the profile with the correct role and permissions
       const { error: profileError } = await supabaseAdmin
         .from("profiles")
         .update({
           full_name: novoNome.trim(),
           role: mapPerfilToRole(novoPerfil),
+          permissions: novasPermissoes,
         })
         .eq("id", authData.user.id);
       if (profileError) throw profileError;
@@ -389,6 +297,7 @@ export default function ControleAcesso() {
         .update({
           full_name: editNome.trim(),
           role: mapPerfilToRole(editPerfil),
+          permissions: editPermissoes,
         })
         .eq("id", usuarioSelecionado.id);
       if (error) throw error;

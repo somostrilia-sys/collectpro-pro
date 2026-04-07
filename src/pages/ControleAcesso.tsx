@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { Shield, Users, Eye, Edit, Lock, Plus, RefreshCw } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Shield, Users, Eye, Edit, Lock, Plus, RefreshCw, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -119,35 +121,23 @@ const getDefaultPermissoes = (perfil: Perfil): Permissoes => {
   return { ...permissoesColaborador };
 };
 
-// ─── Mock Data ─────────────────────────────────────────────────────────────────
+// ─── Role Mapping ────────────────────────────────────────────────────────────
 
-const usuariosMock: Usuario[] = [
-  {
-    id: "1", nome: "Rayanne Donato", email: "rayannedonato@holdingwalk.com.br",
-    perfil: "Gestora", cooperativa: "Todas", status: "Ativo", ultimo: "2026-03-28 22:30",
-    permissoes: { ...permissoesGestora },
-  },
-  {
-    id: "2", nome: "Laleska Gelinske", email: "laleskagelinske@gmail.com",
-    perfil: "Colaborador", cooperativa: "Central SP", status: "Ativo", ultimo: "2026-03-28 21:50",
-    permissoes: { ...permissoesColaborador },
-  },
-  {
-    id: "3", nome: "Carla Mendes", email: "carla@collectpro.com",
-    perfil: "Colaborador", cooperativa: "Central RJ", status: "Ativo", ultimo: "2026-03-28 18:00",
-    permissoes: { ...permissoesColaborador },
-  },
-  {
-    id: "4", nome: "Fernanda Lima", email: "fernanda@collectpro.com",
-    perfil: "Colaborador", cooperativa: "Minas Proteção", status: "Ativo", ultimo: "2026-03-27 16:45",
-    permissoes: { ...permissoesColaborador },
-  },
-  {
-    id: "5", nome: "Admin Sistema", email: "admin@collectpro.com",
-    perfil: "Admin", cooperativa: "Todas", status: "Ativo", ultimo: "2026-03-28 09:00",
-    permissoes: { ...permissoesAdmin },
-  },
-];
+const mapRoleToPerfil = (role: string | null): Perfil => {
+  switch (role) {
+    case "admin": return "Admin";
+    case "gestora": return "Gestora";
+    default: return "Colaborador";
+  }
+};
+
+const mapPerfilToRole = (perfil: Perfil): string => {
+  switch (perfil) {
+    case "Admin": return "admin";
+    case "Gestora": return "gestora";
+    default: return "colaborador";
+  }
+};
 
 // ─── Perfis definition ────────────────────────────────────────────────────────
 
@@ -239,7 +229,34 @@ function PermissoesSection({ permissoes, onChange, readOnly }: PermissoesSection
 
 export default function ControleAcesso() {
   const { toast } = useToast();
-  const [usuarios, setUsuarios] = useState<Usuario[]>(usuariosMock);
+  const queryClient = useQueryClient();
+
+  // ── Fetch profiles from Supabase ──────────────────────────────────────────
+  const { data: usuarios = [], isLoading, isError } = useQuery<Usuario[]>({
+    queryKey: ["profiles-acesso"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id, full_name, avatar_url, role, created_at")
+        .order("created_at", { ascending: true });
+      if (error) throw error;
+      return (data || []).map((p: any) => {
+        const isBloqueado = p.role === "bloqueado";
+        const perfil = isBloqueado ? "Colaborador" as Perfil : mapRoleToPerfil(p.role);
+        return {
+          id: p.id,
+          nome: p.full_name || "Sem nome",
+          email: "",
+          perfil,
+          cooperativa: "Todas",
+          status: (isBloqueado ? "Inativo" : "Ativo") as "Ativo" | "Inativo",
+          ultimo: p.created_at ? new Date(p.created_at).toLocaleString("pt-BR") : "—",
+          permissoes: getDefaultPermissoes(perfil),
+        };
+      });
+    },
+    staleTime: 30_000,
+  });
 
   // Dialog visibility
   const [dialogAdicionar, setDialogAdicionar] = useState(false);
@@ -286,24 +303,53 @@ export default function ControleAcesso() {
     setNovasPermissoes(getDefaultPermissoes(p));
   };
 
+  const criarUsuarioMutation = useMutation({
+    mutationFn: async () => {
+      if (!novoNome.trim() || !novoEmail.trim()) {
+        throw new Error("Nome e e-mail são obrigatórios.");
+      }
+      if (!novaSenha.trim() || novaSenha.trim().length < 6) {
+        throw new Error("A senha deve ter pelo menos 6 caracteres.");
+      }
+      // Create auth user via signUp
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: novoEmail.trim(),
+        password: novaSenha.trim(),
+        options: {
+          data: {
+            full_name: novoNome.trim(),
+          },
+        },
+      });
+      if (authError) throw authError;
+      if (!authData.user) throw new Error("Erro ao criar usuário.");
+
+      // Update the profile with the correct role
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .update({
+          full_name: novoNome.trim(),
+          role: mapPerfilToRole(novoPerfil),
+        })
+        .eq("id", authData.user.id);
+      if (profileError) throw profileError;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["profiles-acesso"] });
+      setDialogAdicionar(false);
+      toast({ title: "Usuário criado!", description: `${novoNome} foi adicionado ao sistema.` });
+    },
+    onError: (err: any) => {
+      toast({ title: "Erro ao criar usuário", description: err.message || "Tente novamente.", variant: "destructive" });
+    },
+  });
+
   const criarUsuario = () => {
     if (!novoNome.trim() || !novoEmail.trim()) {
       toast({ title: "Campos obrigatórios", description: "Nome e e-mail são obrigatórios.", variant: "destructive" });
       return;
     }
-    const novo: Usuario = {
-      id: Date.now().toString(),
-      nome: novoNome.trim(),
-      email: novoEmail.trim(),
-      perfil: novoPerfil,
-      cooperativa: novaCooperativa,
-      status: novoStatus,
-      ultimo: "—",
-      permissoes: { ...novasPermissoes },
-    };
-    setUsuarios((prev) => [...prev, novo]);
-    setDialogAdicionar(false);
-    toast({ title: "Usuário criado!", description: `${novo.nome} foi adicionado ao sistema.` });
+    criarUsuarioMutation.mutate();
   };
 
   // ── Edit ───────────────────────────────────────────────────────────────────
@@ -324,28 +370,35 @@ export default function ControleAcesso() {
     setEditPermissoes(getDefaultPermissoes(p));
   };
 
+  const salvarEdicaoMutation = useMutation({
+    mutationFn: async () => {
+      if (!usuarioSelecionado) throw new Error("Nenhum usuário selecionado.");
+      if (!editNome.trim()) throw new Error("Nome é obrigatório.");
+      const { error } = await supabase
+        .from("profiles")
+        .update({
+          full_name: editNome.trim(),
+          role: mapPerfilToRole(editPerfil),
+        })
+        .eq("id", usuarioSelecionado.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["profiles-acesso"] });
+      setDialogEditar(false);
+      toast({ title: "Usuário atualizado!", description: `${editNome} foi atualizado com sucesso.` });
+    },
+    onError: (err: any) => {
+      toast({ title: "Erro ao atualizar", description: err.message || "Tente novamente.", variant: "destructive" });
+    },
+  });
+
   const salvarEdicao = () => {
     if (!editNome.trim() || !editEmail.trim()) {
       toast({ title: "Campos obrigatórios", description: "Nome e e-mail são obrigatórios.", variant: "destructive" });
       return;
     }
-    setUsuarios((prev) =>
-      prev.map((u) =>
-        u.id === usuarioSelecionado?.id
-          ? {
-              ...u,
-              nome: editNome.trim(),
-              email: editEmail.trim(),
-              perfil: editPerfil,
-              cooperativa: editCooperativa,
-              status: editStatus,
-              permissoes: { ...editPermissoes },
-            }
-          : u
-      )
-    );
-    setDialogEditar(false);
-    toast({ title: "Usuário atualizado!", description: `${editNome} foi atualizado com sucesso.` });
+    salvarEdicaoMutation.mutate();
   };
 
   // ── View ───────────────────────────────────────────────────────────────────
@@ -362,17 +415,47 @@ export default function ControleAcesso() {
     setDialogBloquear(true);
   };
 
+  const bloquearMutation = useMutation({
+    mutationFn: async () => {
+      if (!usuarioSelecionado) throw new Error("Nenhum usuário selecionado.");
+      // We use the role field to indicate blocked status by setting a special role,
+      // or we can update a field. Since the profiles table doesn't have a status column,
+      // we set role to null/empty to effectively block. For a cleaner approach,
+      // we keep the role but the UI can track status based on role presence.
+      // For now, we'll use a convention: role "bloqueado" means inactive.
+      const isAtivo = usuarioSelecionado.status === "Ativo";
+      if (isAtivo) {
+        // Block: set role to a blocked marker
+        const { error } = await supabase
+          .from("profiles")
+          .update({ role: "bloqueado" })
+          .eq("id", usuarioSelecionado.id);
+        if (error) throw error;
+      } else {
+        // Reactivate: set role back to colaborador (default)
+        const { error } = await supabase
+          .from("profiles")
+          .update({ role: "colaborador" })
+          .eq("id", usuarioSelecionado.id);
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["profiles-acesso"] });
+      const novoStatusVal = usuarioSelecionado?.status === "Ativo" ? "Inativo" : "Ativo";
+      setDialogBloquear(false);
+      toast({
+        title: novoStatusVal === "Inativo" ? "Usuário bloqueado" : "Usuário reativado",
+        description: `${usuarioSelecionado?.nome} foi ${novoStatusVal === "Inativo" ? "desativado" : "reativado"}.`,
+      });
+    },
+    onError: (err: any) => {
+      toast({ title: "Erro", description: err.message || "Tente novamente.", variant: "destructive" });
+    },
+  });
+
   const confirmarBloquear = () => {
-    if (!usuarioSelecionado) return;
-    const novoStatusVal: "Ativo" | "Inativo" = usuarioSelecionado.status === "Ativo" ? "Inativo" : "Ativo";
-    setUsuarios((prev) =>
-      prev.map((u) => (u.id === usuarioSelecionado.id ? { ...u, status: novoStatusVal } : u))
-    );
-    setDialogBloquear(false);
-    toast({
-      title: novoStatusVal === "Inativo" ? "Usuário bloqueado" : "Usuário reativado",
-      description: `${usuarioSelecionado.nome} foi ${novoStatusVal === "Inativo" ? "desativado" : "reativado"}.`,
-    });
+    bloquearMutation.mutate();
   };
 
   // ── Render ─────────────────────────────────────────────────────────────────
@@ -428,6 +511,16 @@ export default function ControleAcesso() {
               </div>
             </CardHeader>
             <CardContent>
+              {isLoading ? (
+                <div className="flex items-center justify-center py-12 text-muted-foreground gap-2">
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  <span>Carregando usuários...</span>
+                </div>
+              ) : isError ? (
+                <div className="flex items-center justify-center py-12 text-destructive">
+                  Erro ao carregar usuários. Tente novamente.
+                </div>
+              ) : (
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -480,6 +573,7 @@ export default function ControleAcesso() {
                   ))}
                 </TableBody>
               </Table>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -629,7 +723,10 @@ export default function ControleAcesso() {
           </ScrollArea>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogAdicionar(false)}>Cancelar</Button>
-            <Button onClick={criarUsuario}>Criar Usuário</Button>
+            <Button onClick={criarUsuario} disabled={criarUsuarioMutation.isPending}>
+              {criarUsuarioMutation.isPending && <Loader2 className="h-4 w-4 mr-1 animate-spin" />}
+              Criar Usuário
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -718,7 +815,10 @@ export default function ControleAcesso() {
           </ScrollArea>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogEditar(false)}>Cancelar</Button>
-            <Button onClick={salvarEdicao}>Salvar Alterações</Button>
+            <Button onClick={salvarEdicao} disabled={salvarEdicaoMutation.isPending}>
+              {salvarEdicaoMutation.isPending && <Loader2 className="h-4 w-4 mr-1 animate-spin" />}
+              Salvar Alterações
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

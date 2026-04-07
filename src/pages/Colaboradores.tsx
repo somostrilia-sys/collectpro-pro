@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { Plus, Search, Trophy, TrendingUp, Target, Award, Medal, Users } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Plus, Search, Trophy, TrendingUp, Target, Award, Medal, Users, Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,61 +28,22 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 
-const mockColaboradores = [
-  {
-    id: "1",
-    nome: "Maria Silva",
-    cargo: "Analista de Cobrança",
-    meta: 40000,
-    recuperado: 45200,
-    ligacoes: 245,
-    acordos: 28,
-    email: "maria.silva@collectpro.com",
-  },
-  {
-    id: "2",
-    nome: "João Santos",
-    cargo: "Analista de Cobrança",
-    meta: 35000,
-    recuperado: 38500,
-    ligacoes: 198,
-    acordos: 22,
-    email: "joao.santos@collectpro.com",
-  },
-  {
-    id: "3",
-    nome: "Ana Costa",
-    cargo: "Analista Sênior",
-    meta: 45000,
-    recuperado: 42000,
-    ligacoes: 175,
-    acordos: 31,
-    email: "ana.costa@collectpro.com",
-  },
-  {
-    id: "4",
-    nome: "Carlos Lima",
-    cargo: "Analista de Cobrança",
-    meta: 30000,
-    recuperado: 35800,
-    ligacoes: 156,
-    acordos: 19,
-    email: "carlos.lima@collectpro.com",
-  },
-  {
-    id: "5",
-    nome: "Fernanda Oliveira",
-    cargo: "Supervisora",
-    meta: 50000,
-    recuperado: 52300,
-    ligacoes: 89,
-    acordos: 35,
-    email: "fernanda.oliveira@collectpro.com",
-  },
-];
+interface ColaboradorRow {
+  id: string;
+  nome: string;
+  cargo: string;
+  email: string;
+  telefone: string;
+  ativo: boolean;
+  meta: number;
+  recuperado: number;
+  ligacoes: number;
+  acordos: number;
+}
 
 const Colaboradores = () => {
-  const [colaboradores, setColaboradores] = useState(mockColaboradores);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [newColaborador, setNewColaborador] = useState({
@@ -87,6 +51,31 @@ const Colaboradores = () => {
     cargo: "",
     email: "",
     meta: 30000,
+  });
+
+  // ── Fetch colaboradores from Supabase ─────────────────────────────────────
+  const { data: colaboradores = [], isLoading, isError } = useQuery<ColaboradorRow[]>({
+    queryKey: ["colaboradores"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("colaboradores")
+        .select("id, nome, cargo, email, telefone, ativo, created_at")
+        .order("created_at", { ascending: true });
+      if (error) throw error;
+      return (data || []).map((c: any) => ({
+        id: String(c.id),
+        nome: c.nome || "Sem nome",
+        cargo: c.cargo || "",
+        email: c.email || "",
+        telefone: c.telefone || "",
+        ativo: c.ativo ?? true,
+        meta: 30000,
+        recuperado: 0,
+        ligacoes: 0,
+        acordos: 0,
+      }));
+    },
+    staleTime: 30_000,
   });
 
   const filteredColaboradores = colaboradores.filter((c) =>
@@ -97,21 +86,43 @@ const Colaboradores = () => {
     (a, b) => b.recuperado - a.recuperado
   );
 
+  // ── Add colaborador mutation ──────────────────────────────────────────────
+  const addMutation = useMutation({
+    mutationFn: async (payload: { nome: string; cargo: string; email: string }) => {
+      const { data, error } = await supabase
+        .from("colaboradores")
+        .insert({
+          nome: payload.nome.trim(),
+          cargo: payload.cargo.trim(),
+          email: payload.email.trim(),
+          ativo: true,
+        })
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["colaboradores"] });
+      setIsAddModalOpen(false);
+      setNewColaborador({ nome: "", cargo: "", email: "", meta: 30000 });
+      toast({ title: "Colaborador cadastrado!", description: "O novo colaborador foi adicionado com sucesso." });
+    },
+    onError: (err: any) => {
+      toast({ title: "Erro ao cadastrar", description: err.message || "Tente novamente.", variant: "destructive" });
+    },
+  });
+
   const handleAddColaborador = () => {
-    const novo = {
-      ...newColaborador,
-      id: String(colaboradores.length + 1),
-      recuperado: 0,
-      ligacoes: 0,
-      acordos: 0,
-    };
-    setColaboradores([...colaboradores, novo]);
-    setIsAddModalOpen(false);
-    setNewColaborador({ nome: "", cargo: "", email: "", meta: 30000 });
+    if (!newColaborador.nome.trim()) {
+      toast({ title: "Campo obrigatório", description: "O nome é obrigatório.", variant: "destructive" });
+      return;
+    }
+    addMutation.mutate(newColaborador);
   };
 
   const getProgressColor = (atual: number, meta: number) => {
-    const percentual = (atual / meta) * 100;
+    const percentual = meta > 0 ? (atual / meta) * 100 : 0;
     if (percentual >= 100) return "bg-success";
     if (percentual >= 80) return "bg-warning";
     return "bg-destructive";
@@ -225,14 +236,30 @@ const Colaboradores = () => {
               <Button variant="outline" onClick={() => setIsAddModalOpen(false)}>
                 Cancelar
               </Button>
-              <Button onClick={handleAddColaborador}>Cadastrar</Button>
+              <Button onClick={handleAddColaborador} disabled={addMutation.isPending}>
+                {addMutation.isPending && <Loader2 className="h-4 w-4 mr-1 animate-spin" />}
+                Cadastrar
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
 
+      {/* Loading / Error */}
+      {isLoading && (
+        <div className="flex items-center justify-center py-12 text-muted-foreground gap-2">
+          <Loader2 className="h-5 w-5 animate-spin" />
+          <span>Carregando colaboradores...</span>
+        </div>
+      )}
+      {isError && (
+        <div className="flex items-center justify-center py-12 text-destructive">
+          Erro ao carregar colaboradores. Tente novamente.
+        </div>
+      )}
+
       {/* Top 3 Ranking Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {!isLoading && !isError && <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {sortedByRecovery.slice(0, 3).map((c, index) => (
           <Card
             key={c.id}
@@ -268,18 +295,18 @@ const Colaboradores = () => {
               </div>
               <div className="mt-4 space-y-1">
                 <Progress
-                  value={(c.recuperado / c.meta) * 100}
+                  value={c.meta > 0 ? (c.recuperado / c.meta) * 100 : 0}
                   className={`h-1.5 ${getProgressColor(c.recuperado, c.meta)}`}
                 />
                 <div className="flex justify-between text-xs text-muted-foreground">
-                  <span>{((c.recuperado / c.meta) * 100).toFixed(0)}% da meta</span>
+                  <span>{(c.meta > 0 ? (c.recuperado / c.meta) * 100 : 0).toFixed(0)}% da meta</span>
                   <span>R$ {c.meta.toLocaleString()}</span>
                 </div>
               </div>
             </CardContent>
           </Card>
         ))}
-      </div>
+      </div>}
 
       {/* Search */}
       <Card className="border-0 shadow-sm">
@@ -356,11 +383,11 @@ const Colaboradores = () => {
                   <TableCell className="w-[150px]">
                     <div className="space-y-1">
                       <Progress
-                        value={(colaborador.recuperado / colaborador.meta) * 100}
+                        value={colaborador.meta > 0 ? (colaborador.recuperado / colaborador.meta) * 100 : 0}
                         className={`h-2 ${getProgressColor(colaborador.recuperado, colaborador.meta)}`}
                       />
                       <span className="text-xs text-muted-foreground">
-                        {((colaborador.recuperado / colaborador.meta) * 100).toFixed(0)}%
+                        {(colaborador.meta > 0 ? (colaborador.recuperado / colaborador.meta) * 100 : 0).toFixed(0)}%
                       </span>
                     </div>
                   </TableCell>

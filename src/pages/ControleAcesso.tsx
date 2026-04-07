@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, supabaseAdmin } from "@/integrations/supabase/client";
 import { Shield, Users, Eye, Edit, Lock, Plus, RefreshCw, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -231,26 +231,39 @@ export default function ControleAcesso() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // ── Fetch profiles from Supabase ──────────────────────────────────────────
+  // ── Fetch profiles from Supabase (admin bypass RLS) ────────────────────────
   const { data: usuarios = [], isLoading, isError } = useQuery<Usuario[]>({
     queryKey: ["profiles-acesso"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      // Busca todos os profiles usando service_role (bypass RLS)
+      const { data: profiles, error } = await supabaseAdmin
         .from("profiles")
         .select("id, full_name, avatar_url, role, created_at")
         .order("created_at", { ascending: true });
       if (error) throw error;
-      return (data || []).map((p: any) => {
+
+      // Busca emails dos usuarios via auth admin
+      const { data: authData } = await supabaseAdmin.auth.admin.listUsers();
+      const emailMap = new Map<string, { email: string; lastSignIn: string | null }>();
+      (authData?.users || []).forEach((u: any) => {
+        emailMap.set(u.id, { email: u.email || "", lastSignIn: u.last_sign_in_at });
+      });
+
+      return (profiles || []).map((p: any) => {
         const isBloqueado = p.role === "bloqueado";
         const perfil = isBloqueado ? "Colaborador" as Perfil : mapRoleToPerfil(p.role);
+        const authInfo = emailMap.get(p.id);
+        const lastAccess = authInfo?.lastSignIn
+          ? new Date(authInfo.lastSignIn).toLocaleString("pt-BR")
+          : p.created_at ? new Date(p.created_at).toLocaleString("pt-BR") : "—";
         return {
           id: p.id,
           nome: p.full_name || "Sem nome",
-          email: "",
+          email: authInfo?.email || "",
           perfil,
           cooperativa: "Todas",
           status: (isBloqueado ? "Inativo" : "Ativo") as "Ativo" | "Inativo",
-          ultimo: p.created_at ? new Date(p.created_at).toLocaleString("pt-BR") : "—",
+          ultimo: lastAccess,
           permissoes: getDefaultPermissoes(perfil),
         };
       });
@@ -311,21 +324,18 @@ export default function ControleAcesso() {
       if (!novaSenha.trim() || novaSenha.trim().length < 6) {
         throw new Error("A senha deve ter pelo menos 6 caracteres.");
       }
-      // Create auth user via signUp
-      const { data: authData, error: authError } = await supabase.auth.signUp({
+      // Create auth user via admin API (bypass email confirmation)
+      const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
         email: novoEmail.trim(),
         password: novaSenha.trim(),
-        options: {
-          data: {
-            full_name: novoNome.trim(),
-          },
-        },
+        email_confirm: true,
+        user_metadata: { full_name: novoNome.trim() },
       });
       if (authError) throw authError;
       if (!authData.user) throw new Error("Erro ao criar usuário.");
 
       // Update the profile with the correct role
-      const { error: profileError } = await supabase
+      const { error: profileError } = await supabaseAdmin
         .from("profiles")
         .update({
           full_name: novoNome.trim(),
@@ -374,7 +384,7 @@ export default function ControleAcesso() {
     mutationFn: async () => {
       if (!usuarioSelecionado) throw new Error("Nenhum usuário selecionado.");
       if (!editNome.trim()) throw new Error("Nome é obrigatório.");
-      const { error } = await supabase
+      const { error } = await supabaseAdmin
         .from("profiles")
         .update({
           full_name: editNome.trim(),
@@ -426,14 +436,14 @@ export default function ControleAcesso() {
       const isAtivo = usuarioSelecionado.status === "Ativo";
       if (isAtivo) {
         // Block: set role to a blocked marker
-        const { error } = await supabase
+        const { error } = await supabaseAdmin
           .from("profiles")
           .update({ role: "bloqueado" })
           .eq("id", usuarioSelecionado.id);
         if (error) throw error;
       } else {
         // Reactivate: set role back to colaborador (default)
-        const { error } = await supabase
+        const { error } = await supabaseAdmin
           .from("profiles")
           .update({ role: "colaborador" })
           .eq("id", usuarioSelecionado.id);

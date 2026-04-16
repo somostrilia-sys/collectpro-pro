@@ -537,6 +537,101 @@ export function useBoletosVencidosPorAssociado(associadoId?: string) {
 
 // ── EXPORTAÇÃO DE DADOS ──
 
+// ── LIGAÇÕES ──
+
+export interface Ligacao {
+  id: string;
+  associado_id: string | null;
+  colaborador_id: string | null;
+  telefone: string | null;
+  duracao_segundos: number;
+  resultado: string;
+  observacao: string | null;
+  data_hora: string;
+  created_at: string;
+  associados?: { nome: string; cpf: string } | null;
+  profiles?: { full_name: string } | null;
+}
+
+export function useLigacoes(filtro?: { data?: string; colaborador_id?: string }) {
+  return useQuery<Ligacao[]>({
+    queryKey: ["ligacoes", filtro],
+    queryFn: async () => {
+      let q = supabase
+        .from("ligacoes")
+        .select("*, associados(nome, cpf), profiles(full_name)")
+        .order("data_hora", { ascending: false });
+
+      if (filtro?.colaborador_id) {
+        q = q.eq("colaborador_id", filtro.colaborador_id);
+      }
+      if (filtro?.data) {
+        q = q.gte("data_hora", `${filtro.data}T00:00:00`).lt("data_hora", `${filtro.data}T23:59:59`);
+      }
+
+      const { data, error } = await q.limit(500);
+      if (error) return [];
+      return data || [];
+    },
+    staleTime: 30_000,
+  });
+}
+
+export function useRegistrarLigacao() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: {
+      associado_id?: string;
+      colaborador_id?: string;
+      telefone?: string;
+      duracao_segundos?: number;
+      resultado: string;
+      observacao?: string;
+    }) => {
+      const { data, error } = await supabase
+        .from("ligacoes")
+        .insert({
+          associado_id: payload.associado_id || null,
+          colaborador_id: payload.colaborador_id || null,
+          telefone: payload.telefone || null,
+          duracao_segundos: payload.duracao_segundos || 0,
+          resultado: payload.resultado,
+          observacao: payload.observacao || null,
+          data_hora: new Date().toISOString(),
+        })
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["ligacoes"] });
+    },
+  });
+}
+
+// ── ENVIO DE EMAIL ──
+
+export function useEnviarEmail() {
+  return useMutation({
+    mutationFn: async (payload: {
+      to: string | string[];
+      subject: string;
+      html?: string;
+      text?: string;
+      tipo?: string;
+      associado_id?: string;
+    }) => {
+      const { data, error } = await supabase.functions.invoke("send-email", {
+        body: payload,
+      });
+      if (error) throw error;
+      if (!data?.success && data?.error) throw new Error(data.error);
+      return data;
+    },
+  });
+}
+
 export function useExportData(tipo: string) {
   return useQuery({
     queryKey: ["export", tipo],

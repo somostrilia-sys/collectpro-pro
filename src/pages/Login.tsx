@@ -15,8 +15,32 @@ export default function Login() {
   const [signupPassword, setSignupPassword] = useState('');
   const [signupName, setSignupName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showResetPassword, setShowResetPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!resetEmail.trim()) {
+      toast({ title: 'Erro', description: 'Informe o e-mail.', variant: 'destructive' });
+      return;
+    }
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail.trim(), {
+        redirectTo: `${window.location.origin}/login`,
+      });
+      if (error) throw error;
+      toast({ title: 'E-mail enviado!', description: 'Verifique sua caixa de entrada para redefinir a senha.' });
+      setShowResetPassword(false);
+      setResetEmail('');
+    } catch (error: any) {
+      toast({ title: 'Erro', description: error.message || 'Ocorreu um erro.', variant: 'destructive' });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -163,6 +187,13 @@ export default function Login() {
                   >
                     {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <><ArrowRight className="h-4 w-4" /> Entrar</>}
                   </Button>
+                  <button
+                    type="button"
+                    onClick={() => { setShowResetPassword(true); setResetEmail(loginEmail); }}
+                    className="w-full text-center text-xs text-white/40 hover:text-white/70 mt-3 transition-colors"
+                  >
+                    Esqueceu sua senha?
+                  </button>
                 </form>
               </TabsContent>
 
@@ -230,6 +261,46 @@ export default function Login() {
           <p className="text-center text-white/20 text-xs mt-6">© {new Date().getFullYear()} CollectPro</p>
         </div>
       </div>
+
+      {/* Modal Recuperação de Senha */}
+      {showResetPassword && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <div className="rounded-2xl p-8 w-full max-w-sm mx-4" style={{ backgroundColor: '#161b22', border: '1px solid rgba(255,255,255,0.06)' }}>
+            <h2 className="text-lg font-semibold text-white mb-2">Recuperar Senha</h2>
+            <p className="text-sm text-white/50 mb-4">Informe seu e-mail e enviaremos um link para redefinir sua senha.</p>
+            <form onSubmit={handleResetPassword} className="space-y-4">
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
+                <Input
+                  type="email"
+                  placeholder="seu@email.com"
+                  className="pl-9 h-11 text-sm text-white placeholder:text-white/20 border-0 rounded-lg"
+                  style={{ backgroundColor: 'rgba(255,255,255,0.06)' }}
+                  value={resetEmail}
+                  onChange={(e) => setResetEmail(e.target.value)}
+                  required
+                  autoFocus
+                />
+              </div>
+              <Button
+                type="submit"
+                className="w-full h-11 font-semibold text-white rounded-lg"
+                style={{ backgroundColor: '#2e5ac1' }}
+                disabled={loading}
+              >
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Enviar Link'}
+              </Button>
+              <button
+                type="button"
+                onClick={() => setShowResetPassword(false)}
+                className="w-full text-center text-xs text-white/40 hover:text-white/70 transition-colors"
+              >
+                Voltar ao login
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

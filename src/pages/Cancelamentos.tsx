@@ -176,7 +176,7 @@ const formatDate = (iso: string) => {
 
 // ─── Term helper ────────────────────────────────────────────────────────────
 
-const buildTermo = (s: SolicitacaoCancelamento) => `TERMO DE CANCELAMENTO
+const buildTermo = (s: SolicitacaoCancelamento, nomeResponsavel?: string) => `TERMO DE CANCELAMENTO DE ASSOCIAÇÃO
 
 Eu, ${s.nome}, portador(a) do CPF ${s.cpf}, associado(a) ao plano ${s.plano} da CollectPro Proteção Veicular, referente ao veículo de placa ${s.placa}, solicito formalmente o cancelamento da minha associação.
 
@@ -184,7 +184,11 @@ Declaro estar ciente de que:
 1. A proteção veicular será encerrada após o processamento desta solicitação;
 2. Eventuais débitos pendentes deverão ser quitados;
 3. O cancelamento é irreversível após a conclusão do processo;
-4. Não haverá cobertura para sinistros ocorridos após a data de cancelamento.
+4. Não haverá cobertura para sinistros ocorridos após a data de cancelamento;
+5. Caso o associado tenha recebido indenização, fica sujeito à cláusula de fidelidade de 12 (doze) meses, conforme regulamento interno da associação.
+
+CLÁUSULA DE FIDELIDADE — REGULAMENTO INTERNO
+O associado que recebeu indenização por sinistro está vinculado ao período mínimo de fidelidade de 12 (doze) meses, contados a partir da data do pagamento da indenização. Em caso de cancelamento durante o período de fidelidade, o associado deverá arcar com a multa prevista no regulamento, correspondente ao valor proporcional dos meses restantes para o cumprimento do prazo.
 
 Motivo do cancelamento: ${s.motivo}
 
@@ -196,8 +200,8 @@ ${s.nome}
 CPF: ${s.cpf}
 
 _________________________
-Rayanne Donato
-CEO — Grupo WALK Holding Corporation`;
+${nomeResponsavel || "Responsável"}
+CollectPro — Setor de Cobrança`;
 
 // ─── StatusSelect inline ─────────────────────────────────────────────────────
 
@@ -456,7 +460,7 @@ const Cancelamentos = () => {
 
   const handleBaixarTermo = () => {
     if (!termoSolicitacao) return;
-    const texto = buildTermo(termoSolicitacao);
+    const texto = buildTermo(termoSolicitacao, currentUser);
     const blob = new Blob([texto], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -469,7 +473,7 @@ const Cancelamentos = () => {
 
   const handleCopiarTermo = () => {
     if (!termoSolicitacao) return;
-    navigator.clipboard.writeText(buildTermo(termoSolicitacao));
+    navigator.clipboard.writeText(buildTermo(termoSolicitacao, currentUser));
     toast({ title: "Termo copiado!" });
   };
 
@@ -1068,7 +1072,7 @@ const Cancelamentos = () => {
             <div className="space-y-4">
               {/* Termo text */}
               <div className="p-4 rounded-lg border bg-muted/20 font-mono text-sm whitespace-pre-wrap leading-relaxed">
-                {buildTermo(termoSolicitacao)}
+                {buildTermo(termoSolicitacao, currentUser)}
               </div>
 
               {/* Ações do termo */}

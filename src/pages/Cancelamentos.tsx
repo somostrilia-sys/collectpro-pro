@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Search,
   UserMinus,
@@ -82,7 +84,7 @@ const mockAssociados = [
   { id: "A5", nome: "Carlos Eduardo Ferreira", cpf: "654.321.098-00", placa: "JKL-7890", plano: "Básico",   email: "carlos.ferreira@email.com" },
 ];
 
-const atendentes = ["Rayanne Donato", "Laleska Gelinske", "Carla Mendes", "Fernanda Lima"];
+// Atendentes carregados dinamicamente no componente
 
 const mockSolicitacoes: SolicitacaoCancelamento[] = [
   {
@@ -248,6 +250,20 @@ const StatusSelect = ({ value, onChange, compact = false }: StatusSelectProps) =
 
 const Cancelamentos = () => {
   const { toast } = useToast();
+  const { fullName } = useAuth();
+  const currentUser = fullName || "Usuário";
+
+  const [atendentes, setAtendentes] = useState<string[]>([]);
+  useEffect(() => {
+    supabase
+      .from("profiles")
+      .select("full_name")
+      .neq("role", "bloqueado")
+      .then(({ data }) => {
+        const nomes = (data || []).map((p: any) => p.full_name).filter(Boolean);
+        setAtendentes(nomes.length > 0 ? nomes : [currentUser]);
+      });
+  }, [currentUser]);
 
   // Solicitações state
   const [solicitacoes, setSolicitacoes] = useState<SolicitacaoCancelamento[]>(mockSolicitacoes);
@@ -314,7 +330,7 @@ const Cancelamentos = () => {
       plano: associadoEncontrado.plano,
       email: associadoEncontrado.email,
       status: "PENDENTE",
-      atendente: "Rayanne Donato",
+      atendente: currentUser,
       dataAgendada: null,
       criadoEm: new Date().toISOString().slice(0, 16).replace("T", " "),
       motivo: motivoNovo,
@@ -414,7 +430,7 @@ const Cancelamentos = () => {
     if (!solicitacaoSelecionada || !novoComentario.trim()) return;
     const comentario: Comentario = {
       id: `cm${Date.now()}`,
-      autor: "Rayanne Donato",
+      autor: currentUser,
       dataHora: new Date().toISOString().slice(0, 16).replace("T", " "),
       texto: novoComentario,
     };

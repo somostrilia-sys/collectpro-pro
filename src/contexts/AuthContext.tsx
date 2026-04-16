@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
-import { supabase, supabaseAdmin } from '@/integrations/supabase/client';
+import { supabase } from '@/integrations/supabase/client';
 import type { Perfil, Permissoes } from '@/types/permissions';
 import { getDefaultPermissoes, mapRoleToPerfil } from '@/types/permissions';
 
@@ -39,11 +39,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const fetchProfile = async (userId: string) => {
     try {
-      const { data: profile } = await supabaseAdmin
-        .from("profiles")
-        .select("full_name, role, permissions")
-        .eq("id", userId)
-        .single();
+      const { data } = await supabase.functions.invoke("manage-users", {
+        body: { action: "get_profile", user_id: userId },
+      });
+      const profile = data?.profile;
 
       if (profile) {
         setFullName(profile.full_name || null);

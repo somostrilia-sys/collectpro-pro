@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabaseAdmin } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/client";
 import { Shield, Users, Eye, Edit, Lock, Plus, RefreshCw, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -142,24 +142,19 @@ export default function ControleAcesso() {
   const { data: usuarios = [], isLoading, isError } = useQuery<Usuario[]>({
     queryKey: ["profiles-acesso"],
     queryFn: async () => {
-      // Busca todos os profiles usando service_role (bypass RLS)
-      const { data: profiles, error } = await supabaseAdmin
-        .from("profiles")
-        .select("id, full_name, avatar_url, role, permissions, created_at")
-        .order("created_at", { ascending: true });
-      if (error) throw error;
-
-      // Busca emails dos usuarios via auth admin
-      const { data: authData } = await supabaseAdmin.auth.admin.listUsers();
-      const emailMap = new Map<string, { email: string; lastSignIn: string | null }>();
-      (authData?.users || []).forEach((u: any) => {
-        emailMap.set(u.id, { email: u.email || "", lastSignIn: u.last_sign_in_at });
+      const { data, error } = await supabase.functions.invoke("manage-users", {
+        body: { action: "list_users" },
       });
+      if (error) throw error;
+      if (!data?.success) throw new Error(data?.error || "Erro ao listar usuários");
 
-      return (profiles || []).map((p: any) => {
+      const profiles = data.profiles || [];
+      const emailMap = data.emailMap || {};
+
+      return profiles.map((p: any) => {
         const isBloqueado = p.role === "bloqueado";
         const perfil = isBloqueado ? "Colaborador" as Perfil : mapRoleToPerfil(p.role);
-        const authInfo = emailMap.get(p.id);
+        const authInfo = emailMap[p.id];
         const lastAccess = authInfo?.lastSignIn
           ? new Date(authInfo.lastSignIn).toLocaleString("pt-BR")
           : p.created_at ? new Date(p.created_at).toLocaleString("pt-BR") : "—";
@@ -231,26 +226,18 @@ export default function ControleAcesso() {
       if (!novaSenha.trim() || novaSenha.trim().length < 6) {
         throw new Error("A senha deve ter pelo menos 6 caracteres.");
       }
-      // Create auth user via admin API (bypass email confirmation)
-      const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
-        email: novoEmail.trim(),
-        password: novaSenha.trim(),
-        email_confirm: true,
-        user_metadata: { full_name: novoNome.trim() },
-      });
-      if (authError) throw authError;
-      if (!authData.user) throw new Error("Erro ao criar usuário.");
-
-      // Update the profile with the correct role and permissions
-      const { error: profileError } = await supabaseAdmin
-        .from("profiles")
-        .update({
+      const { data, error: fnError } = await supabase.functions.invoke("manage-users", {
+        body: {
+          action: "create_user",
+          email: novoEmail.trim(),
+          password: novaSenha.trim(),
           full_name: novoNome.trim(),
           role: mapPerfilToRole(novoPerfil),
           permissions: novasPermissoes,
-        })
-        .eq("id", authData.user.id);
-      if (profileError) throw profileError;
+        },
+      });
+      if (fnError) throw fnError;
+      if (!data?.success) throw new Error(data?.error || "Erro ao criar usuário.");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["profiles-acesso"] });
@@ -292,15 +279,17 @@ export default function ControleAcesso() {
     mutationFn: async () => {
       if (!usuarioSelecionado) throw new Error("Nenhum usuário selecionado.");
       if (!editNome.trim()) throw new Error("Nome é obrigatório.");
-      const { error } = await supabaseAdmin
-        .from("profiles")
-        .update({
+      const { data, error: fnError } = await supabase.functions.invoke("manage-users", {
+        body: {
+          action: "update_profile",
+          user_id: usuarioSelecionado.id,
           full_name: editNome.trim(),
           role: mapPerfilToRole(editPerfil),
           permissions: editPermissoes,
-        })
-        .eq("id", usuarioSelecionado.id);
-      if (error) throw error;
+        },
+      });
+      if (fnError) throw fnError;
+      if (!data?.success) throw new Error(data?.error || "Erro ao atualizar.");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["profiles-acesso"] });
@@ -343,21 +332,15 @@ export default function ControleAcesso() {
       // we keep the role but the UI can track status based on role presence.
       // For now, we'll use a convention: role "bloqueado" means inactive.
       const isAtivo = usuarioSelecionado.status === "Ativo";
-      if (isAtivo) {
-        // Block: set role to a blocked marker
-        const { error } = await supabaseAdmin
-          .from("profiles")
-          .update({ role: "bloqueado" })
-          .eq("id", usuarioSelecionado.id);
-        if (error) throw error;
-      } else {
-        // Reactivate: set role back to colaborador (default)
-        const { error } = await supabaseAdmin
-          .from("profiles")
-          .update({ role: "colaborador" })
-          .eq("id", usuarioSelecionado.id);
-        if (error) throw error;
-      }
+      const { data, error: fnError } = await supabase.functions.invoke("manage-users", {
+        body: {
+          action: "block_user",
+          user_id: usuarioSelecionado.id,
+          block: isAtivo,
+        },
+      });
+      if (fnError) throw fnError;
+      if (!data?.success) throw new Error(data?.error || "Erro ao alterar status.");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["profiles-acesso"] });

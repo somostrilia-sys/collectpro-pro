@@ -357,3 +357,209 @@ export function useUpdateAcordo() {
     },
   });
 }
+
+// ── NOTIFICAÇÕES DE RETIRADA ──
+
+export interface NotificacaoRetirada {
+  id: string;
+  associado_id: string | null;
+  placa: string | null;
+  tipo: string;
+  status: string;
+  descricao: string | null;
+  proximos_passos: string | null;
+  responsavel_id: string | null;
+  resolvido_em: string | null;
+  created_at: string;
+  associados?: { nome: string; cpf: string; placa: string } | null;
+  profiles?: { full_name: string } | null;
+}
+
+export function useNotificacoesRetirada() {
+  return useQuery<NotificacaoRetirada[]>({
+    queryKey: ["notificacoes-retirada"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("notificacoes_retirada")
+        .select("*, associados(nome, cpf, placa), profiles(full_name)")
+        .order("created_at", { ascending: false });
+      if (error) return [];
+      return data || [];
+    },
+    staleTime: 30_000,
+  });
+}
+
+export function useCriarNotificacaoRetirada() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: {
+      associado_id?: string;
+      placa?: string;
+      descricao?: string;
+      proximos_passos?: string;
+      responsavel_id?: string;
+    }) => {
+      const { data, error } = await supabase
+        .from("notificacoes_retirada")
+        .insert({
+          associado_id: payload.associado_id || null,
+          placa: payload.placa || null,
+          tipo: "retirada",
+          status: "pendente",
+          descricao: payload.descricao || null,
+          proximos_passos: payload.proximos_passos || null,
+          responsavel_id: payload.responsavel_id || null,
+        })
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notificacoes-retirada"] });
+    },
+  });
+}
+
+export function useAtualizarNotificacaoRetirada() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: { id: string; status?: string; proximos_passos?: string; responsavel_id?: string }) => {
+      const updateData: Record<string, any> = { updated_at: new Date().toISOString() };
+      if (payload.status) updateData.status = payload.status;
+      if (payload.proximos_passos !== undefined) updateData.proximos_passos = payload.proximos_passos;
+      if (payload.responsavel_id) updateData.responsavel_id = payload.responsavel_id;
+      if (payload.status === "resolvido") updateData.resolvido_em = new Date().toISOString();
+
+      const { error } = await supabase
+        .from("notificacoes_retirada")
+        .update(updateData)
+        .eq("id", payload.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notificacoes-retirada"] });
+    },
+  });
+}
+
+// ── HISTÓRICO DE PAGAMENTOS ──
+
+export interface HistoricoPagamento {
+  id: string;
+  associado_id: string | null;
+  tipo: string;
+  valor: number;
+  data_pagamento: string | null;
+  forma_pagamento: string | null;
+  referencia: string | null;
+  boletos_ids: string[] | null;
+  acordo_id: string | null;
+  observacao: string | null;
+  registrado_por: string | null;
+  created_at: string;
+  associados?: { nome: string; cpf: string } | null;
+  profiles?: { full_name: string } | null;
+}
+
+export function useHistoricoPagamentos(filtro?: { associado_id?: string; periodo?: string }) {
+  return useQuery<HistoricoPagamento[]>({
+    queryKey: ["historico-pagamentos", filtro],
+    queryFn: async () => {
+      let q = supabase
+        .from("historico_pagamentos")
+        .select("*, associados(nome, cpf), profiles(full_name)")
+        .order("created_at", { ascending: false });
+
+      if (filtro?.associado_id) {
+        q = q.eq("associado_id", filtro.associado_id);
+      }
+      const { data, error } = await q.limit(500);
+      if (error) return [];
+      return data || [];
+    },
+    staleTime: 30_000,
+  });
+}
+
+export function useRegistrarPagamento() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: {
+      associado_id: string;
+      tipo: string;
+      valor: number;
+      data_pagamento: string;
+      forma_pagamento?: string;
+      referencia?: string;
+      boletos_ids?: string[];
+      acordo_id?: string;
+      observacao?: string;
+      registrado_por?: string;
+    }) => {
+      const { data, error } = await supabase
+        .from("historico_pagamentos")
+        .insert(payload)
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["historico-pagamentos"] });
+      queryClient.invalidateQueries({ queryKey: ["boletos"] });
+      queryClient.invalidateQueries({ queryKey: ["boletos-kpis"] });
+    },
+  });
+}
+
+// ── UNIFICAÇÃO DE BOLETOS ──
+
+export function useBoletosVencidosPorAssociado(associadoId?: string) {
+  return useQuery({
+    queryKey: ["boletos-vencidos-associado", associadoId],
+    queryFn: async () => {
+      if (!associadoId) return [];
+      const { data, error } = await supabase
+        .from("boletos")
+        .select("id, gia_id, valor, vencimento, mes_referencia, status")
+        .eq("associado_id", associadoId)
+        .in("status", ["aberto", "vencido"])
+        .order("vencimento", { ascending: true });
+      if (error) return [];
+      return data || [];
+    },
+    enabled: !!associadoId,
+    staleTime: 30_000,
+  });
+}
+
+// ── EXPORTAÇÃO DE DADOS ──
+
+export function useExportData(tipo: string) {
+  return useQuery({
+    queryKey: ["export", tipo],
+    queryFn: async () => {
+      if (tipo === "associados") {
+        const { data } = await supabase.from("associados").select("*").limit(10000);
+        return data || [];
+      }
+      if (tipo === "boletos") {
+        const { data } = await supabase.from("boletos").select("*, associados(nome, cpf, cooperativa)").limit(10000);
+        return data || [];
+      }
+      if (tipo === "acordos") {
+        const { data } = await supabase.from("acordos").select("*, associados(nome, cpf)").limit(10000);
+        return data || [];
+      }
+      if (tipo === "pagamentos") {
+        const { data } = await supabase.from("historico_pagamentos").select("*, associados(nome, cpf)").limit(10000);
+        return data || [];
+      }
+      return [];
+    },
+    enabled: false, // Only fetch when triggered
+    staleTime: 0,
+  });
+}

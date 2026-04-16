@@ -15,8 +15,8 @@ serve(async (req) => {
       return { numero: i + 1, valor: valor_parcela, vencimento: venc.toISOString().slice(0, 10), status: "pendente" };
     });
     
-    // Salvar acordo (tabela acordos ou acordos_cobranca)
-    const { data: acordo } = await supabase.from("acordos").insert([{
+    // Salvar acordo
+    const { data: acordo, error: insertError } = await supabase.from("acordos").insert([{
       associado_id,
       valor_original,
       valor_acordo,
@@ -24,14 +24,8 @@ serve(async (req) => {
       parcelas_detalhes: parcelasArr,
       status: "ativo",
       created_at: new Date().toISOString()
-    }]).select().single().catch(async () => {
-      // Tentar tabela alternativa
-      const { data } = await supabase.from("acordos_cobranca").insert([{
-        associado_id, valor_original, valor_acordo, parcelas,
-        parcelas_detalhes: parcelasArr, status: "ativo"
-      }]).select().single().catch(() => ({ data: { id: crypto.randomUUID() } }));
-      return { data };
-    });
+    }]).select().single();
+    if (insertError) throw insertError;
     
     return new Response(JSON.stringify({ success: true, acordo_id: acordo?.id, parcelas: parcelasArr }), { headers: { ...cors, "Content-Type": "application/json" } });
   } catch(e: any) {

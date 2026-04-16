@@ -16,6 +16,8 @@ import {
   Loader2,
 } from "lucide-react";
 import { useAcordosList, useCreateAcordo, useUpdateAcordo } from "@/hooks/useCollectData";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -98,7 +100,7 @@ const formatDate = (iso: string) => {
 const formatCurrency = (value: number) =>
   value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
-const atendentes = ["Rayanne Donato", "Laleska Gelinske", "Carla Mendes", "Fernanda Lima"];
+// Atendentes carregados dinamicamente via hook no componente
 
 // ─── Status Badge ─────────────────────────────────────────────────────────────
 
@@ -127,7 +129,7 @@ const emptyForm = {
   valorOriginal: "" as string | number,
   valorAcordo: "" as string | number,
   dataVencimento: "",
-  atendente: "Rayanne Donato",
+  atendente: "",
   observacao: "",
   status: "Pendente" as StatusAcordo,
 };
@@ -172,10 +174,25 @@ const DescontoInfo = ({
 
 const Acordos = () => {
   const { toast } = useToast();
+  const { fullName } = useAuth();
+  const currentUser = fullName || "Usuário";
 
   const { data: acordosData = [], isLoading: loadingAcordos } = useAcordosList();
   const createAcordo = useCreateAcordo();
   const updateAcordo = useUpdateAcordo();
+
+  // Carregar atendentes da tabela profiles
+  const [atendentes, setAtendentes] = useState<string[]>([]);
+  useEffect(() => {
+    supabase
+      .from("profiles")
+      .select("full_name")
+      .neq("role", "bloqueado")
+      .then(({ data }) => {
+        const nomes = (data || []).map((p: any) => p.full_name).filter(Boolean);
+        setAtendentes(nomes.length > 0 ? nomes : [currentUser]);
+      });
+  }, [currentUser]);
 
   // local overlay for comments and historico (these aren't persisted to DB):
   const [localOverlays, setLocalOverlays] = useState<Record<string, { comentarios: Comentario[]; historico: HistoricoItem[] }>>({});
@@ -281,7 +298,7 @@ const Acordos = () => {
     if (!acordoVisualizado || !novoComentario.trim()) return;
     const comentario: Comentario = {
       id: `cm${Date.now()}`,
-      autor: "Rayanne Donato",
+      autor: currentUser,
       dataHora: new Date().toISOString().slice(0, 16).replace("T", " "),
       texto: novoComentario,
     };

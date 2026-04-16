@@ -67,6 +67,7 @@ const menuGroups: MenuGroup[] = [
     items: [
       { title: "Boletos", url: "/boletos", icon: FileText },
       { title: "Recebimentos", url: "/financeiro", icon: DollarSign },
+      { title: "Histórico Pagamentos", url: "/historico-pagamentos", icon: History },
       { title: "Reembolsos", url: "/reembolsos", icon: RotateCcw },
     ],
   },

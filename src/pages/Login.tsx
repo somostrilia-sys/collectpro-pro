@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase, supabaseAdmin } from '@/integrations/supabase/client';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -28,12 +28,10 @@ export default function Login() {
       // Check if user is blocked
       const { data: { user: authUser } } = await supabase.auth.getUser();
       if (authUser) {
-        const { data: profile } = await supabaseAdmin
-          .from("profiles")
-          .select("role")
-          .eq("id", authUser.id)
-          .single();
-        if (profile?.role === "bloqueado") {
+        const { data } = await supabase.functions.invoke("manage-users", {
+          body: { action: "get_profile", user_id: authUser.id },
+        });
+        if (data?.profile?.role === "bloqueado") {
           await supabase.auth.signOut();
           throw new Error("Sua conta está bloqueada. Contate o administrador.");
         }

@@ -1,3 +1,4 @@
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -30,12 +31,14 @@ import ExportacaoRelatorios from "./pages/ExportacaoRelatorios";
 import ControleAcesso from "./pages/ControleAcesso";
 import Integracoes from "./pages/Integracoes";
 import VeiculosIndenizados from "./pages/VeiculosIndenizados";
+import HistoricoPagamentos from "./pages/HistoricoPagamentos";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
 const App = () => (
+  <ErrorBoundary>
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
@@ -56,6 +59,7 @@ const App = () => (
                       <Route path="/boletos" element={<Boletos />} />
                       <Route path="/financeiro" element={<Financeiro />} />
                       <Route path="/reembolsos" element={<Reembolsos />} />
+                      <Route path="/historico-pagamentos" element={<HistoricoPagamentos />} />
                       <Route path="/colaboradores" element={<Colaboradores />} />
                       <Route path="/ligacoes" element={<Ligacoes />} />
                       <Route path="/acoes-cobranca" element={<AcoesCobranca />} />
@@ -84,6 +88,7 @@ const App = () => (
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
+  </ErrorBoundary>
 );
 
 export default App;

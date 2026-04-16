@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Filter, Send, Eye, RefreshCw, Copy, MessageCircle, Mail, FileDown, Receipt, CheckCircle2, AlertTriangle, TrendingUp, ExternalLink, QrCode, Loader2, Clock } from "lucide-react";
+import { Search, Filter, Send, Eye, RefreshCw, Copy, MessageCircle, Mail, FileDown, Receipt, CheckCircle2, AlertTriangle, TrendingUp, ExternalLink, QrCode, Loader2, Clock, Merge } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,7 +11,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { useBoletos, useBoletosKPIs, useSyncGIA, type BoletoRow } from "@/hooks/useCollectData";
+import { useBoletos, useBoletosKPIs, useSyncGIA, useCreateAcordo, useRegistrarPagamento, type BoletoRow } from "@/hooks/useCollectData";
+import { useAuth } from "@/contexts/AuthContext";
+import { Textarea } from "@/components/ui/textarea";
+import { supabase } from "@/integrations/supabase/client";
 
 function formatDate(dateStr: string | null) {
   if (!dateStr) return "—";
@@ -145,6 +148,79 @@ const Boletos = () => {
     setSendBoleto(null);
   };
 
+  // ── Unificação de Boletos ──
+  const { user } = useAuth();
+  const [dialogUnificar, setDialogUnificar] = useState(false);
+  const [unificarDesconto, setUnificarDesconto] = useState("");
+  const [unificarObs, setUnificarObs] = useState("");
+  const [unificando, setUnificando] = useState(false);
+
+  const boletosParaUnificar = filtered.filter((b) => selectedIds.has(b.id) && ["aberto", "vencido"].includes(b.status));
+  const valorTotalUnificar = boletosParaUnificar.reduce((s, b) => s + b.valor, 0);
+  const associadosUnicos = [...new Set(boletosParaUnificar.map((b) => b.associado))];
+
+  const handleAbrirUnificar = () => {
+    if (boletosParaUnificar.length < 2) {
+      toast({ title: "Selecione pelo menos 2 boletos vencidos/abertos do mesmo associado", variant: "destructive" });
+      return;
+    }
+    if (associadosUnicos.length > 1) {
+      toast({ title: "Selecione boletos de um único associado", description: "A unificação só funciona para boletos do mesmo associado.", variant: "destructive" });
+      return;
+    }
+    setUnificarDesconto("");
+    setUnificarObs("");
+    setDialogUnificar(true);
+  };
+
+  const handleConfirmarUnificacao = async () => {
+    setUnificando(true);
+    try {
+      const desconto = parseFloat(unificarDesconto) || 0;
+      const valorComDesconto = valorTotalUnificar - (valorTotalUnificar * desconto / 100);
+      const boleto = boletosParaUnificar[0];
+
+      // Buscar associado_id pelo nome (primeiro boleto)
+      const { data: assocData } = await supabase
+        .from("associados")
+        .select("id")
+        .eq("nome", boleto.associado)
+        .limit(1)
+        .single();
+
+      // Criar acordo unificado
+      const { data: acordo, error: acordoError } = await supabase.from("acordos").insert({
+        associado_id: assocData?.id || null,
+        valor_original: valorTotalUnificar,
+        valor_acordo: valorComDesconto,
+        parcelas: 1,
+        parcelas_detalhes: [{
+          numero: 1,
+          valor: valorComDesconto,
+          vencimento: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
+          status: "pendente",
+        }],
+        status: "ativo",
+      }).select().single();
+      if (acordoError) throw acordoError;
+
+      // Marcar boletos como "acordo"
+      const ids = boletosParaUnificar.map((b) => b.id);
+      await supabase.from("boletos").update({ status: "acordo" }).in("id", ids);
+
+      toast({
+        title: "Boletos unificados!",
+        description: `${boletosParaUnificar.length} boletos unificados em acordo de ${valorComDesconto.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}`,
+      });
+      setDialogUnificar(false);
+      setSelectedIds(new Set());
+    } catch (e: any) {
+      toast({ title: "Erro ao unificar", description: e.message, variant: "destructive" });
+    } finally {
+      setUnificando(false);
+    }
+  };
+
   function BoletoTable({ data }: { data: BoletoRow[] }) {
     return (
       <Table>
@@ -217,10 +293,16 @@ const Boletos = () => {
         </div>
         <div className="flex gap-2">
           {selectedIds.size > 0 && (
-            <Button onClick={handleDisparoAvulso} className="gap-2">
-              <MessageCircle className="h-4 w-4" />
-              Disparar ({selectedIds.size})
-            </Button>
+            <>
+              <Button onClick={handleDisparoAvulso} className="gap-2">
+                <MessageCircle className="h-4 w-4" />
+                Disparar ({selectedIds.size})
+              </Button>
+              <Button variant="outline" onClick={handleAbrirUnificar} className="gap-2">
+                <Merge className="h-4 w-4" />
+                Unificar Boletos
+              </Button>
+            </>
           )}
           <Button variant="outline" onClick={handleSync} disabled={syncGIA.isPending}>
             {syncGIA.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-2" />}
@@ -460,6 +542,59 @@ const Boletos = () => {
           <DialogFooter className="gap-2">
             <Button variant="outline" onClick={() => setSendBoleto(null)}>Cancelar</Button>
             <Button onClick={handleSendConfirm}><Send className="h-4 w-4 mr-2" />Enviar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal: Unificar Boletos */}
+      <Dialog open={dialogUnificar} onOpenChange={setDialogUnificar}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-heading">Unificar Boletos em Acordo</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="bg-muted/30 rounded-lg p-3 space-y-1">
+              <p className="text-sm font-medium">Associado: {associadosUnicos[0]}</p>
+              <p className="text-sm">{boletosParaUnificar.length} boletos selecionados</p>
+              <p className="text-lg font-bold">Total: {formatCurrency(valorTotalUnificar)}</p>
+            </div>
+            <div className="space-y-1.5">
+              <Label>Desconto (%)</Label>
+              <Input
+                type="number"
+                placeholder="0"
+                min="0"
+                max="100"
+                value={unificarDesconto}
+                onChange={(e) => setUnificarDesconto(e.target.value)}
+              />
+              {unificarDesconto && parseFloat(unificarDesconto) > 0 && (
+                <p className="text-sm text-success">
+                  Valor com desconto: {formatCurrency(valorTotalUnificar - (valorTotalUnificar * parseFloat(unificarDesconto) / 100))}
+                </p>
+              )}
+            </div>
+            <div className="space-y-1.5">
+              <Label>Observação</Label>
+              <Textarea
+                placeholder="Observações sobre a unificação..."
+                value={unificarObs}
+                onChange={(e) => setUnificarObs(e.target.value)}
+              />
+            </div>
+            <div className="text-xs text-muted-foreground space-y-1">
+              <p>Boletos incluídos:</p>
+              {boletosParaUnificar.map((b) => (
+                <p key={b.id}>- Venc. {formatDate(b.vencimento)} — {formatCurrency(b.valor)} ({b.mesReferencia})</p>
+              ))}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDialogUnificar(false)}>Cancelar</Button>
+            <Button onClick={handleConfirmarUnificacao} disabled={unificando}>
+              {unificando && <Loader2 className="h-4 w-4 mr-1 animate-spin" />}
+              Confirmar Unificação
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -52,10 +52,12 @@ export default function Login() {
       // Check if user is blocked
       const { data: { user: authUser } } = await supabase.auth.getUser();
       if (authUser) {
-        const { data } = await supabase.functions.invoke("manage-users", {
-          body: { action: "get_profile", user_id: authUser.id },
-        });
-        if (data?.profile?.role === "bloqueado") {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", authUser.id)
+          .single();
+        if (profile?.role === "bloqueado") {
           await supabase.auth.signOut();
           throw new Error("Sua conta está bloqueada. Contate o administrador.");
         }

@@ -39,10 +39,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const fetchProfile = async (userId: string) => {
     try {
-      const { data } = await supabase.functions.invoke("manage-users", {
-        body: { action: "get_profile", user_id: userId },
-      });
-      const profile = data?.profile;
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("full_name, role, permissions")
+        .eq("id", userId)
+        .single();
 
       if (profile) {
         setFullName(profile.full_name || null);

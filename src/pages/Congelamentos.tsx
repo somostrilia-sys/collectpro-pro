@@ -123,7 +123,7 @@ export default function Congelamentos() {
             {[
               { label: "Ativos", value: kpi.ativos, icon: CheckCircle, iconColor: "text-success", bg: "bg-success/10" },
               { label: "Aguardando", value: kpi.aguardando, icon: Clock, iconColor: "text-warning", bg: "bg-warning/10" },
-              { label: "Expiram em 7 dias", value: 4, icon: AlertTriangle, iconColor: "text-warning", bg: "bg-warning/10" },
+              { label: "Expiram em 7 dias", value: 0, icon: AlertTriangle, iconColor: "text-warning", bg: "bg-warning/10" },
               { label: "Valor Congelado", value: `R$ ${kpi.valor.toLocaleString("pt-BR")}`, icon: DollarSign, iconColor: "text-primary", bg: "bg-primary/10" },
             ].map(c => (
               <Card key={c.label} className="border-0 shadow-sm hover:shadow-md transition-shadow">
@@ -288,19 +288,19 @@ export default function Congelamentos() {
               <CardContent className="space-y-3 text-sm">
                 <div>
                   <div className="flex justify-between mb-1"><span className="text-muted-foreground">Valor congelado atual</span><span className="font-bold text-primary">R$ 0</span></div>
-                  <Progress value={65} className="h-3" />
-                  <p className="text-xs text-muted-foreground mt-1">65% da meta mensal de congelamentos</p>
+                  <Progress value={0} className="h-3" />
+                  <p className="text-xs text-muted-foreground mt-1">0% da meta mensal de congelamentos</p>
                 </div>
                 <div>
-                  <div className="flex justify-between mb-1"><span className="text-muted-foreground">Recuperado após encerramento</span><span className="font-bold text-success">R$ 615</span></div>
-                  <Progress value={26} className="h-3" />
+                  <div className="flex justify-between mb-1"><span className="text-muted-foreground">Recuperado após encerramento</span><span className="font-bold text-success">R$ 0</span></div>
+                  <Progress value={0} className="h-3" />
                 </div>
                 <div className="rounded-lg bg-warning/10 p-3 mt-2">
                   <div className="flex items-center gap-2 text-warning font-medium">
                     <AlertTriangle className="h-4 w-4" />
-                    4 congelamentos expiram nos próximos 7 dias
+                    0 congelamentos expiram nos próximos 7 dias
                   </div>
-                  <p className="text-xs text-muted-foreground mt-0.5">Valor a retomar: R$ 1.070/mês</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Valor a retomar: R$ 0/mês</p>
                 </div>
               </CardContent>
             </Card>

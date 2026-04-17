@@ -134,8 +134,8 @@ const RelatorioDialog = ({
   open: boolean;
   onClose: () => void;
 }) => {
-  const [dataInicio, setDataInicio] = useState("2024-01-01");
-  const [dataFim, setDataFim] = useState("2024-12-31");
+  const [dataInicio, setDataInicio] = useState("");
+  const [dataFim, setDataFim] = useState("");
   const [status, setStatus] = useState("todos");
   const [tipo, setTipo] = useState("faturamento");
   const [vencimento, setVencimento] = useState("todos");
@@ -325,8 +325,8 @@ const RelatorioGeralDialog = ({
   open: boolean;
   onClose: () => void;
 }) => {
-  const [dataInicio, setDataInicio] = useState("2024-01-01");
-  const [dataFim, setDataFim] = useState("2024-12-31");
+  const [dataInicio, setDataInicio] = useState("");
+  const [dataFim, setDataFim] = useState("");
   const [coopFilter, setCoopFilter] = useState("todas");
   const [vencFilter, setVencFilter] = useState("todos");
   const [volFilter, setVolFilter] = useState("todos");

@@ -182,7 +182,7 @@ export default function Reembolsos() {
             <div className="rounded-xl p-2.5 bg-success/10">
               <DollarSign className="h-5 w-5 text-success" />
             </div>
-            <p className="text-2xl font-bold text-success">R$ 3.420</p>
+            <p className="text-2xl font-bold text-success">R$ 0</p>
           </CardContent>
         </Card>
         <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">

@@ -64,11 +64,11 @@ export default function Financeiro() {
   const { toast } = useToast();
   const [search, setSearch]   = useState("");
   const [formaF, setFormaF]   = useState("Todos");
-  const [dataF, setDataF]     = useState("2026-03-29");
+  const [dataF, setDataF]     = useState(new Date().toISOString().slice(0,10));
   const [detalhe, setDetalhe] = useState<Recebimento | null>(null);
   const [estorno, setEstorno] = useState<Recebimento | null>(null);
   const [vincBusca, setVinc]  = useState("");
-  const [dataCon, setDataCon] = useState("2026-03-29");
+  const [dataCon, setDataCon] = useState(new Date().toISOString().slice(0,10));
 
   const filtered = mockRec.filter(r => {
     const s = search.toLowerCase();
@@ -165,7 +165,7 @@ export default function Financeiro() {
                   </div>
                   <span className="text-xs text-muted-foreground">Recebido no Mês</span>
                 </div>
-                <p className="text-xl font-bold">{fmt(285620)}</p>
+                <p className="text-xl font-bold">{fmt(0)}</p>
               </CardContent>
             </Card>
             <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
@@ -327,26 +327,26 @@ export default function Financeiro() {
             <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="pt-5 pb-4">
                 <p className="text-xs text-muted-foreground mb-1">Total Esperado</p>
-                <p className="text-xl font-bold">{fmt(18500)}</p>
+                <p className="text-xl font-bold">{fmt(0)}</p>
                 <p className="text-xs text-muted-foreground">boletos vencidos</p>
               </CardContent>
             </Card>
             <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="pt-5 pb-4">
                 <p className="text-xs text-muted-foreground mb-1">Total Recebido</p>
-                <p className="text-xl font-bold text-success">{fmt(12450)}</p>
+                <p className="text-xl font-bold text-success">{fmt(0)}</p>
               </CardContent>
             </Card>
             <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="pt-5 pb-4">
                 <p className="text-xs text-muted-foreground mb-1">Diferença</p>
-                <p className="text-xl font-bold text-destructive">-{fmt(6050)}</p>
+                <p className="text-xl font-bold text-destructive">{fmt(0)}</p>
               </CardContent>
             </Card>
             <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="pt-5 pb-4">
                 <p className="text-xs text-muted-foreground mb-1">Taxa de Recebimento</p>
-                <p className="text-xl font-bold text-primary">67,3%</p>
+                <p className="text-xl font-bold text-primary">0%</p>
               </CardContent>
             </Card>
           </div>
@@ -356,11 +356,11 @@ export default function Financeiro() {
               <CardTitle className="text-sm font-heading">Recebido vs Esperado</CardTitle>
             </CardHeader>
             <CardContent className="px-4 pb-4 space-y-1">
-              <Progress value={67.3} className="h-4" />
+              <Progress value={0} className="h-4" />
               <div className="flex justify-between text-xs text-muted-foreground">
-                <span>{fmt(12450)} recebido</span>
-                <span>67,3%</span>
-                <span>{fmt(18500)} esperado</span>
+                <span>{fmt(0)} recebido</span>
+                <span>0%</span>
+                <span>{fmt(0)} esperado</span>
               </div>
             </CardContent>
           </Card>
@@ -402,11 +402,11 @@ export default function Financeiro() {
           <div className="flex flex-wrap items-end gap-3">
             <div>
               <Label className="text-xs mb-1 block">De</Label>
-              <Input type="date" defaultValue="2026-03-23" className="w-36" />
+              <Input type="date" className="w-36" />
             </div>
             <div>
               <Label className="text-xs mb-1 block">Até</Label>
-              <Input type="date" defaultValue="2026-03-29" className="w-36" />
+              <Input type="date" className="w-36" />
             </div>
             <Button variant="outline" className="gap-2" onClick={() => exportar("CSV")}>
               <Download className="h-4 w-4" />Exportar CSV

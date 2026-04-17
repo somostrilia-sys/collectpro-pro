@@ -31,27 +31,9 @@ import {
 } from "recharts";
 import { useAcordosStats, useDashboardKPIs, useSyncGIA } from "@/hooks/useCollectData";
 
-const monthlyData = [
-  { mes: "Out", arrecadacao: 151000, meta: 155000 },
-  { mes: "Nov", arrecadacao: 158000, meta: 160000 },
-  { mes: "Dez", arrecadacao: 163000, meta: 165000 },
-  { mes: "Jan", arrecadacao: 171000, meta: 170000 },
-  { mes: "Fev", arrecadacao: 185000, meta: 175000 },
-  { mes: "Mar", arrecadacao: 197000, meta: 180000 },
-];
-
-const statusData = [
-  { name: "Pagos", value: 23400, color: "hsl(var(--success))" },
-  { name: "Pendentes", value: 1847, color: "hsl(var(--warning))" },
-  { name: "Vencidos", value: 892, color: "hsl(var(--destructive))" },
-];
-
-const collaboratorData = [
-  { nome: "Angela S.", recuperado: 62000, meta: 55000 },
-  { nome: "Carlos M.", recuperado: 48000, meta: 45000 },
-  { nome: "Fernanda L.", recuperado: 51000, meta: 50000 },
-  { nome: "Rodrigo T.", recuperado: 36000, meta: 40000 },
-];
+const monthlyData: { mes: string; arrecadacao: number; meta: number }[] = [];
+const statusData: { name: string; value: number; color: string }[] = [];
+const collaboratorData: { nome: string; recuperado: number; meta: number }[] = [];
 
 const Dashboard = () => {
   const { data: stats, isLoading } = useAcordosStats();
@@ -211,32 +193,8 @@ const Dashboard = () => {
             <CardDescription className="text-xs">Insights automáticos</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            <div className="p-3 bg-card rounded-lg border border-destructive/20">
-              <div className="flex items-center gap-2 mb-1.5">
-                <ArrowDownRight className="h-3.5 w-3.5 text-destructive" />
-                <span className="text-xs font-semibold text-destructive">Prioridade Alta</span>
-              </div>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                892 boletos vencidos com potencial de R$ 312k. Acione régua D+15 com VoIP IA.
-              </p>
-            </div>
-            <div className="p-3 bg-card rounded-lg border border-success/20">
-              <div className="flex items-center gap-2 mb-1.5">
-                <ArrowUpRight className="h-3.5 w-3.5 text-success" />
-                <span className="text-xs font-semibold text-success">Oportunidade</span>
-              </div>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Rodrigo T. 10% abaixo da meta. Redistribua 18 casos de baixa complexidade.
-              </p>
-            </div>
-            <div className="p-3 bg-card rounded-lg border border-warning/20">
-              <div className="flex items-center gap-2 mb-1.5">
-                <Sparkles className="h-3.5 w-3.5 text-warning" />
-                <span className="text-xs font-semibold text-warning">Sugestão</span>
-              </div>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                47 acordos fechados esta semana — maior taxa do trimestre. Continue a régua D+7.
-              </p>
+            <div className="p-6 text-center text-xs text-muted-foreground">
+              Nenhum insight disponível no momento.
             </div>
           </CardContent>
         </Card>

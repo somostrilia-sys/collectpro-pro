@@ -1020,7 +1020,7 @@ const ReguaCobranca = () => {
                 <Check className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <div className="text-3xl font-bold text-primary">92%</div>
+                <div className="text-3xl font-bold text-primary">0%</div>
                 <p className="text-sm text-muted-foreground">
                   Taxa de Recuperação Pré-Vencimento
                 </p>
@@ -1036,7 +1036,7 @@ const ReguaCobranca = () => {
                 <Clock className="h-6 w-6 text-warning" />
               </div>
               <div>
-                <div className="text-3xl font-bold text-warning">45%</div>
+                <div className="text-3xl font-bold text-warning">0%</div>
                 <p className="text-sm text-muted-foreground">
                   Taxa de Recuperação Pós-Vencimento
                 </p>
@@ -1052,7 +1052,7 @@ const ReguaCobranca = () => {
                 <AlertTriangle className="h-6 w-6 text-destructive" />
               </div>
               <div>
-                <div className="text-3xl font-bold text-destructive">12</div>
+                <div className="text-3xl font-bold text-destructive">0</div>
                 <p className="text-sm text-muted-foreground">
                   Aguardando Negativação
                 </p>

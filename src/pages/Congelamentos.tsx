@@ -87,8 +87,8 @@ export default function Congelamentos() {
       return;
     }
     const novo: Congelamento = {
-      id: Date.now(), associado: form.associado, cpf: "000.000.000-00", cooperativa: "Coop Sul",
-      motivo: form.motivo, inicio: form.inicio, fim: form.fim, valor: 250, status: "Aguardando",
+      id: Date.now(), associado: form.associado, cpf: "", cooperativa: "",
+      motivo: form.motivo, inicio: form.inicio, fim: form.fim, valor: 0, status: "Aguardando",
       comentarios: "Registrado via formulário.", atendente: form.atendente || "Sistema",
     };
     setData(prev => [novo, ...prev]);
@@ -254,7 +254,7 @@ export default function Congelamentos() {
             <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
               <CardHeader><CardTitle className="font-heading text-base">Resumo Mensal — Março 2026</CardTitle></CardHeader>
               <CardContent className="space-y-2 text-sm">
-                {[["Novos congelamentos","8"],["Encerrados no período","2"],["Média de duração","34 dias"],["Total congelado no mês","R$ 2.340"]].map(([k,v]) => (
+                {[["Novos congelamentos","0"],["Encerrados no período","0"],["Média de duração","—"],["Total congelado no mês","R$ 0"]].map(([k,v]) => (
                   <div key={k} className="flex justify-between py-1 border-b last:border-0">
                     <span className="text-muted-foreground">{k}</span><span className="font-semibold">{v}</span>
                   </div>
@@ -287,7 +287,7 @@ export default function Congelamentos() {
               <CardHeader><CardTitle className="font-heading text-base">Impacto Financeiro</CardTitle></CardHeader>
               <CardContent className="space-y-3 text-sm">
                 <div>
-                  <div className="flex justify-between mb-1"><span className="text-muted-foreground">Valor congelado atual</span><span className="font-bold text-primary">R$ 2.340</span></div>
+                  <div className="flex justify-between mb-1"><span className="text-muted-foreground">Valor congelado atual</span><span className="font-bold text-primary">R$ 0</span></div>
                   <Progress value={65} className="h-3" />
                   <p className="text-xs text-muted-foreground mt-1">65% da meta mensal de congelamentos</p>
                 </div>

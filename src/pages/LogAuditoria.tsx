@@ -5,18 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
 
-const logs = [
-  { id: 1, usuario: "Maria Gestora", acao: "Alteração de Status", entidade: "Associado", alvo: "João Pereira", de: "Ativo", para: "Inadimplente", data: "2026-03-09 14:32", ip: "192.168.1.45" },
-  { id: 2, usuario: "Carlos Mendes", acao: "Registro de Ligação", entidade: "Ligação", alvo: "Ana Costa - (11) 98765-4321", de: "-", para: "Contato Efetivo", data: "2026-03-09 13:15", ip: "192.168.1.22" },
-  { id: 3, usuario: "Maria Gestora", acao: "Criação de Acordo", entidade: "Acordo", alvo: "Roberto Lima - #AC-2024-095", de: "-", para: "R$ 2.400,00 em 6x", data: "2026-03-09 11:45", ip: "192.168.1.45" },
-  { id: 4, usuario: "Ana Souza", acao: "Envio de Template", entidade: "Template", alvo: "WhatsApp - Lembrete Vencimento", de: "-", para: "Enviado para 45 associados", data: "2026-03-09 10:00", ip: "192.168.1.33" },
-  { id: 5, usuario: "Maria Gestora", acao: "Negativação", entidade: "Associado", alvo: "Fernando Dias", de: "Inadimplente", para: "Negativado SPC", data: "2026-03-09 09:30", ip: "192.168.1.45" },
-  { id: 6, usuario: "Pedro Alves", acao: "Alteração de Status", entidade: "Boleto", alvo: "BOL-2024-1847", de: "Pendente", para: "Pago", data: "2026-03-08 16:45", ip: "192.168.1.18" },
-  { id: 7, usuario: "Carlos Mendes", acao: "Alteração de Status", entidade: "Associado", alvo: "Luciana Ferreira", de: "Inadimplente", para: "Em Acordo", data: "2026-03-08 15:20", ip: "192.168.1.22" },
-  { id: 8, usuario: "Maria Gestora", acao: "Exclusão de Template", entidade: "Template", alvo: "SMS - Cobrança Agressiva", de: "Ativo", para: "Excluído", data: "2026-03-08 14:00", ip: "192.168.1.45" },
-  { id: 9, usuario: "Ana Souza", acao: "Registro de Ligação", entidade: "Ligação", alvo: "Paulo Santos - (21) 97654-3210", de: "-", para: "Sem Contato", data: "2026-03-08 11:30", ip: "192.168.1.33" },
-  { id: 10, usuario: "Maria Gestora", acao: "Alteração de Perfil", entidade: "Colaborador", alvo: "Pedro Alves", de: "Colaborador", para: "Colaborador Sênior", data: "2026-03-08 09:00", ip: "192.168.1.45" },
-];
+const logs: { id: number; usuario: string; acao: string; entidade: string; alvo: string; de: string; para: string; data: string; ip: string }[] = [];
 
 const acaoBadge = (acao: string) => {
   if (acao.includes("Alteração")) return <Badge className="bg-primary/10 text-primary border-0">Alteração</Badge>;

@@ -196,7 +196,7 @@ const Integracoes = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <KPICard
           title="Total de Integrações"
-          value="1 ativa"
+          value="0"
           change={`${enabledImports + enabledExports} sincronizações habilitadas`}
           changeType="positive"
           icon={Plug}
@@ -204,15 +204,15 @@ const Integracoes = () => {
         />
         <KPICard
           title="Última Sincronização"
-          value="21:45"
-          change="Hoje, 28/03/2026"
+          value="—"
+          change="Sem dados"
           changeType="positive"
           icon={Clock}
           gradient="success"
         />
         <KPICard
           title="Registros Sincronizados"
-          value="6.328"
+          value="0"
           change="Nas últimas 24h"
           changeType="positive"
           icon={Database}
@@ -220,9 +220,9 @@ const Integracoes = () => {
         />
         <KPICard
           title="Erros Pendentes"
-          value="1"
-          change="Módulo Sinistros"
-          changeType="negative"
+          value="0"
+          change="Nenhum erro"
+          changeType="positive"
           icon={AlertCircle}
           gradient="danger"
         />

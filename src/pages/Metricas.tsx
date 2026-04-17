@@ -23,21 +23,9 @@ import {
 } from "recharts";
 import { useToast } from "@/hooks/use-toast";
 
-const monthlyData = [
-  { mes: "Jan", arrecadacao: 125000, meta: 150000, acordos: 28, ligacoes: 450 },
-  { mes: "Fev", arrecadacao: 132000, meta: 150000, acordos: 32, ligacoes: 520 },
-  { mes: "Mar", arrecadacao: 148000, meta: 150000, acordos: 35, ligacoes: 480 },
-  { mes: "Abr", arrecadacao: 156000, meta: 160000, acordos: 42, ligacoes: 510 },
-  { mes: "Mai", arrecadacao: 142000, meta: 160000, acordos: 38, ligacoes: 490 },
-  { mes: "Jun", arrecadacao: 168000, meta: 170000, acordos: 45, ligacoes: 530 },
-];
+const monthlyData: { mes: string; arrecadacao: number; meta: number; acordos: number; ligacoes: number }[] = [];
 
-const channelData = [
-  { canal: "WhatsApp", efetividade: 78, total: 1250 },
-  { canal: "Ligação", efetividade: 65, total: 890 },
-  { canal: "SMS", efetividade: 45, total: 420 },
-  { canal: "E-mail", efetividade: 32, total: 350 },
-];
+const channelData: { canal: string; efetividade: number; total: number }[] = [];
 
 const Metricas = () => {
   const [periodo, setPeriodo] = useState("6meses");

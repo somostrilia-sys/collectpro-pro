@@ -171,7 +171,7 @@ export default function Reembolsos() {
             <div className="rounded-xl p-2.5 bg-primary/10">
               <RotateCcw className="h-5 w-5 text-primary" />
             </div>
-            <p className="text-2xl font-bold">8</p>
+            <p className="text-2xl font-bold">0</p>
           </CardContent>
         </Card>
         <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">

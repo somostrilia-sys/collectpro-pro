@@ -146,14 +146,7 @@ const RelatorioDialog = ({
   const inad = mockInadimplentes[coop.id] ?? [];
   const inadTotal = inad.reduce((s, i) => s + i.valorAberto, 0);
 
-  const mockRows = [
-    { mes: "Jan", fat: coop.faturamento * 0.085, arr: coop.arrecadado * 0.085, acordos: Math.round(coop.acordosAtivos * 0.4), cancel: 0 },
-    { mes: "Fev", fat: coop.faturamento * 0.082, arr: coop.arrecadado * 0.081, acordos: Math.round(coop.acordosAtivos * 0.3), cancel: 0 },
-    { mes: "Mar", fat: coop.faturamento * 0.083, arr: coop.arrecadado * 0.084, acordos: Math.round(coop.acordosAtivos * 0.2), cancel: Math.round(coop.cancelamentos * 0.3) },
-    { mes: "Abr", fat: coop.faturamento * 0.084, arr: coop.arrecadado * 0.083, acordos: 0, cancel: Math.round(coop.cancelamentos * 0.2) },
-    { mes: "Mai", fat: coop.faturamento * 0.083, arr: coop.arrecadado * 0.082, acordos: 0, cancel: 0 },
-    { mes: "Jun", fat: coop.faturamento * 0.082, arr: coop.arrecadado * 0.083, acordos: Math.round(coop.acordosAtivos * 0.1), cancel: Math.round(coop.cancelamentos * 0.5) },
-  ];
+  const mockRows: { mes: string; fat: number; arr: number; acordos: number; cancel: number }[] = [];
 
   const totalFat = mockRows.reduce((s, r) => s + r.fat, 0);
   const totalArr = mockRows.reduce((s, r) => s + r.arr, 0);
@@ -850,7 +843,7 @@ const Cooperativas = () => {
             </div>
             <div>
               <p className="text-xs text-muted-foreground">Cooperativas Ativas</p>
-              <p className="text-2xl font-bold">8</p>
+              <p className="text-2xl font-bold">{mockCooperativas.length}</p>
             </div>
           </CardContent>
         </Card>

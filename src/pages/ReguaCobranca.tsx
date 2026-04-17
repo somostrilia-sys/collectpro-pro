@@ -254,18 +254,7 @@ const etaposPosVencimento: EtapaRegua[] = [
 
 // --- Mock: Associados na Regua ---
 
-const mockAssociados: AssociadoRegua[] = [
-  { id: "1", nome: "Maria Santos", cpf: "123.456.789-00", etapaAtual: "D-7", diasAtraso: -7, valor: 320.0, proximoDisparo: "Hoje 08:00", canal: "WhatsApp", fase: "pre" },
-  { id: "2", nome: "João Silva", cpf: "234.567.890-11", etapaAtual: "D-3", diasAtraso: -3, valor: 450.0, proximoDisparo: "Hoje 09:00", canal: "WhatsApp", fase: "pre" },
-  { id: "3", nome: "Ana Lima", cpf: "345.678.901-22", etapaAtual: "D0", diasAtraso: 0, valor: 189.0, proximoDisparo: "Hoje 10:00", canal: "WhatsApp", fase: "pre" },
-  { id: "4", nome: "Carlos Souza", cpf: "456.789.012-33", etapaAtual: "D+1", diasAtraso: 1, valor: 275.0, proximoDisparo: "Amanhã 08:00", canal: "WhatsApp", fase: "pos" },
-  { id: "5", nome: "Pedro Costa", cpf: "567.890.123-44", etapaAtual: "D+3", diasAtraso: 3, valor: 390.0, proximoDisparo: "27/01 08:00", canal: "WhatsApp", fase: "pos" },
-  { id: "6", nome: "Lucia Ferreira", cpf: "678.901.234-55", etapaAtual: "D+7", diasAtraso: 7, valor: 520.0, proximoDisparo: "28/01 09:00", canal: "WhatsApp + Ligação", fase: "pos" },
-  { id: "7", nome: "Roberto Alves", cpf: "789.012.345-66", etapaAtual: "D+10", diasAtraso: 10, valor: 870.0, proximoDisparo: "29/01 10:00", canal: "WhatsApp + E-mail", fase: "pos" },
-  { id: "8", nome: "Fernanda Rocha", cpf: "890.123.456-77", etapaAtual: "D+15", diasAtraso: 15, valor: 640.0, proximoDisparo: "30/01 08:00", canal: "WhatsApp + Ligação + E-mail", fase: "pos" },
-  { id: "9", nome: "Marcos Nunes", cpf: "901.234.567-88", etapaAtual: "D+25", diasAtraso: 25, valor: 1200.0, proximoDisparo: "01/02 08:00", canal: "WhatsApp + E-mail", fase: "pos" },
-  { id: "10", nome: "Patrícia Gomes", cpf: "012.345.678-99", etapaAtual: "D+30", diasAtraso: 30, valor: 980.0, proximoDisparo: "Aguardando", canal: "Sistema", fase: "pos" },
-];
+const mockAssociados: AssociadoRegua[]  = [];
 
 // --- Helpers ---
 

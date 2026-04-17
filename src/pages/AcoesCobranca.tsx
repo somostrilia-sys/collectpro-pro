@@ -19,62 +19,7 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 
-const mockAcoes = [
-  {
-    id: "1",
-    associado: "João Carlos da Silva",
-    tipo: "WhatsApp",
-    descricao: "Envio de lembrete D+1",
-    status: "Enviado",
-    colaborador: "Sistema",
-    dataHora: "2024-01-15 08:00",
-  },
-  {
-    id: "2",
-    associado: "Maria Aparecida Santos",
-    tipo: "Ligação",
-    descricao: "Contato de cobrança D+5",
-    status: "Concluído",
-    colaborador: "Maria Silva",
-    dataHora: "2024-01-15 10:30",
-  },
-  {
-    id: "3",
-    associado: "Pedro Henrique Oliveira",
-    tipo: "SMS",
-    descricao: "Envio de segunda via",
-    status: "Enviado",
-    colaborador: "Sistema",
-    dataHora: "2024-01-15 09:15",
-  },
-  {
-    id: "4",
-    associado: "Ana Beatriz Lima",
-    tipo: "E-mail",
-    descricao: "Notificação de negativação D+30",
-    status: "Enviado",
-    colaborador: "Sistema",
-    dataHora: "2024-01-14 14:00",
-  },
-  {
-    id: "5",
-    associado: "Carlos Eduardo Ferreira",
-    tipo: "Ligação",
-    descricao: "Follow-up de acordo",
-    status: "Pendente",
-    colaborador: "João Santos",
-    dataHora: "2024-01-15 16:00",
-  },
-  {
-    id: "6",
-    associado: "Fernanda Cristina Souza",
-    tipo: "WhatsApp",
-    descricao: "Confirmação de acordo",
-    status: "Lido",
-    colaborador: "Sistema",
-    dataHora: "2024-01-15 11:45",
-  },
-];
+const mockAcoes = [];
 
 const AcoesCobranca = () => {
   const [searchTerm, setSearchTerm] = useState("");

@@ -25,62 +25,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-const mockTickets = [
-  {
-    id: "T001",
-    assunto: "Dúvida sobre segunda via",
-    associado: "João Carlos da Silva",
-    status: "Aberto",
-    prioridade: "Normal",
-    colaborador: "Maria Silva",
-    dataAbertura: "2024-01-15 09:30",
-    ultimaMensagem: "Bom dia, preciso da segunda via do boleto",
-    mensagens: [
-      { autor: "João Carlos", tipo: "cliente", msg: "Bom dia, preciso da segunda via do boleto", hora: "09:30" },
-      { autor: "Maria Silva", tipo: "atendente", msg: "Bom dia João! Estou enviando agora.", hora: "09:35" },
-    ],
-  },
-  {
-    id: "T002",
-    assunto: "Solicitação de cancelamento",
-    associado: "Ana Beatriz Lima",
-    status: "Em andamento",
-    prioridade: "Alta",
-    colaborador: "João Santos",
-    dataAbertura: "2024-01-15 10:15",
-    ultimaMensagem: "Gostaria de cancelar meu plano",
-    mensagens: [
-      { autor: "Ana Beatriz", tipo: "cliente", msg: "Gostaria de cancelar meu plano", hora: "10:15" },
-      { autor: "João Santos", tipo: "atendente", msg: "Olá Ana, posso entender o motivo?", hora: "10:20" },
-      { autor: "Ana Beatriz", tipo: "cliente", msg: "Estou com dificuldades financeiras", hora: "10:25" },
-    ],
-  },
-  {
-    id: "T003",
-    assunto: "Negociação de dívida",
-    associado: "Pedro Henrique Oliveira",
-    status: "Aguardando cliente",
-    prioridade: "Normal",
-    colaborador: "Ana Costa",
-    dataAbertura: "2024-01-14 14:00",
-    ultimaMensagem: "Proposta enviada, aguardando retorno",
-    mensagens: [
-      { autor: "Pedro Henrique", tipo: "cliente", msg: "Quero negociar minha dívida", hora: "14:00" },
-      { autor: "Ana Costa", tipo: "atendente", msg: "Olá Pedro! Temos condições especiais.", hora: "14:10" },
-    ],
-  },
-  {
-    id: "T004",
-    assunto: "Reclamação de cobrança indevida",
-    associado: "Fernanda Cristina Souza",
-    status: "Resolvido",
-    prioridade: "Alta",
-    colaborador: "Carlos Lima",
-    dataAbertura: "2024-01-13 16:30",
-    ultimaMensagem: "Problema resolvido, obrigada!",
-    mensagens: [],
-  },
-];
+const mockTickets = [];
 
 const Tickets = () => {
   const [tickets, setTickets] = useState(mockTickets);

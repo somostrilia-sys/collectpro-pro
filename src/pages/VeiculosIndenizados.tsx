@@ -22,48 +22,15 @@ interface VeiculoIndenizado {
   cooperativa: string; observacoes: string;
 }
 
-const mockVeiculos: VeiculoIndenizado[] = [
-  { id:"1", associado:"João Carlos da Silva", cpf:"123.456.789-00", placa:"ABC-1234", veiculo:"HB20 2022", tipoEvento:"Perda Total - Colisão", valorIndenizacao:45000, dataEvento:"15/01/2026", fidelidadeAte:"15/01/2027", statusFidelidade:"Em Fidelidade", cooperativa:"WALK SP", observacoes:"Colisão frontal em rodovia. Veículo declarado perda total." },
-  { id:"2", associado:"Maria Santos", cpf:"987.654.321-00", placa:"XYZ-5678", veiculo:"Onix 2023", tipoEvento:"Roubo/Furto", valorIndenizacao:62000, dataEvento:"01/11/2025", fidelidadeAte:"01/11/2026", statusFidelidade:"Em Fidelidade", cooperativa:"WALK RJ", observacoes:"Roubo a mão armada. BO registrado." },
-  { id:"3", associado:"Pedro Oliveira", cpf:"456.789.123-00", placa:"DEF-9012", veiculo:"Corolla 2021", tipoEvento:"Perda Total - Enchente", valorIndenizacao:85000, dataEvento:"10/06/2025", fidelidadeAte:"10/06/2026", statusFidelidade:"Em Fidelidade", cooperativa:"WALK MG", observacoes:"Veículo submerso durante enchente." },
-  { id:"4", associado:"Ana Lima", cpf:"321.654.987-00", placa:"GHI-3456", veiculo:"Creta 2022", tipoEvento:"Perda Total - Colisão", valorIndenizacao:72000, dataEvento:"20/02/2025", fidelidadeAte:"20/02/2026", statusFidelidade:"Fidelidade Cumprida", cooperativa:"WALK SP", observacoes:"Colisão traseira. Perícia confirmou perda total." },
-  { id:"5", associado:"Carlos Ferreira", cpf:"789.123.456-00", placa:"JKL-7890", veiculo:"Compass 2023", tipoEvento:"Roubo/Furto", valorIndenizacao:120000, dataEvento:"05/03/2026", fidelidadeAte:"05/03/2027", statusFidelidade:"Em Fidelidade", cooperativa:"WALK PR", observacoes:"Furto em estacionamento." },
-  { id:"6", associado:"Fernanda Costa", cpf:"654.321.789-00", placa:"MNO-1234", veiculo:"Kicks 2022", tipoEvento:"Perda Total - Incêndio", valorIndenizacao:55000, dataEvento:"15/08/2025", fidelidadeAte:"15/08/2026", statusFidelidade:"Em Fidelidade", cooperativa:"WALK BA", observacoes:"Incêndio de origem elétrica." },
-  { id:"7", associado:"Roberto Almeida", cpf:"147.258.369-00", placa:"PQR-5678", veiculo:"T-Cross 2021", tipoEvento:"Perda Total - Colisão", valorIndenizacao:68000, dataEvento:"01/01/2025", fidelidadeAte:"01/01/2026", statusFidelidade:"Fidelidade Cumprida", cooperativa:"WALK SP", observacoes:"Colisão em cruzamento. Sem vítimas." },
-  { id:"8", associado:"Luciana Martins", cpf:"963.852.741-00", placa:"STU-9012", veiculo:"Tracker 2023", tipoEvento:"Roubo/Furto", valorIndenizacao:95000, dataEvento:"28/12/2025", fidelidadeAte:"28/12/2026", statusFidelidade:"Em Fidelidade", cooperativa:"WALK RS", observacoes:"Roubo durante a madrugada." },
-];
+const mockVeiculos: VeiculoIndenizado[]  = [];
 
-const tentativasCancelamento = [
-  { nome:"Pedro Oliveira", cpf:"456.789.123-00", data:"18/03/2026", status:"Bloqueado - Em fidelidade" },
-  { nome:"Maria Santos", cpf:"987.654.321-00", data:"05/03/2026", status:"Bloqueado - Em fidelidade" },
-  { nome:"Fernanda Costa", cpf:"654.321.789-00", data:"22/02/2026", status:"Bloqueado - Em fidelidade" },
-];
+const tentativasCancelamento = [];
 
-const relatorioTipos = [
-  { tipo:"Perda Total - Colisão", quantidade:18, valorTotal:1240000 },
-  { tipo:"Roubo/Furto", quantidade:15, valorTotal:1580000 },
-  { tipo:"Perda Total - Enchente", quantidade:6, valorTotal:390000 },
-  { tipo:"Perda Total - Incêndio", quantidade:4, valorTotal:260000 },
-  { tipo:"Outro", quantidade:2, valorTotal:85000 },
-];
+const relatorioTipos = [];
 
-const relatorioCooperativas = [
-  { cooperativa:"WALK SP", indenizacoes:14, valorTotal:980000 },
-  { cooperativa:"WALK RJ", indenizacoes:9, valorTotal:620000 },
-  { cooperativa:"WALK MG", indenizacoes:8, valorTotal:540000 },
-  { cooperativa:"WALK PR", indenizacoes:7, valorTotal:480000 },
-  { cooperativa:"WALK BA", indenizacoes:4, valorTotal:270000 },
-  { cooperativa:"WALK RS", indenizacoes:3, valorTotal:165000 },
-];
+const relatorioCooperativas = [];
 
-const evolucaoMensal = [
-  { mes:"Out/2025", indenizacoes:6, valor:388000 },
-  { mes:"Nov/2025", indenizacoes:8, valor:512000 },
-  { mes:"Dez/2025", indenizacoes:7, valor:465000 },
-  { mes:"Jan/2026", indenizacoes:9, valor:610000 },
-  { mes:"Fev/2026", indenizacoes:5, valor:334000 },
-  { mes:"Mar/2026", indenizacoes:10, valor:670000 },
-];
+const evolucaoMensal = [];
 
 const fmt = (v: number) => v.toLocaleString("pt-BR", { style:"currency", currency:"BRL" });
 

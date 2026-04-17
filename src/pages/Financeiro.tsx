@@ -31,34 +31,9 @@ interface Recebimento {
   codigoTransacao: string; referenciaBoleto: string; status: StatusRec;
 }
 
-const mockRec: Recebimento[] = [
-  { id:"1",  dataHora:"29/03 08:15", associado:"João Carlos da Silva", cpf:"123.456.789-00", cooperativa:"Central SP",     valor:189.90, forma:"PIX QR Code",             codigoTransacao:"PIX-2026032908150001", referenciaBoleto:"—", status:"Confirmado" },
-  { id:"2",  dataHora:"29/03 08:22", associado:"Maria Santos",          cpf:"987.654.321-00", cooperativa:"Central RJ",     valor:129.90, forma:"Boleto Código de Barras", codigoTransacao:"—",                   referenciaBoleto:"23793.38128 60000.000018 23456.789012 1 92650000012990", status:"Confirmado" },
-  { id:"3",  dataHora:"29/03 08:45", associado:"Pedro Oliveira",        cpf:"456.789.123-00", cooperativa:"Central SP",     valor:249.90, forma:"PIX QR Code",             codigoTransacao:"PIX-2026032908450002", referenciaBoleto:"—", status:"Confirmado" },
-  { id:"4",  dataHora:"29/03 09:10", associado:"Ana Lima",              cpf:"321.654.987-00", cooperativa:"Minas Proteção", valor:159.90, forma:"Boleto Código de Barras", codigoTransacao:"—",                   referenciaBoleto:"23793.38128 60000.000024 34567.890123 2 92650000015990", status:"Confirmado" },
-  { id:"5",  dataHora:"29/03 09:30", associado:"Carlos Ferreira",       cpf:"789.123.456-00", cooperativa:"Sul Proteção",   valor:199.90, forma:"PIX QR Code",             codigoTransacao:"PIX-2026032909300003", referenciaBoleto:"—", status:"Confirmado" },
-  { id:"6",  dataHora:"29/03 09:55", associado:"Fernanda Costa",        cpf:"654.321.789-00", cooperativa:"Central SP",     valor:179.90, forma:"Boleto Código de Barras", codigoTransacao:"—",                   referenciaBoleto:"23793.38128 60000.000036 45678.901234 3 92650000017990", status:"Pendente"   },
-  { id:"7",  dataHora:"29/03 10:12", associado:"Roberto Almeida",       cpf:"147.258.369-00", cooperativa:"Centro-Oeste",   valor:219.90, forma:"PIX QR Code",             codigoTransacao:"PIX-2026032910120004", referenciaBoleto:"—", status:"Confirmado" },
-  { id:"8",  dataHora:"29/03 10:40", associado:"Luciana Martins",       cpf:"963.852.741-00", cooperativa:"Litoral",        valor:149.90, forma:"PIX QR Code",             codigoTransacao:"PIX-2026032910400005", referenciaBoleto:"—", status:"Confirmado" },
-  { id:"9",  dataHora:"29/03 11:05", associado:"Marcos Ribeiro",        cpf:"258.147.369-00", cooperativa:"Nordeste",       valor:209.90, forma:"Boleto Código de Barras", codigoTransacao:"—",                   referenciaBoleto:"23793.38128 60000.000048 56789.012345 4 92650000020990", status:"Confirmado" },
-  { id:"10", dataHora:"29/03 11:30", associado:"Patrícia Souza",        cpf:"369.258.147-00", cooperativa:"Central RJ",     valor:169.90, forma:"PIX QR Code",             codigoTransacao:"PIX-2026032911300006", referenciaBoleto:"—", status:"Confirmado" },
-  { id:"11", dataHora:"29/03 12:00", associado:"Não identificado",      cpf:"—",              cooperativa:"—",              valor:189.90, forma:"PIX QR Code",             codigoTransacao:"PIX-2026032912000007", referenciaBoleto:"—", status:"Pendente"   },
-  { id:"12", dataHora:"29/03 12:25", associado:"Ricardo Santos",        cpf:"741.852.963-00", cooperativa:"Norte",          valor:239.90, forma:"Transferência",           codigoTransacao:"TED-2026032912250001", referenciaBoleto:"—", status:"Confirmado" },
-  { id:"13", dataHora:"29/03 13:00", associado:"Não identificado",      cpf:"—",              cooperativa:"—",              valor:159.90, forma:"PIX QR Code",             codigoTransacao:"PIX-2026032913000008", referenciaBoleto:"—", status:"Pendente"   },
-];
+const mockRec: Recebimento[]  = [];
 
-const mockConc = [
-  { id:"1",  associado:"João Carlos da Silva", esperado:189.90, recebido:189.90, status:"Conciliado"   },
-  { id:"2",  associado:"Maria Santos",          esperado:129.90, recebido:129.90, status:"Conciliado"   },
-  { id:"3",  associado:"Ana Lima",              esperado:159.90, recebido:159.90, status:"Conciliado"   },
-  { id:"4",  associado:"Fernanda Costa",        esperado:179.90, recebido:0,      status:"Não recebido" },
-  { id:"5",  associado:"Roberto Almeida",       esperado:219.90, recebido:219.90, status:"Conciliado"   },
-  { id:"6",  associado:"Marcos Ribeiro",        esperado:209.90, recebido:209.90, status:"Conciliado"   },
-  { id:"7",  associado:"Sílvia Duarte",         esperado:189.90, recebido:100.00, status:"Parcial"      },
-  { id:"8",  associado:"Tiago Moraes",          esperado:149.90, recebido:0,      status:"Não recebido" },
-  { id:"9",  associado:"Renata Braga",          esperado:199.90, recebido:250.00, status:"Excedente"    },
-  { id:"10", associado:"Gustavo Neves",         esperado:169.90, recebido:0,      status:"Não recebido" },
-];
+const mockConc = [];
 
 const fmt = (v: number) => v.toLocaleString("pt-BR", { style:"currency", currency:"BRL" });
 
@@ -107,18 +82,7 @@ export default function Financeiro() {
   const totalBoleto = mockRec.filter(r => r.forma === "Boleto Código de Barras" && r.status !== "Estornado").reduce((s,r) => s+r.valor, 0);
   const pendId      = mockRec.filter(r => r.associado === "Não identificado").length;
 
-  const extratoRaw = [
-    { id:"e1",  dataHora:"29/03 13:00", desc:"Não identificado — PIX",          cod:"PIX-2026032913000008", valor:159.90, tipo:"entrada" as const },
-    { id:"e2",  dataHora:"29/03 12:25", desc:"Ricardo Santos — Transferência",  cod:"TED-2026032912250001", valor:239.90, tipo:"entrada" as const },
-    { id:"e3",  dataHora:"29/03 12:00", desc:"Não identificado — PIX",          cod:"PIX-2026032912000007", valor:189.90, tipo:"entrada" as const },
-    { id:"e4",  dataHora:"29/03 11:30", desc:"Patrícia Souza — PIX",            cod:"PIX-2026032911300006", valor:169.90, tipo:"entrada" as const },
-    { id:"e5",  dataHora:"29/03 11:05", desc:"Marcos Ribeiro — Boleto",         cod:"BOL-20260329110500",   valor:209.90, tipo:"entrada" as const },
-    { id:"e6",  dataHora:"28/03 14:10", desc:"Fernanda Costa — Boleto (Estorno)",cod:"BOL-20260328141000",  valor:179.90, tipo:"estorno" as const },
-    { id:"e7",  dataHora:"28/03 10:00", desc:"Carlos Ferreira — PIX",           cod:"PIX-2026032810000001", valor:199.90, tipo:"entrada" as const },
-    { id:"e8",  dataHora:"27/03 09:30", desc:"Luciana Martins — PIX",           cod:"PIX-2026032709300001", valor:149.90, tipo:"entrada" as const },
-    { id:"e9",  dataHora:"26/03 16:00", desc:"João Carlos — PIX",               cod:"PIX-2026032616000001", valor:189.90, tipo:"entrada" as const },
-    { id:"e10", dataHora:"25/03 11:00", desc:"Pedro Oliveira — PIX",            cod:"PIX-2026032511000001", valor:249.90, tipo:"entrada" as const },
-  ];
+  const extratoRaw: { id: string; dataHora: string; desc: string; cod: string; valor: number; tipo: "entrada" | "estorno" }[] = [];
   let acc = 0;
   const extrato = extratoRaw.slice().reverse().map(e => {
     acc += e.tipo === "entrada" ? e.valor : -e.valor;
@@ -127,39 +91,10 @@ export default function Financeiro() {
   const totEntradas = extratoRaw.filter(e => e.tipo === "entrada").reduce((s,e) => s+e.valor, 0);
   const totEstornos = extratoRaw.filter(e => e.tipo === "estorno").reduce((s,e) => s+e.valor, 0);
 
-  const porForma = [
-    { forma:"PIX QR Code",             qtd:8, total:7230.00, pct:58.1 },
-    { forma:"Boleto Código de Barras", qtd:4, total:5220.00, pct:41.9 },
-    { forma:"Transferência",           qtd:1, total:239.90,  pct:1.9  },
-    { forma:"Outros",                  qtd:0, total:0,       pct:0    },
-  ];
-  const porCoop = [
-    { coop:"Central SP",     rec:3, total:619.70,  ticket:206.57 },
-    { coop:"Central RJ",     rec:2, total:299.80,  ticket:149.90 },
-    { coop:"Minas Proteção", rec:1, total:159.90,  ticket:159.90 },
-    { coop:"Sul Proteção",   rec:1, total:199.90,  ticket:199.90 },
-    { coop:"Centro-Oeste",   rec:1, total:219.90,  ticket:219.90 },
-    { coop:"Norte",          rec:1, total:239.90,  ticket:239.90 },
-    { coop:"Nordeste",       rec:1, total:209.90,  ticket:209.90 },
-    { coop:"Litoral",        rec:1, total:149.90,  ticket:149.90 },
-  ];
-  const evolucao = [
-    { data:"23/03", rec:18, valor:3210.00, comp:"+4,2%",  neg:false },
-    { data:"24/03", rec:22, valor:3890.00, comp:"+21,2%", neg:false },
-    { data:"25/03", rec:20, valor:3540.00, comp:"-9,0%",  neg:true  },
-    { data:"26/03", rec:25, valor:4350.00, comp:"+22,9%", neg:false },
-    { data:"27/03", rec:19, valor:3210.00, comp:"-26,2%", neg:true  },
-    { data:"28/03", rec:28, valor:4980.00, comp:"+55,1%", neg:false },
-    { data:"29/03", rec:13, valor:2669.70, comp:"-46,4%", neg:true  },
-  ];
-  const horarios = [
-    { faixa:"08h–10h", qtd:5, valor:929.50  },
-    { faixa:"10h–12h", qtd:4, valor:749.60  },
-    { faixa:"12h–14h", qtd:3, valor:589.70  },
-    { faixa:"14h–16h", qtd:0, valor:0       },
-    { faixa:"16h–18h", qtd:0, valor:0       },
-    { faixa:"18h–20h", qtd:0, valor:0       },
-  ];
+  const porForma: { forma: string; qtd: number; total: number; pct: number }[] = [];
+  const porCoop: { coop: string; rec: number; total: number; ticket: number }[] = [];
+  const evolucao: { data: string; rec: number; valor: number; comp: string; neg: boolean }[] = [];
+  const horarios: { faixa: string; qtd: number; valor: number }[] = [];
   const maxH = Math.max(...horarios.map(h => h.qtd), 1);
 
   function copiar(txt: string, label: string) {

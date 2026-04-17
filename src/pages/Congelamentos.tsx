@@ -20,16 +20,7 @@ interface Congelamento {
   comentarios: string; atendente: string;
 }
 
-const MOCK: Congelamento[] = [
-  { id: 1, associado: "Carlos Mendes", cpf: "123.456.789-00", cooperativa: "Coop Sul", motivo: "Colisão Total", inicio: "01/03/2026", fim: "30/04/2026", valor: 290, status: "Ativo", comentarios: "Veículo em reparo na funilaria.", atendente: "Ana Silva" },
-  { id: 2, associado: "Maria Souza", cpf: "234.567.890-11", cooperativa: "Coop Norte", motivo: "Roubo de Veículo", inicio: "15/02/2026", fim: "15/04/2026", valor: 315, status: "Ativo", comentarios: "BO registrado. Aguardando perito.", atendente: "Bruno Costa" },
-  { id: 3, associado: "José Lima", cpf: "345.678.901-22", cooperativa: "Coop Sul", motivo: "Enchente/Alagamento", inicio: "20/03/2026", fim: "20/04/2026", valor: 180, status: "Aguardando", comentarios: "Aguardando laudo técnico.", atendente: "Carla Dias" },
-  { id: 4, associado: "Ana Paula", cpf: "456.789.012-33", cooperativa: "Coop Leste", motivo: "Incêndio", inicio: "10/02/2026", fim: "10/03/2026", valor: 420, status: "Expirado", comentarios: "Período encerrado.", atendente: "Diego Nunes" },
-  { id: 5, associado: "Pedro Rocha", cpf: "567.890.123-44", cooperativa: "Coop Norte", motivo: "Colisão Parcial", inicio: "05/03/2026", fim: "05/04/2026", valor: 260, status: "Ativo", comentarios: "Em reparo na concessionária.", atendente: "Ana Silva" },
-  { id: 6, associado: "Fernanda Castro", cpf: "678.901.234-55", cooperativa: "Coop Sul", motivo: "Granizo", inicio: "25/01/2026", fim: "25/03/2026", valor: 195, status: "Cancelado", comentarios: "Cancelado a pedido do associado.", atendente: "Bruno Costa" },
-  { id: 7, associado: "Lucas Moraes", cpf: "789.012.345-66", cooperativa: "Coop Leste", motivo: "Furto de Peças", inicio: "12/03/2026", fim: "12/04/2026", valor: 340, status: "Aguardando", comentarios: "Aguardando aprovação da diretoria.", atendente: "Carla Dias" },
-  { id: 8, associado: "Juliana Ferreira", cpf: "890.123.456-77", cooperativa: "Coop Norte", motivo: "Acidente com Terceiros", inicio: "01/04/2026", fim: "01/05/2026", valor: 340, status: "Ativo", comentarios: "Processo judicial em andamento.", atendente: "Diego Nunes" },
-];
+const MOCK: Congelamento[]  = [];
 
 const MOTIVOS = ["Colisão Total","Colisão Parcial","Roubo de Veículo","Furto de Peças","Incêndio","Enchente/Alagamento","Granizo","Acidente com Terceiros"];
 const COOPS = ["Todas","Coop Sul","Coop Norte","Coop Leste"];
@@ -106,15 +97,8 @@ export default function Congelamentos() {
   };
 
   // Relatórios mock
-  const porCoop = [
-    { name: "Coop Sul", count: 3, pct: 38 },
-    { name: "Coop Norte", count: 3, pct: 38 },
-    { name: "Coop Leste", count: 2, pct: 25 },
-  ];
-  const porMotivo = [
-    { name: "Colisão Total", count: 2 }, { name: "Roubo de Veículo", count: 1 },
-    { name: "Colisão Parcial", count: 1 }, { name: "Outros", count: 4 },
-  ];
+  const porCoop: { name: string; count: number; pct: number }[] = [];
+  const porMotivo: { name: string; count: number }[] = [];
 
   return (
     <div className="space-y-6">

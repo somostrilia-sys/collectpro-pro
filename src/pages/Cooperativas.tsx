@@ -83,56 +83,9 @@ interface Inadimplente {
   diasAtraso: number;
 }
 
-const mockCooperativas: Cooperativa[] = [
-  { id: "1", nome: "Central SP", cnpj: "12.345.678/0001-90", uf: "SP", cidade: "São Paulo", responsavel: "Carlos Eduardo Mendes", telefone: "(11) 3456-7890", email: "contato@centralsp.coop.br", associados: 1250, faturamento: 187500, arrecadado: 168750, acordosAtivos: 12, cancelamentos: 3, voluntario: "Ricardo Menezes", voluntarioTelefone: "(11) 98765-4321", voluntarioEmail: "ricardo@centralsp.coop.br", diaVencimento: 1 },
-  { id: "2", nome: "Central RJ", cnpj: "23.456.789/0001-01", uf: "RJ", cidade: "Rio de Janeiro", responsavel: "Ana Paula Ferreira", telefone: "(21) 2345-6789", email: "contato@centralrj.coop.br", associados: 980, faturamento: 147000, arrecadado: 117600, acordosAtivos: 18, cancelamentos: 7, voluntario: "Beatriz Carvalho", voluntarioTelefone: "(21) 98765-4321", voluntarioEmail: "beatriz@centralrj.coop.br", diaVencimento: 10 },
-  { id: "3", nome: "Minas Proteção", cnpj: "34.567.890/0001-12", uf: "MG", cidade: "Belo Horizonte", responsavel: "Roberto Alves Costa", telefone: "(31) 3456-7890", email: "contato@minasprotecao.coop.br", associados: 750, faturamento: 112500, arrecadado: 84375, acordosAtivos: 15, cancelamentos: 5, voluntario: "Gustavo Pereira", voluntarioTelefone: "(31) 98765-4321", voluntarioEmail: "gustavo@minasprotecao.coop.br", diaVencimento: 20 },
-  { id: "4", nome: "Sul Proteção", cnpj: "45.678.901/0001-23", uf: "PR", cidade: "Curitiba", responsavel: "Fernanda Lima Souza", telefone: "(41) 3456-7890", email: "contato@sulprotecao.coop.br", associados: 520, faturamento: 78000, arrecadado: 70200, acordosAtivos: 5, cancelamentos: 2, voluntario: "Daniela Campos", voluntarioTelefone: "(41) 98765-4321", voluntarioEmail: "daniela@sulprotecao.coop.br", diaVencimento: 1 },
-  { id: "5", nome: "Nordeste", cnpj: "56.789.012/0001-34", uf: "PE", cidade: "Recife", responsavel: "Marcelo Santos Oliveira", telefone: "(81) 3456-7890", email: "contato@nordeste.coop.br", associados: 480, faturamento: 72000, arrecadado: 50400, acordosAtivos: 22, cancelamentos: 10, voluntario: "Thiago Monteiro", voluntarioTelefone: "(81) 98765-4321", voluntarioEmail: "thiago@nordeste.coop.br", diaVencimento: 10 },
-  { id: "6", nome: "Centro-Oeste", cnpj: "67.890.123/0001-45", uf: "GO", cidade: "Goiânia", responsavel: "Juliana Ramos Pereira", telefone: "(62) 3456-7890", email: "contato@centrooeste.coop.br", associados: 350, faturamento: 52500, arrecadado: 44625, acordosAtivos: 8, cancelamentos: 3, voluntario: "Larissa Duarte", voluntarioTelefone: "(62) 98765-4321", voluntarioEmail: "larissa@centrooeste.coop.br", diaVencimento: 20 },
-  { id: "7", nome: "Norte", cnpj: "78.901.234/0001-56", uf: "PA", cidade: "Belém", responsavel: "Paulo Henrique Dias", telefone: "(91) 3456-7890", email: "contato@norte.coop.br", associados: 280, faturamento: 42000, arrecadado: 29400, acordosAtivos: 12, cancelamentos: 6, voluntario: "André Nascimento", voluntarioTelefone: "(91) 98765-4321", voluntarioEmail: "andre@norte.coop.br", diaVencimento: 1 },
-  { id: "8", nome: "Litoral", cnpj: "89.012.345/0001-67", uf: "SC", cidade: "Florianópolis", responsavel: "Tatiana Rocha Vieira", telefone: "(48) 3456-7890", email: "contato@litoral.coop.br", associados: 320, faturamento: 48000, arrecadado: 43200, acordosAtivos: 4, cancelamentos: 1, voluntario: "Vanessa Ribas", voluntarioTelefone: "(48) 98765-4321", voluntarioEmail: "vanessa@litoral.coop.br", diaVencimento: 10 },
-];
+const mockCooperativas: Cooperativa[]  = [];
 
-const mockInadimplentes: Record<string, Inadimplente[]> = {
-  "1": [
-    { nome: "Maria Aparecida Costa", cpf: "123.456.789-00", valorAberto: 420.50, diasAtraso: 15 },
-    { nome: "Pedro Lima Rocha", cpf: "234.567.890-11", valorAberto: 280.00, diasAtraso: 32 },
-    { nome: "Carlos Ferreira", cpf: "345.678.901-22", valorAberto: 390.00, diasAtraso: 8 },
-  ],
-  "2": [
-    { nome: "Roberta Alves", cpf: "456.789.012-33", valorAberto: 480.00, diasAtraso: 45 },
-    { nome: "Luciana Barbosa", cpf: "567.890.123-44", valorAberto: 290.00, diasAtraso: 12 },
-    { nome: "Fernanda Castro", cpf: "678.901.234-55", valorAberto: 550.00, diasAtraso: 28 },
-    { nome: "Adriano Marinho", cpf: "789.012.345-66", valorAberto: 310.00, diasAtraso: 60 },
-  ],
-  "3": [
-    { nome: "Sérgio Nunes", cpf: "890.123.456-77", valorAberto: 370.00, diasAtraso: 55 },
-    { nome: "Camila Ribeiro", cpf: "901.234.567-88", valorAberto: 450.00, diasAtraso: 18 },
-    { nome: "Diego Pinto", cpf: "012.345.678-99", valorAberto: 310.00, diasAtraso: 42 },
-  ],
-  "4": [
-    { nome: "Beatriz Moreira", cpf: "234.567.891-12", valorAberto: 260.00, diasAtraso: 10 },
-  ],
-  "5": [
-    { nome: "Rodrigo Azevedo", cpf: "345.678.902-23", valorAberto: 290.00, diasAtraso: 90 },
-    { nome: "Isabela Lopes", cpf: "456.789.013-34", valorAberto: 360.00, diasAtraso: 75 },
-    { nome: "Patrícia Melo", cpf: "567.890.124-45", valorAberto: 270.00, diasAtraso: 48 },
-    { nome: "Leonardo Borges", cpf: "678.901.235-56", valorAberto: 480.00, diasAtraso: 22 },
-  ],
-  "6": [
-    { nome: "Bruno Tavares", cpf: "890.123.457-78", valorAberto: 280.00, diasAtraso: 14 },
-    { nome: "Elaine Marques", cpf: "901.234.568-89", valorAberto: 350.00, diasAtraso: 30 },
-  ],
-  "7": [
-    { nome: "Fábio Coelho", cpf: "012.345.679-90", valorAberto: 260.00, diasAtraso: 65 },
-    { nome: "Gabriela Nascimento", cpf: "123.456.781-02", valorAberto: 310.00, diasAtraso: 80 },
-    { nome: "Iara Vieira", cpf: "234.567.892-13", valorAberto: 380.00, diasAtraso: 95 },
-  ],
-  "8": [
-    { nome: "Nilton Araújo", cpf: "456.789.014-35", valorAberto: 350.00, diasAtraso: 8 },
-  ],
-};
+const mockInadimplentes: Record<string, Inadimplente[]> = {};
 
 // -- Helpers --
 const fmt = (v: number) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });

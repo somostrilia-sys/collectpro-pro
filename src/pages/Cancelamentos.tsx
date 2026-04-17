@@ -76,81 +76,11 @@ interface SolicitacaoCancelamento {
 
 // ─── Mock Data ──────────────────────────────────────────────────────────────
 
-const mockAssociados = [
-  { id: "A1", nome: "João Carlos da Silva",    cpf: "123.456.789-00", placa: "ABC-1234", plano: "Premium",  email: "joao.silva@email.com" },
-  { id: "A2", nome: "Maria Aparecida Santos",  cpf: "987.654.321-00", placa: "XYZ-5678", plano: "Básico",   email: "maria.santos@email.com" },
-  { id: "A3", nome: "Pedro Henrique Oliveira", cpf: "456.789.123-00", placa: "DEF-9012", plano: "Premium",  email: "pedro.oliveira@email.com" },
-  { id: "A4", nome: "Ana Beatriz Lima",        cpf: "321.654.987-00", placa: "GHI-3456", plano: "Standard", email: "ana.lima@email.com" },
-  { id: "A5", nome: "Carlos Eduardo Ferreira", cpf: "654.321.098-00", placa: "JKL-7890", plano: "Básico",   email: "carlos.ferreira@email.com" },
-];
+const mockAssociados = [];
 
 // Atendentes carregados dinamicamente no componente
 
-const mockSolicitacoes: SolicitacaoCancelamento[] = [
-  {
-    id: "C001",
-    nome: "Maria Aparecida Santos",
-    cpf: "987.654.321-00",
-    placa: "XYZ-5678",
-    plano: "Básico",
-    email: "maria.santos@email.com",
-    status: "PENDENTE",
-    atendente: "Rayanne Donato",
-    dataAgendada: null,
-    criadoEm: "2024-01-15 09:00",
-    motivo: "Dificuldades financeiras",
-    comentarios: [
-      { id: "cm1", autor: "Rayanne Donato", dataHora: "2024-01-15 09:05", texto: "Associada entrou em contato via WhatsApp solicitando cancelamento urgente." },
-    ],
-  },
-  {
-    id: "C002",
-    nome: "Ana Beatriz Lima",
-    cpf: "321.654.987-00",
-    placa: "GHI-3456",
-    plano: "Standard",
-    email: "ana.lima@email.com",
-    status: "EM ATENDIMENTO",
-    atendente: "Laleska Gelinske",
-    dataAgendada: "2024-01-18 14:00",
-    criadoEm: "2024-01-14 11:30",
-    motivo: "Mudança de cidade, não precisa mais do plano",
-    comentarios: [
-      { id: "cm2", autor: "Laleska Gelinske", dataHora: "2024-01-14 11:35", texto: "Conversei com a associada. Vou tentar retenção antes de concluir o cancelamento." },
-      { id: "cm3", autor: "Carla Mendes",     dataHora: "2024-01-15 10:00", texto: "Ligação feita. Associada mantém decisão de cancelar." },
-    ],
-  },
-  {
-    id: "C003",
-    nome: "Carlos Eduardo Ferreira",
-    cpf: "654.321.098-00",
-    placa: "JKL-7890",
-    plano: "Básico",
-    email: "carlos.ferreira@email.com",
-    status: "URGENTE",
-    atendente: "Carla Mendes",
-    dataAgendada: null,
-    criadoEm: "2024-01-15 08:00",
-    motivo: "Associado com reclamação grave — cobertura negada indevidamente",
-    comentarios: [],
-  },
-  {
-    id: "C004",
-    nome: "Pedro Henrique Oliveira",
-    cpf: "456.789.123-00",
-    placa: "DEF-9012",
-    plano: "Premium",
-    email: "pedro.oliveira@email.com",
-    status: "CONCLUÍDO",
-    atendente: "Fernanda Lima",
-    dataAgendada: "2024-01-10 10:00",
-    criadoEm: "2024-01-08 16:00",
-    motivo: "Vendeu o veículo",
-    comentarios: [
-      { id: "cm4", autor: "Fernanda Lima", dataHora: "2024-01-10 10:30", texto: "Cancelamento concluído com sucesso. Documentação enviada por e-mail." },
-    ],
-  },
-];
+const mockSolicitacoes: SolicitacaoCancelamento[]  = [];
 
 // ─── Status color helpers ────────────────────────────────────────────────────
 

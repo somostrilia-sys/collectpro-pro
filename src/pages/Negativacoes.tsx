@@ -31,53 +31,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 
-const mockNegativacoes = [
-  {
-    id: "1",
-    associado: "Ana Beatriz Lima",
-    cpf: "789.123.456-00",
-    valorDevido: 1250.0,
-    diasAtraso: 45,
-    orgao: "SPC",
-    status: "Negativado",
-    dataInclusao: "2024-01-10",
-    motivo: "Boletos vencidos há mais de 30 dias",
-  },
-  {
-    id: "2",
-    associado: "Carlos Eduardo Ferreira",
-    cpf: "321.654.987-00",
-    valorDevido: 890.0,
-    diasAtraso: 38,
-    orgao: "Serasa",
-    status: "Negativado",
-    dataInclusao: "2024-01-05",
-    motivo: "Inadimplência recorrente",
-  },
-  {
-    id: "3",
-    associado: "João Carlos da Silva",
-    cpf: "123.456.789-00",
-    valorDevido: 0,
-    diasAtraso: 0,
-    orgao: "SPC/Serasa",
-    status: "Retirado",
-    dataInclusao: "2023-12-01",
-    dataRetirada: "2024-01-15",
-    motivo: "Débito quitado",
-  },
-  {
-    id: "4",
-    associado: "Fernanda Cristina Souza",
-    cpf: "654.987.321-00",
-    valorDevido: 560.0,
-    diasAtraso: 32,
-    orgao: "Pendente",
-    status: "Aguardando",
-    dataInclusao: "-",
-    motivo: "Prazo de 30 dias atingido",
-  },
-];
+const mockNegativacoes = [];
 
 const Negativacoes = () => {
   const [negativacoes, setNegativacoes] = useState(mockNegativacoes);

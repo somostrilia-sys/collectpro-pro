@@ -24,48 +24,7 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 
-const mockTemplates = [
-  {
-    id: "1",
-    nome: "Lembrete D+1",
-    canal: "WhatsApp",
-    categoria: "Utilidade",
-    mensagem: "Olá {nome}!\n\nSeu boleto de R$ {valor} vence amanhã ({vencimento}).\n\nLink para pagamento: {link_boleto}\n\nQualquer dúvida, estamos à disposição!",
-    variaveis: ["nome", "valor", "vencimento", "link_boleto"],
-  },
-  {
-    id: "2",
-    nome: "Lembrete D+5",
-    canal: "WhatsApp",
-    categoria: "Utilidade",
-    mensagem: "Olá {nome}!\n\nIdentificamos que seu boleto no valor de R$ {valor} está pendente desde {vencimento}.\n\nPara sua comodidade, segue o link atualizado: {link_boleto}\n\nPrecisa de ajuda? Estamos aqui!",
-    variaveis: ["nome", "valor", "vencimento", "link_boleto"],
-  },
-  {
-    id: "3",
-    nome: "Confirmação de Acordo",
-    canal: "WhatsApp",
-    categoria: "Utilidade",
-    mensagem: "Olá {nome}!\n\nSeu acordo foi registrado com sucesso!\n\nDetalhes:\n- Valor total: R$ {valor_acordo}\n- Parcelas: {parcelas}x de R$ {valor_parcela}\n- 1ª parcela: {data_primeira_parcela}\n\nObrigado pela confiança!",
-    variaveis: ["nome", "valor_acordo", "parcelas", "valor_parcela", "data_primeira_parcela"],
-  },
-  {
-    id: "4",
-    nome: "Aviso de Negativação",
-    canal: "E-mail",
-    categoria: "Utilidade",
-    mensagem: "Prezado(a) {nome},\n\nInformamos que o débito no valor de R$ {valor} referente ao seu plano de proteção veicular encontra-se em aberto há mais de 30 dias.\n\nPara evitar a inclusão nos órgãos de proteção ao crédito (SPC/Serasa), solicitamos a regularização até {data_limite}.\n\nPara negociação, entre em contato pelo telefone {telefone_contato}.\n\nAtenciosamente,\nEquipe CollectPro",
-    variaveis: ["nome", "valor", "data_limite", "telefone_contato"],
-  },
-  {
-    id: "5",
-    nome: "Lembrete SMS",
-    canal: "SMS",
-    categoria: "Utilidade",
-    mensagem: "CollectPro: {nome}, seu boleto de R$ {valor} vence em {vencimento}. Pague pelo link: {link_curto}",
-    variaveis: ["nome", "valor", "vencimento", "link_curto"],
-  },
-];
+const mockTemplates = [];
 
 const Templates = () => {
   const [templates, setTemplates] = useState(mockTemplates);

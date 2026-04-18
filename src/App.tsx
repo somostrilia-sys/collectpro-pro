@@ -30,6 +30,7 @@ import LogAuditoria from "./pages/LogAuditoria";
 import ExportacaoRelatorios from "./pages/ExportacaoRelatorios";
 import ControleAcesso from "./pages/ControleAcesso";
 import Integracoes from "./pages/Integracoes";
+import Conversas from "./pages/Conversas";
 import VeiculosIndenizados from "./pages/VeiculosIndenizados";
 import HistoricoPagamentos from "./pages/HistoricoPagamentos";
 import Login from "./pages/Login";
@@ -64,6 +65,7 @@ const App = () => (
                       <Route path="/ligacoes" element={<Ligacoes />} />
                       <Route path="/acoes-cobranca" element={<AcoesCobranca />} />
                       <Route path="/regua-cobranca" element={<ReguaCobranca />} />
+                      <Route path="/conversas" element={<Conversas />} />
                       <Route path="/templates" element={<Templates />} />
                       <Route path="/acordos" element={<Acordos />} />
                       <Route path="/negativacoes" element={<Negativacoes />} />

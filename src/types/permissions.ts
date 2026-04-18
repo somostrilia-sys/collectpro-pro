@@ -120,6 +120,7 @@ export const MODULE_ROUTE_MAP: Record<string, keyof Permissoes> = {
   "/ligacoes": "ligacoes",
   "/acoes-cobranca": "acoes",
   "/regua-cobranca": "regua",
+  "/conversas": "templates",
   "/templates": "templates",
   "/acordos": "acordos",
   "/negativacoes": "negativacoes",

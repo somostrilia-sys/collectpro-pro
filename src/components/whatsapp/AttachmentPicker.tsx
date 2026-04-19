@@ -6,7 +6,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Paperclip, Image, Film, FileText, Music, MapPin, Contact, Zap } from "lucide-react";
+import { Paperclip, Image, Film, FileText, Music, MapPin, Contact, Zap, BarChart2, CreditCard } from "lucide-react";
 
 interface Props {
   onPickFile: (file: File, type: "image" | "video" | "audio" | "document") => void;
@@ -14,9 +14,10 @@ interface Props {
   onPickContact?: () => void;
   onPickPix?: () => void;
   onPickPoll?: () => void;
+  onPickPayment?: () => void;
 }
 
-export function AttachmentPicker({ onPickFile, onPickLocation, onPickContact, onPickPix, onPickPoll }: Props) {
+export function AttachmentPicker({ onPickFile, onPickLocation, onPickContact, onPickPix, onPickPoll, onPickPayment }: Props) {
   const imgRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLInputElement>(null);
   const docRef = useRef<HTMLInputElement>(null);
@@ -63,6 +64,16 @@ export function AttachmentPicker({ onPickFile, onPickLocation, onPickContact, on
           {onPickPix && (
             <DropdownMenuItem onClick={onPickPix}>
               <Zap className="h-4 w-4 mr-2 text-green-600" /> PIX
+            </DropdownMenuItem>
+          )}
+          {onPickPayment && (
+            <DropdownMenuItem onClick={onPickPayment}>
+              <CreditCard className="h-4 w-4 mr-2 text-indigo-500" /> Solicitar Pagamento
+            </DropdownMenuItem>
+          )}
+          {onPickPoll && (
+            <DropdownMenuItem onClick={onPickPoll}>
+              <BarChart2 className="h-4 w-4 mr-2 text-orange-500" /> Enquete
             </DropdownMenuItem>
           )}
         </DropdownMenuContent>

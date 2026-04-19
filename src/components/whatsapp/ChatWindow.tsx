@@ -20,6 +20,10 @@ import { ReactionsBar } from "./ReactionsBar";
 import { EmojiPicker } from "./EmojiPicker";
 import { MessageActionsMenu } from "./MessageActionsMenu";
 import { AttachmentPicker } from "./AttachmentPicker";
+import {
+  SendLocationDialog, SendContactDialog, SendPixDialog, SendPollDialog, SendPaymentDialog,
+} from "./InteractiveSendDialogs";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Props {
   instanceId: string | null;
@@ -64,6 +68,11 @@ export function ChatWindow({
   const [replyingTo, setReplyingTo] = useState<WhatsAppMessage | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const typingTimerRef = useRef<number | null>(null);
+  const [dialogLocation, setDialogLocation] = useState(false);
+  const [dialogContact, setDialogContact] = useState(false);
+  const [dialogPix, setDialogPix] = useState(false);
+  const [dialogPoll, setDialogPoll] = useState(false);
+  const [dialogPayment, setDialogPayment] = useState(false);
 
   const { data: messages = [], isLoading } = useMessages(instanceId, telefone);
   const send = useSendMessage();
@@ -186,9 +195,32 @@ export function ChatWindow({
   };
 
   const handleAttach = async (file: File, type: "image" | "video" | "audio" | "document") => {
-    toast({ title: "Upload de arquivo em implementação", description: "Em breve" });
-    // TODO: upload pro Storage + envio com URL pública
-    void file; void type;
+    try {
+      toast({ title: "Enviando arquivo..." });
+      const form = new FormData();
+      form.append("instance_id", instanceId);
+      form.append("file", file);
+      const { data, error } = await supabase.functions.invoke("whatsapp-upload-media", {
+        body: form,
+      });
+      if (error) throw error;
+      if (!data?.success || !data?.public_url) throw new Error("upload falhou");
+
+      await send.mutateAsync({
+        instance_id: instanceId,
+        telefone,
+        chat_jid: chatJid ?? undefined,
+        associado_id: associadoId ?? undefined,
+        media: {
+          type,
+          url: data.public_url,
+          caption: text.trim() || undefined,
+        },
+      });
+      setText("");
+    } catch (e: any) {
+      toast({ title: "Falha ao enviar arquivo", description: e.message, variant: "destructive" });
+    }
   };
 
   const header = nome || formatTel(telefone);
@@ -400,7 +432,14 @@ export function ChatWindow({
       {/* ═══ Input ═══ */}
       <div className="p-3 border-t bg-background">
         <div className="flex items-end gap-2">
-          <AttachmentPicker onPickFile={handleAttach} />
+          <AttachmentPicker
+            onPickFile={handleAttach}
+            onPickLocation={() => setDialogLocation(true)}
+            onPickContact={() => setDialogContact(true)}
+            onPickPix={() => setDialogPix(true)}
+            onPickPoll={() => setDialogPoll(true)}
+            onPickPayment={() => setDialogPayment(true)}
+          />
           <EmojiPicker onPick={(e) => setText(text + e)} />
           <Textarea
             value={text}
@@ -425,6 +464,28 @@ export function ChatWindow({
           </Button>
         </div>
       </div>
+
+      {/* Diálogos interativos */}
+      <SendLocationDialog
+        instanceId={instanceId} chatJid={chatJid} telefone={telefone} associadoId={associadoId}
+        open={dialogLocation} onOpenChange={setDialogLocation}
+      />
+      <SendContactDialog
+        instanceId={instanceId} chatJid={chatJid} telefone={telefone} associadoId={associadoId}
+        open={dialogContact} onOpenChange={setDialogContact}
+      />
+      <SendPixDialog
+        instanceId={instanceId} chatJid={chatJid} telefone={telefone} associadoId={associadoId}
+        open={dialogPix} onOpenChange={setDialogPix}
+      />
+      <SendPollDialog
+        instanceId={instanceId} chatJid={chatJid} telefone={telefone} associadoId={associadoId}
+        open={dialogPoll} onOpenChange={setDialogPoll}
+      />
+      <SendPaymentDialog
+        instanceId={instanceId} chatJid={chatJid} telefone={telefone} associadoId={associadoId}
+        open={dialogPayment} onOpenChange={setDialogPayment}
+      />
     </div>
   );
 }

@@ -173,7 +173,7 @@ const Integracoes = () => {
           <Tabs defaultValue="uazapi">
             <TabsList>
               <TabsTrigger value="uazapi">uazapi (multi-instância)</TabsTrigger>
-              <TabsTrigger value="meta">Meta · Config</TabsTrigger>
+              <TabsTrigger value="meta">Meta Cloud API</TabsTrigger>
               <TabsTrigger value="meta-templates">Meta · Templates</TabsTrigger>
               <TabsTrigger value="meta-profile">Meta · Perfil</TabsTrigger>
               <TabsTrigger value="meta-blocks">Meta · Bloqueios</TabsTrigger>

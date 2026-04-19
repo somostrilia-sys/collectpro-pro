@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FileText, Send } from "lucide-react";
 import { useMetaTemplatesLocal, useSendMessage } from "@/hooks/useWhatsApp";
 import { useAuth } from "@/contexts/AuthContext";
@@ -16,7 +17,21 @@ interface Props {
   associadoId?: string | null;
   disabled?: boolean;
   triggerClassName?: string;
+  /** Filtro de setor/categoria (ex: "cobranca", "evento", "track", "gestao"). "all" = todos. */
+  defaultSetor?: "cobranca" | "evento" | "track" | "gestao" | "all";
 }
+
+const SETOR_GROUPS = [
+  { slug: "all",       label: "Todos" },
+  { slug: "cobranca",  label: "💰 Cobrança"    },
+  { slug: "evento",    label: "🚨 Eventos"     },
+  { slug: "track",     label: "📍 Rastreamento" },
+  { slug: "gestao",    label: "📋 Gestão"      },
+  { slug: "boas_vindas", label: "👋 Boas-vindas" },
+  { slug: "lembrete",  label: "⏰ Lembrete"    },
+  { slug: "aplicativo", label: "📱 Aplicativo" },
+  { slug: "outro",     label: "Outros"         },
+];
 
 // Extrai variáveis {{nome}} / {{1}} do body do template
 function extractVars(template: any): string[] {
@@ -33,14 +48,23 @@ function getBodyPreview(template: any): string {
   return bodyComp?.text ?? "";
 }
 
-export function MetaTemplatePicker({ instanceId, telefone, associadoId, disabled, triggerClassName }: Props) {
+export function MetaTemplatePicker({ instanceId, telefone, associadoId, disabled, triggerClassName, defaultSetor = "cobranca" }: Props) {
   const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [vars, setVars] = useState<Record<string, string>>({});
+  const [setorFilter, setSetorFilter] = useState<string>(defaultSetor);
   const { user } = useAuth();
 
   const { data: templates = [], isLoading } = useMetaTemplatesLocal(instanceId, "APPROVED");
   const send = useSendMessage();
+
+  const filtered = useMemo(() => {
+    if (setorFilter === "all") return templates;
+    return templates.filter((t: any) => {
+      const cat = (t.categoria || t.category || "").toString().toLowerCase();
+      return cat === setorFilter || cat.includes(setorFilter);
+    });
+  }, [templates, setorFilter]);
 
   const selected = useMemo(
     () => templates.find((t: any) => t.id === selectedId) ?? null,
@@ -83,15 +107,35 @@ export function MetaTemplatePicker({ instanceId, telefone, associadoId, disabled
         </DialogHeader>
 
         <div className="space-y-4">
+          {/* Filtro de setor */}
+          <div className="flex items-center gap-2">
+            <Label className="text-xs">Setor:</Label>
+            <Select value={setorFilter} onValueChange={setSetorFilter}>
+              <SelectTrigger className="h-8 w-48">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {SETOR_GROUPS.map((s) => (
+                  <SelectItem key={s.slug} value={s.slug}>{s.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <span className="text-xs text-muted-foreground ml-auto">
+              {filtered.length}/{templates.length}
+            </span>
+          </div>
+
           {isLoading && <p className="text-sm text-muted-foreground">Carregando templates...</p>}
-          {!isLoading && templates.length === 0 && (
+          {!isLoading && filtered.length === 0 && (
             <p className="text-sm text-muted-foreground">
-              Nenhum template aprovado. Crie em /integracoes &gt; Templates Meta.
+              {templates.length === 0
+                ? "Nenhum template aprovado. Crie em /integracoes > Templates Meta."
+                : "Nenhum template neste setor. Troca o filtro ou use 'Todos'."}
             </p>
           )}
 
           <div className="space-y-2 max-h-64 overflow-y-auto">
-            {templates.map((t: any) => (
+            {filtered.map((t: any) => (
               <button
                 key={t.id}
                 onClick={() => { setSelectedId(t.id); setVars({}); }}

@@ -77,6 +77,7 @@ const menuGroups: MenuGroup[] = [
       { title: "Ações", url: "/acoes-cobranca", icon: Zap },
       { title: "Régua", url: "/regua-cobranca", icon: ClipboardList },
       { title: "Conversas", url: "/conversas", icon: MessageSquare },
+      { title: "Automações & IA", url: "/automacoes", icon: Zap },
       { title: "Templates", url: "/templates", icon: FileText },
       { title: "Acordos", url: "/acordos", icon: Handshake },
       { title: "Negativações", url: "/negativacoes", icon: AlertTriangle },

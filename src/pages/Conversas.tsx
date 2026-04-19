@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MessageSquare, Users, Tag, Zap, Settings, BarChart3, LayoutGrid } from "lucide-react";
+import { MessageSquare, Users, Tag, Zap, Settings, BarChart3, LayoutGrid, Bot } from "lucide-react";
 import { useWhatsAppInstances, useInstancesRealtime } from "@/hooks/useWhatsApp";
 import { ChatsTab } from "@/components/whatsapp/tabs/ChatsTab";
 import { GroupsTab } from "@/components/whatsapp/tabs/GroupsTab";
@@ -9,6 +9,7 @@ import { QuickRepliesTab } from "@/components/whatsapp/tabs/QuickRepliesTab";
 import { ConfigTab } from "@/components/whatsapp/tabs/ConfigTab";
 import { AdminDashboardTab } from "@/components/whatsapp/tabs/AdminDashboardTab";
 import { KanbanTab } from "@/components/whatsapp/tabs/KanbanTab";
+import { AutomationsTab } from "@/components/whatsapp/tabs/AutomationsTab";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function Conversas() {
@@ -32,7 +33,7 @@ export default function Conversas() {
   return (
     <div className="space-y-4">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className={isAdmin ? "grid grid-cols-7 w-full max-w-4xl" : "grid grid-cols-6 w-full max-w-3xl"}>
+        <TabsList className={isAdmin ? "grid grid-cols-8 w-full max-w-5xl" : "grid grid-cols-7 w-full max-w-4xl"}>
           <TabsTrigger value="chats" className="gap-1.5">
             <MessageSquare className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Chats</span>
@@ -52,6 +53,10 @@ export default function Conversas() {
           <TabsTrigger value="quickreplies" className="gap-1.5">
             <Zap className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Respostas</span>
+          </TabsTrigger>
+          <TabsTrigger value="automations" className="gap-1.5">
+            <Bot className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Automações</span>
           </TabsTrigger>
           <TabsTrigger value="config" className="gap-1.5">
             <Settings className="h-3.5 w-3.5" />
@@ -90,6 +95,12 @@ export default function Conversas() {
         <TabsContent value="quickreplies" className="mt-4">
           <div className="border rounded-lg overflow-hidden bg-background h-[calc(100vh-12rem)]">
             <QuickRepliesTab instanceId={myInstance?.id ?? null} />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="automations" className="mt-4">
+          <div className="border rounded-lg overflow-hidden bg-background h-[calc(100vh-12rem)]">
+            <AutomationsTab instanceId={myInstance?.id ?? null} />
           </div>
         </TabsContent>
 

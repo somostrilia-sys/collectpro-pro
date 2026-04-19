@@ -305,6 +305,11 @@ async function handleMessage(supabase: any, instance: any, payload: any) {
       invokeDownloader(messageId).catch(() => {});
     }
   }
+
+  // Dispara motor de automação (fire-and-forget)
+  if (!fromMe) {
+    invokeAutomationEngine(messageId).catch(() => {});
+  }
 }
 
 // ─── MESSAGE UPDATE (ack/status/edição/delete) ────────────────────────
@@ -645,6 +650,22 @@ async function invokeDownloader(messageId: string) {
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
   try {
     await fetch(`${supabaseUrl}/functions/v1/whatsapp-media-downloader`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${serviceKey}`,
+      },
+      body: JSON.stringify({ message_id: messageId }),
+    });
+  } catch { /* silent */ }
+}
+
+// Dispara motor de automação
+async function invokeAutomationEngine(messageId: string) {
+  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  try {
+    await fetch(`${supabaseUrl}/functions/v1/whatsapp-automation-engine`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

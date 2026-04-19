@@ -27,6 +27,7 @@ import {
   mapRoleToPerfil,
   mapPerfilToRole,
 } from "@/types/permissions";
+import { HubUsuariosTab } from "@/components/whatsapp/HubUsuariosTab";
 
 // ─── Local Types ──────────────────────────────────────────────────────────────
 
@@ -395,6 +396,7 @@ export default function ControleAcesso() {
         <TabsList>
           <TabsTrigger value="usuarios">Usuários</TabsTrigger>
           <TabsTrigger value="permissoes">Matriz de Permissões</TabsTrigger>
+          <TabsTrigger value="hub">Hub WhatsApp</TabsTrigger>
         </TabsList>
 
         {/* Tab: Usuários */}
@@ -516,6 +518,11 @@ export default function ControleAcesso() {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* Tab: Hub WhatsApp (cross-setor) */}
+        <TabsContent value="hub" className="mt-4">
+          <HubUsuariosTab />
         </TabsContent>
       </Tabs>
 

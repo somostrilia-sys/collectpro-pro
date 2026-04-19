@@ -708,20 +708,7 @@ export function useInstanceConfig() {
 // ATRIBUIÇÃO DE CHATS
 // ═══════════════════════════════════════════════════════════════════════
 
-export function useChatAssignment(instanceId: string | null, chatJid: string | null) {
-  return useQuery({
-    queryKey: ["whatsapp-assignment", instanceId, chatJid],
-    queryFn: async () => {
-      if (!instanceId || !chatJid) return null;
-      const { data } = await supabase.functions.invoke("whatsapp-assignment", {
-        body: { instance_id: instanceId, action: "get_current", chat_jid: chatJid },
-      });
-      return data?.assignment ?? null;
-    },
-    enabled: !!instanceId && !!chatJid,
-    staleTime: 30_000,
-  });
-}
+// Versão definitiva abaixo (suporta UAZAPI + Meta).
 
 export function useAssignmentAction() {
   const qc = useQueryClient();

@@ -22,11 +22,13 @@ export function ChatsTab() {
 
   // Admin/Gestora veem todas (Meta oficial + colaboradores);
   // Atendente vê a instância Meta oficial (compartilhada) + a própria UAZAPI.
+  // Sempre filtra instâncias inativas (ativo=false) — LuxSales e outras desativadas.
   const visibleInstances = useMemo(() => {
+    const activeOnly = instances.filter((i: any) => i.ativo !== false);
     if (role === "Admin" || role === "Gestora") {
-      return instances;
+      return activeOnly;
     }
-    return instances.filter(
+    return activeOnly.filter(
       (i) => i.tipo === "meta_oficial" || i.colaborador_id === user?.id,
     );
   }, [instances, role, user]);

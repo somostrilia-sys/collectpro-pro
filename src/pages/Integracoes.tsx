@@ -21,6 +21,10 @@ import {
 } from "@/hooks/useWhatsApp";
 import { InstanceCard } from "@/components/whatsapp/InstanceCard";
 import { QRConnect } from "@/components/whatsapp/QRConnect";
+import { MetaTemplatesManager } from "@/components/whatsapp/meta/MetaTemplatesManager";
+import { MetaBusinessProfile } from "@/components/whatsapp/meta/MetaBusinessProfile";
+import { MetaBlocksManager } from "@/components/whatsapp/meta/MetaBlocksManager";
+import { MetaAnalyticsDashboard } from "@/components/whatsapp/meta/MetaAnalyticsDashboard";
 import type { WhatsAppInstance } from "@/types/whatsapp";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
@@ -169,7 +173,11 @@ const Integracoes = () => {
           <Tabs defaultValue="uazapi">
             <TabsList>
               <TabsTrigger value="uazapi">uazapi (multi-instância)</TabsTrigger>
-              <TabsTrigger value="meta">Meta Cloud API</TabsTrigger>
+              <TabsTrigger value="meta">Meta · Config</TabsTrigger>
+              <TabsTrigger value="meta-templates">Meta · Templates</TabsTrigger>
+              <TabsTrigger value="meta-profile">Meta · Perfil</TabsTrigger>
+              <TabsTrigger value="meta-blocks">Meta · Bloqueios</TabsTrigger>
+              <TabsTrigger value="meta-analytics">Meta · Analytics</TabsTrigger>
               <TabsTrigger value="webhooks">Webhooks</TabsTrigger>
             </TabsList>
 
@@ -284,6 +292,38 @@ const Integracoes = () => {
                   </ol>
                 </CardContent>
               </Card>
+            </TabsContent>
+
+            {/* ─── Meta · Templates ─── */}
+            <TabsContent value="meta-templates" className="space-y-4 mt-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <FileSignature className="h-4 w-4" /> Templates Meta aprovados
+                  </CardTitle>
+                  <CardDescription>
+                    Criar/listar/sincronizar templates com a Meta. Obrigatórios pra enviar fora da janela de 24h.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <MetaTemplatesManager instanceId={metaInst?.id ?? null} />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* ─── Meta · Perfil ─── */}
+            <TabsContent value="meta-profile" className="space-y-4 mt-4">
+              <MetaBusinessProfile instanceId={metaInst?.id ?? null} />
+            </TabsContent>
+
+            {/* ─── Meta · Bloqueios ─── */}
+            <TabsContent value="meta-blocks" className="space-y-4 mt-4">
+              <MetaBlocksManager instanceId={metaInst?.id ?? null} />
+            </TabsContent>
+
+            {/* ─── Meta · Analytics ─── */}
+            <TabsContent value="meta-analytics" className="space-y-4 mt-4">
+              <MetaAnalyticsDashboard instanceId={metaInst?.id ?? null} />
             </TabsContent>
 
             {/* ─── Webhooks ─── */}

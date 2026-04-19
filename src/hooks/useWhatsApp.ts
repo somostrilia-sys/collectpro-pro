@@ -782,6 +782,60 @@ export function useAdminDashboard(action: string, params: Record<string, any> = 
 }
 
 // ═══════════════════════════════════════════════════════════════════════
+// HISTÓRICO DO ASSOCIADO (integração cross-module)
+// ═══════════════════════════════════════════════════════════════════════
+
+export function useAssociadoHistorico(associadoId: string | null) {
+  return useQuery({
+    queryKey: ["associado-historico", associadoId],
+    queryFn: async () => {
+      if (!associadoId) return null;
+      const [
+        { data: associado },
+        { data: boletos },
+        { data: acordos },
+        { data: ligacoes },
+        { data: pagamentos },
+      ] = await Promise.all([
+        (supabase as any).from("associados")
+          .select("id, nome, cpf, email, whatsapp, placa, status, situacao, cooperativa")
+          .eq("id", associadoId).maybeSingle(),
+        (supabase as any).from("boletos")
+          .select("id, valor, vencimento, status, mes_referencia, link_boleto, pix_copia_cola")
+          .eq("associado_id", associadoId)
+          .order("vencimento", { ascending: false })
+          .limit(10),
+        (supabase as any).from("acordos")
+          .select("id, valor_original, valor_acordo, parcelas, status, created_at")
+          .eq("associado_id", associadoId)
+          .order("created_at", { ascending: false })
+          .limit(5),
+        (supabase as any).from("ligacoes")
+          .select("id, resultado, duracao_segundos, data_hora")
+          .eq("associado_id", associadoId)
+          .order("data_hora", { ascending: false })
+          .limit(10),
+        (supabase as any).from("historico_pagamentos")
+          .select("id, valor, data_pagamento, forma_pagamento, tipo")
+          .eq("associado_id", associadoId)
+          .order("data_pagamento", { ascending: false })
+          .limit(10),
+      ]);
+
+      return {
+        associado: associado ?? null,
+        boletos: boletos ?? [],
+        acordos: acordos ?? [],
+        ligacoes: ligacoes ?? [],
+        pagamentos: pagamentos ?? [],
+      };
+    },
+    enabled: !!associadoId,
+    staleTime: 60_000,
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════
 // WEBHOOK URLS
 // ═══════════════════════════════════════════════════════════════════════
 

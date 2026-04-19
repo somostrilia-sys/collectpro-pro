@@ -10,6 +10,7 @@ import {
   FileText, ArrowRightLeft,
 } from "lucide-react";
 import { ContactAvatar } from "./ContactAvatar";
+import { AssociadoHistoricoSection } from "./AssociadoHistoricoSection";
 import {
   useGroup,
   useChatNotes,
@@ -244,6 +245,11 @@ export function ChatInfoPanel({
               </div>
             )}
           </div>
+
+          {/* Histórico CollectPro (se tem associado_id) */}
+          {associadoId && !isGroup && (
+            <AssociadoHistoricoSection associadoId={associadoId} />
+          )}
 
           {/* Lead info (CRM) */}
           {lead && (

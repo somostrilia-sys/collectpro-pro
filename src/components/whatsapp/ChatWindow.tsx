@@ -23,6 +23,8 @@ import { AttachmentPicker } from "./AttachmentPicker";
 import {
   SendLocationDialog, SendContactDialog, SendPixDialog, SendPollDialog, SendPaymentDialog,
 } from "./InteractiveSendDialogs";
+import { SlashCommandsMenu } from "./SlashCommandsMenu";
+import { useAssociadoHistorico } from "@/hooks/useWhatsApp";
 import { supabase } from "@/integrations/supabase/client";
 
 interface Props {
@@ -73,6 +75,11 @@ export function ChatWindow({
   const [dialogPix, setDialogPix] = useState(false);
   const [dialogPoll, setDialogPoll] = useState(false);
   const [dialogPayment, setDialogPayment] = useState(false);
+  const [slashMenuOpen, setSlashMenuOpen] = useState(false);
+  const [slashQuery, setSlashQuery] = useState("");
+
+  // Histórico do associado (pra atalhos tipo /boleto)
+  const { data: historico } = useAssociadoHistorico(associadoId ?? null);
 
   const { data: messages = [], isLoading } = useMessages(instanceId, telefone);
   const send = useSendMessage();
@@ -114,6 +121,33 @@ export function ChatWindow({
       toast({ title: "Falha ao enviar", description: e.message, variant: "destructive" });
       setText(msg);
     }
+  };
+
+  const handleTextChange = (value: string) => {
+    setText(value);
+    handleTyping();
+    // Detectar slash menu: abre se linha atual começa com /
+    const lastLine = value.split("\n").pop() || "";
+    if (lastLine.startsWith("/") && !lastLine.includes(" ")) {
+      setSlashMenuOpen(true);
+      setSlashQuery(lastLine);
+    } else {
+      setSlashMenuOpen(false);
+    }
+  };
+
+  const handleSendBoletoCommand = async () => {
+    const abertos = (historico?.boletos ?? []).filter((b: any) =>
+      ["aberto", "vencido"].includes(b.status),
+    );
+    if (abertos.length === 0) {
+      toast({ title: "Nenhum boleto em aberto", variant: "destructive" });
+      return;
+    }
+    const b = abertos[0];
+    const msg = `📄 Boleto em aberto\n\nValor: R$ ${b.valor.toFixed(2)}\nVencimento: ${b.vencimento}\n${b.link_boleto ? `\n🔗 ${b.link_boleto}` : ""}${b.pix_copia_cola ? `\n\n🔐 PIX Copia e Cola:\n${b.pix_copia_cola}` : ""}`;
+    setText(msg);
+    setSlashMenuOpen(false);
   };
 
   const handleTyping = () => {
@@ -441,19 +475,44 @@ export function ChatWindow({
             onPickPayment={() => setDialogPayment(true)}
           />
           <EmojiPicker onPick={(e) => setText(text + e)} />
-          <Textarea
-            value={text}
-            onChange={(e) => { setText(e.target.value); handleTyping(); }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                handleSend();
-              }
-            }}
-            placeholder="Escreva uma mensagem"
-            rows={1}
-            className="resize-none min-h-10 max-h-32"
-          />
+          <div className="flex-1 relative">
+            <SlashCommandsMenu
+              visible={slashMenuOpen}
+              query={slashQuery}
+              instanceId={instanceId}
+              colaboradorId={user?.id}
+              onCloseMenu={() => setSlashMenuOpen(false)}
+              onPickQuickReply={(qr) => {
+                // Substitui a parte "/..." pelo conteúdo
+                const lines = text.split("\n");
+                lines[lines.length - 1] = qr.conteudo;
+                setText(lines.join("\n"));
+              }}
+              onCommandBoleto={associadoId ? handleSendBoletoCommand : undefined}
+              onCommandPix={() => { setText(""); setDialogPix(true); }}
+              onCommandPagamento={() => { setText(""); setDialogPayment(true); }}
+              onCommandAcordo={() => toast({ title: "Atalho /acordo", description: "Abra Acordos no menu lateral" })}
+              onCommandCancelamento={() => toast({ title: "Atalho /cancelamento", description: "Abra Cancelamentos no menu lateral" })}
+              onCommandLigacao={() => toast({ title: "Atalho /ligacao", description: "Abra Ligações no menu lateral" })}
+            />
+            <Textarea
+              value={text}
+              onChange={(e) => handleTextChange(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Escape" && slashMenuOpen) {
+                  setSlashMenuOpen(false);
+                  return;
+                }
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSend();
+                }
+              }}
+              placeholder="Escreva uma mensagem (digite / para comandos)"
+              rows={1}
+              className="resize-none min-h-10 max-h-32 w-full"
+            />
+          </div>
           <Button
             size="icon"
             onClick={handleSend}

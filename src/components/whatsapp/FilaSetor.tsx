@@ -29,6 +29,8 @@ import { cn } from "@/lib/utils";
 interface Props {
   onSelect?: (atend: Atendimento) => void;
   selectedId?: string | null;
+  /** Override de setor (admin/supervisor vê outros setores). "*" = todos. */
+  setorOverride?: "cobranca" | "evento" | "track" | "gestao" | "*";
 }
 
 const SETORES = [
@@ -73,7 +75,7 @@ function formatAgo(iso: string): string {
   return `${Math.floor(diff / 86400)}d`;
 }
 
-export function FilaSetor({ onSelect, selectedId }: Props) {
+export function FilaSetor({ onSelect, selectedId, setorOverride }: Props) {
   const { toast } = useToast();
   const { user } = useAuth();
   const [filter, setFilter] = useState<"todos" | "minhas" | "novos" | "ia" | "humano" | "aguardando">("todos");
@@ -88,7 +90,7 @@ export function FilaSetor({ onSelect, selectedId }: Props) {
     aguardando: ["aguardando_cliente"],
   };
 
-  const { data: atendimentos = [], isLoading } = useAtendimentos(statusMap[filter]);
+  const { data: atendimentos = [], isLoading } = useAtendimentos(statusMap[filter], setorOverride);
   const { data: filas = [] } = useFilas();
   const assumir = useAssumir();
   const transferir = useTransferir();

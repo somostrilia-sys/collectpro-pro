@@ -4,6 +4,8 @@ import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const SETOR = "cobranca";
+export type SetorSlug = "cobranca" | "evento" | "track" | "gestao";
+export const SETORES_VALIDOS: SetorSlug[] = ["cobranca", "evento", "track", "gestao"];
 
 export interface Atendimento {
   id: string;
@@ -17,14 +19,23 @@ export interface Atendimento {
   ultima_msg_em: string;
 }
 
-export function useAtendimentos(status?: string[]) {
+/**
+ * Hook de atendimentos por setor.
+ * @param status filtros de status
+ * @param setorOverride opcional — quando supervisor/admin/ceo/diretor/cs vê outro setor.
+ *                     Quando omitido, usa SETOR padrão ("cobranca" no CollectPro).
+ *                     Passa "*" pra ver TODOS os setores.
+ */
+export function useAtendimentos(status?: string[], setorOverride?: SetorSlug | "*") {
   const qc = useQueryClient();
+  const setor = setorOverride ?? SETOR;
   const query = useQuery<Atendimento[]>({
-    queryKey: ["atendimentos", SETOR, status],
+    queryKey: ["atendimentos", setor, status],
     queryFn: async () => {
       let q = (supabase as any).from("whatsapp_atendimentos")
-        .select("*").eq("setor", SETOR)
-        .order("ultima_msg_em", { ascending: false }).limit(200);
+        .select("*")
+        .order("ultima_msg_em", { ascending: false }).limit(500);
+      if (setor !== "*") q = q.eq("setor", setor);
       if (status?.length) q = q.in("status", status);
       const { data, error } = await q;
       if (error) throw error;
@@ -33,13 +44,14 @@ export function useAtendimentos(status?: string[]) {
     staleTime: 5_000,
   });
   useEffect(() => {
-    const ch = supabase.channel(`atend-${SETOR}`)
+    const filter = setor === "*" ? undefined : `setor=eq.${setor}`;
+    const ch = supabase.channel(`atend-${setor}`)
       .on("postgres_changes" as any,
-        { event: "*", schema: "public", table: "whatsapp_atendimentos", filter: `setor=eq.${SETOR}` },
-        () => qc.invalidateQueries({ queryKey: ["atendimentos", SETOR] }),
+        { event: "*", schema: "public", table: "whatsapp_atendimentos", ...(filter ? { filter } : {}) },
+        () => qc.invalidateQueries({ queryKey: ["atendimentos", setor] }),
       ).subscribe();
     return () => { supabase.removeChannel(ch); };
-  }, [qc]);
+  }, [qc, setor]);
   return query;
 }
 

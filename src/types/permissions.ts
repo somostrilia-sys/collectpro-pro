@@ -92,9 +92,16 @@ export const getDefaultPermissoes = (perfil: Perfil): Permissoes => {
 
 export const mapRoleToPerfil = (role: string | null): Perfil => {
   switch (role) {
-    case "admin": return "Admin";
-    case "gestora": return "Gestora";
-    default: return "Colaborador";
+    case "admin":
+    case "ceo":
+    case "diretor":
+    case "cs":
+      return "Admin";
+    case "gestora":
+    case "supervisor":
+      return "Gestora";
+    default:
+      return "Colaborador";
   }
 };
 

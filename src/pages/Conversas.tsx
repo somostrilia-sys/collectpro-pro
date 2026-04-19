@@ -1,13 +1,15 @@
 import { useState, useMemo } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MessageSquare, Users, Tag, Zap, Settings, BarChart3, LayoutGrid, Bot } from "lucide-react";
+import { MessageSquare, Users, Tag, Zap, Settings, BarChart3, LayoutGrid, Bot, Inbox } from "lucide-react";
 import { useWhatsAppInstances, useInstancesRealtime } from "@/hooks/useWhatsApp";
 import { ChatsTab } from "@/components/whatsapp/tabs/ChatsTab";
+import { FilaTab } from "@/components/whatsapp/tabs/FilaTab";
 import { GroupsTab } from "@/components/whatsapp/tabs/GroupsTab";
 import { LabelsTab } from "@/components/whatsapp/tabs/LabelsTab";
 import { QuickRepliesTab } from "@/components/whatsapp/tabs/QuickRepliesTab";
 import { ConfigTab } from "@/components/whatsapp/tabs/ConfigTab";
 import { AdminDashboardTab } from "@/components/whatsapp/tabs/AdminDashboardTab";
+import { HubDashboardTab } from "@/components/whatsapp/tabs/HubDashboardTab";
 import { KanbanTab } from "@/components/whatsapp/tabs/KanbanTab";
 import { AutomationsTab } from "@/components/whatsapp/tabs/AutomationsTab";
 import { useAuth } from "@/contexts/AuthContext";
@@ -33,10 +35,14 @@ export default function Conversas() {
   return (
     <div className="space-y-4">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className={isAdmin ? "grid grid-cols-8 w-full max-w-5xl" : "grid grid-cols-7 w-full max-w-4xl"}>
+        <TabsList className={isAdmin ? "grid grid-cols-9 w-full max-w-6xl" : "grid grid-cols-8 w-full max-w-5xl"}>
           <TabsTrigger value="chats" className="gap-1.5">
             <MessageSquare className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Chats</span>
+          </TabsTrigger>
+          <TabsTrigger value="fila" className="gap-1.5">
+            <Inbox className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Fila Hub</span>
           </TabsTrigger>
           <TabsTrigger value="kanban" className="gap-1.5">
             <LayoutGrid className="h-3.5 w-3.5" />
@@ -72,6 +78,10 @@ export default function Conversas() {
 
         <TabsContent value="chats" className="mt-4">
           <ChatsTab />
+        </TabsContent>
+
+        <TabsContent value="fila" className="mt-4">
+          <FilaTab />
         </TabsContent>
 
         <TabsContent value="kanban" className="mt-4">
@@ -112,9 +122,26 @@ export default function Conversas() {
 
         {isAdmin && (
           <TabsContent value="dashboard" className="mt-4">
-            <div className="border rounded-lg overflow-hidden bg-background h-[calc(100vh-12rem)] flex flex-col">
-              <AdminDashboardTab />
-            </div>
+            <Tabs defaultValue="hub" className="w-full">
+              <TabsList className="mb-3">
+                <TabsTrigger value="hub" className="gap-1.5">
+                  <BarChart3 className="h-3.5 w-3.5" />
+                  <span>Hub (Meta cross-setor)</span>
+                </TabsTrigger>
+                <TabsTrigger value="instancia" className="gap-1.5">
+                  <Settings className="h-3.5 w-3.5" />
+                  <span>Instância (uazapi)</span>
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="hub">
+                <HubDashboardTab />
+              </TabsContent>
+              <TabsContent value="instancia">
+                <div className="border rounded-lg overflow-hidden bg-background h-[calc(100vh-16rem)] flex flex-col">
+                  <AdminDashboardTab />
+                </div>
+              </TabsContent>
+            </Tabs>
           </TabsContent>
         )}
       </Tabs>

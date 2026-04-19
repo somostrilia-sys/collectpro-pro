@@ -1,12 +1,13 @@
 import { useState, useMemo } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MessageSquare, Users, Tag, Zap, Settings } from "lucide-react";
+import { MessageSquare, Users, Tag, Zap, Settings, BarChart3 } from "lucide-react";
 import { useWhatsAppInstances, useInstancesRealtime } from "@/hooks/useWhatsApp";
 import { ChatsTab } from "@/components/whatsapp/tabs/ChatsTab";
 import { GroupsTab } from "@/components/whatsapp/tabs/GroupsTab";
 import { LabelsTab } from "@/components/whatsapp/tabs/LabelsTab";
 import { QuickRepliesTab } from "@/components/whatsapp/tabs/QuickRepliesTab";
 import { ConfigTab } from "@/components/whatsapp/tabs/ConfigTab";
+import { AdminDashboardTab } from "@/components/whatsapp/tabs/AdminDashboardTab";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function Conversas() {
@@ -25,11 +26,12 @@ export default function Conversas() {
   }, [instances, role, user]);
 
   const [activeTab, setActiveTab] = useState("chats");
+  const isAdmin = role === "Admin" || role === "Gestora";
 
   return (
     <div className="space-y-4">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-5 w-full max-w-2xl">
+        <TabsList className={isAdmin ? "grid grid-cols-6 w-full max-w-3xl" : "grid grid-cols-5 w-full max-w-2xl"}>
           <TabsTrigger value="chats" className="gap-1.5">
             <MessageSquare className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Chats</span>
@@ -50,6 +52,12 @@ export default function Conversas() {
             <Settings className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Config</span>
           </TabsTrigger>
+          {isAdmin && (
+            <TabsTrigger value="dashboard" className="gap-1.5">
+              <BarChart3 className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Dashboard</span>
+            </TabsTrigger>
+          )}
         </TabsList>
 
         <TabsContent value="chats" className="mt-4">
@@ -79,6 +87,14 @@ export default function Conversas() {
             <ConfigTab instanceId={myInstance?.id ?? null} />
           </div>
         </TabsContent>
+
+        {isAdmin && (
+          <TabsContent value="dashboard" className="mt-4">
+            <div className="border rounded-lg overflow-hidden bg-background h-[calc(100vh-12rem)] flex flex-col">
+              <AdminDashboardTab />
+            </div>
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   );

@@ -705,6 +705,25 @@ export function useInstanceConfig() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════
+// DASHBOARD ADMIN (métricas/logs/alertas)
+// ═══════════════════════════════════════════════════════════════════════
+
+export function useAdminDashboard(action: string, params: Record<string, any> = {}, enabled = true) {
+  return useQuery({
+    queryKey: ["whatsapp-admin-dashboard", action, params],
+    queryFn: async () => {
+      const { data, error } = await supabase.functions.invoke("whatsapp-admin-dashboard", {
+        body: { action, ...params },
+      });
+      if (error) throw error;
+      return data;
+    },
+    enabled,
+    staleTime: 30_000,
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════
 // WEBHOOK URLS
 // ═══════════════════════════════════════════════════════════════════════
 

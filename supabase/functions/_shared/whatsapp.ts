@@ -36,6 +36,39 @@ export function renderTemplate(template: string, vars: Record<string, any>): str
   });
 }
 
+// ─── UAZAPI JID helpers ────────────────────────────────────────────────
+// JIDs possíveis:
+//   DM:  5511999998888@s.whatsapp.net
+//   Grupo: 120363020123456789@g.us
+//   Newsletter: 12036304xxxxxxxxxx@newsletter
+//   LID: 123456789@lid (anonimizado)
+
+export function isGroupJid(jid: string | null | undefined): boolean {
+  return !!jid && jid.endsWith("@g.us");
+}
+
+export function isNewsletterJid(jid: string | null | undefined): boolean {
+  return !!jid && jid.endsWith("@newsletter");
+}
+
+export function jidToPhone(jid: string | null | undefined): string {
+  if (!jid) return "";
+  const bare = String(jid).split("@")[0];
+  // Para DMs: é o telefone direto
+  return bare.replace(/\D/g, "");
+}
+
+// Descobre o telefone "de fato" da conversa:
+// DM → telefone do contato
+// Grupo → usa o JID do grupo como "telefone" (já que vai agregar por chat_jid)
+export function resolveConversationPhone(chatJid: string, senderJid?: string): string {
+  if (isGroupJid(chatJid)) {
+    // Em grupos, o "telefone" no whatsapp_messages é o JID do grupo normalizado
+    return jidToPhone(chatJid);
+  }
+  return jidToPhone(chatJid || senderJid || "");
+}
+
 // ─── UAZAPI ───────────────────────────────────────────────────────────
 export const UAZAPI_SERVER = "https://trilhoassist.uazapi.com";
 
@@ -125,6 +158,59 @@ export function mapUazapiStatus(raw: string): string {
   if (s === "banned" || s === "disconnected_banned") return "banned";
   if (s === "disconnected" || s === "close" || s === "closed" || s === "offline") return "disconnected";
   return "error";
+}
+
+// ─── UAZAPI — Info de grupo (POST /group/info) ─────────────────────────
+export async function uazapiGroupInfo(
+  instanceToken: string,
+  groupJid: string,
+  serverUrl: string = UAZAPI_SERVER,
+): Promise<{ ok: boolean; data: any }> {
+  const res = await fetch(`${serverUrl}/group/info`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", token: instanceToken },
+    body: JSON.stringify({ groupJid }),
+  });
+  const data = await res.json().catch(() => ({}));
+  return { ok: res.ok, data };
+}
+
+// ─── UAZAPI — Detalhes completos de chat (POST /chat/details) ──────────
+export async function uazapiChatDetails(
+  instanceToken: string,
+  jid: string,
+  serverUrl: string = UAZAPI_SERVER,
+  preview: boolean = false,
+): Promise<{ ok: boolean; data: any }> {
+  const res = await fetch(`${serverUrl}/chat/details`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", token: instanceToken },
+    body: JSON.stringify({ number: jid, preview }),
+  });
+  const data = await res.json().catch(() => ({}));
+  return { ok: res.ok, data };
+}
+
+// ─── UAZAPI — Download de mídia de mensagem (POST /message/download) ───
+export async function uazapiMessageDownload(
+  instanceToken: string,
+  messageExternalId: string,
+  serverUrl: string = UAZAPI_SERVER,
+): Promise<{ ok: boolean; data: any; buffer?: ArrayBuffer; mimeType?: string }> {
+  const res = await fetch(`${serverUrl}/message/download`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", token: instanceToken },
+    body: JSON.stringify({ id: messageExternalId }),
+  });
+  const contentType = res.headers.get("content-type") || "";
+
+  if (contentType.includes("application/json")) {
+    const data = await res.json().catch(() => ({}));
+    // UAZAPI pode retornar URL pra baixar OU base64
+    return { ok: res.ok, data };
+  }
+  const buffer = await res.arrayBuffer();
+  return { ok: res.ok, data: {}, buffer, mimeType: contentType };
 }
 
 // ─── META CLOUD API ───────────────────────────────────────────────────

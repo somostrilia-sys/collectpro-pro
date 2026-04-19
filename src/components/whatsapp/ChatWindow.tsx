@@ -6,7 +6,8 @@ import {
   Send, Loader2, Check, CheckCheck, Clock, AlertCircle, MessageSquare,
   Mic, Users, Info, Search, Phone, MoreVertical,
 } from "lucide-react";
-import { useMessages, useSendMessage, useMessageAction, useSendPresence } from "@/hooks/useWhatsApp";
+import { useMessages, useSendMessage, useMessageAction, useSendPresence, useWhatsAppInstances } from "@/hooks/useWhatsApp";
+import { ConversationStatusHeader } from "./ConversationStatusHeader";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import type { WhatsAppMessage, MessageStatus } from "@/types/whatsapp";
@@ -20,6 +21,7 @@ import { ReactionsBar } from "./ReactionsBar";
 import { EmojiPicker } from "./EmojiPicker";
 import { MessageActionsMenu } from "./MessageActionsMenu";
 import { AttachmentPicker } from "./AttachmentPicker";
+import { MetaTemplatePicker } from "./MetaTemplatePicker";
 import {
   SendLocationDialog, SendContactDialog, SendPixDialog, SendPollDialog, SendPaymentDialog,
 } from "./InteractiveSendDialogs";
@@ -82,6 +84,11 @@ export function ChatWindow({
   const { data: historico } = useAssociadoHistorico(associadoId ?? null);
 
   const { data: messages = [], isLoading } = useMessages(instanceId, telefone);
+  const { data: allInstances = [] } = useWhatsAppInstances();
+  const currentInstance = useMemo(
+    () => allInstances.find((i) => i.id === instanceId) ?? null,
+    [allInstances, instanceId],
+  );
   const send = useSendMessage();
   const msgAction = useMessageAction();
   const presence = useSendPresence();
@@ -92,6 +99,16 @@ export function ChatWindow({
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages.length, telefone]);
+
+  // Cancela timer de presence ao desmontar / trocar de chat pra evitar leak
+  useEffect(() => {
+    return () => {
+      if (typingTimerRef.current) {
+        window.clearTimeout(typingTimerRef.current);
+        typingTimerRef.current = null;
+      }
+    };
+  }, [telefone]);
 
   if (!telefone || !instanceId) {
     return (
@@ -300,6 +317,11 @@ export function ChatWindow({
         </Button>
       </div>
 
+      {/* ═══ Status (CSW + Assignment) — só aparece pra Meta oficial ═══ */}
+      {currentInstance && telefone && (
+        <ConversationStatusHeader instance={currentInstance} telefone={telefone} />
+      )}
+
       {/* ═══ Mensagens ═══ */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-2">
         {isLoading ? (
@@ -475,6 +497,13 @@ export function ChatWindow({
             onPickPayment={() => setDialogPayment(true)}
           />
           <EmojiPicker onPick={(e) => setText(text + e)} />
+          {currentInstance?.tipo === "meta_oficial" && instanceId && telefone && (
+            <MetaTemplatePicker
+              instanceId={instanceId}
+              telefone={telefone}
+              associadoId={associadoId}
+            />
+          )}
           <div className="flex-1 relative">
             <SlashCommandsMenu
               visible={slashMenuOpen}

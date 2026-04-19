@@ -49,8 +49,9 @@ Deno.serve(async (req) => {
     if (r.status === "connected") {
       upd.qr_code = null;
       upd.qr_expires_at = null;
-      // extrai telefone se uazapi retornar
-      const phone = r.data?.instance?.profile?.number ?? r.data?.instance?.phone ?? r.data?.phone;
+      // UAZAPI retorna JID em `owner` ou `jid` (ex: 5511999998888@s.whatsapp.net)
+      const rawJid = r.data?.instance?.owner ?? r.data?.jid ?? r.data?.instance?.jid ?? "";
+      const phone = String(rawJid).split("@")[0].replace(/\D/g, "");
       if (phone) upd.telefone = phone;
     }
     await supabase.from("whatsapp_instances").update(upd).eq("id", inst.id);

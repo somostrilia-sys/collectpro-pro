@@ -50,9 +50,25 @@ Deno.serve(async (req) => {
 
     switch (action) {
       case "react": {
-        const { message_external_id, emoji } = body;
+        const { message_external_id, emoji, chat_jid } = body;
         if (!message_external_id) return bad("message_external_id obrigatório");
-        const r = await call("/message/react", { id: message_external_id, text: emoji ?? "" });
+        // UAZAPI exige number (JID do chat onde a mensagem está)
+        let number = chat_jid;
+        if (!number) {
+          const { data: msgRow } = await supabase.from("whatsapp_messages")
+            .select("id, telefone, whatsapp_uazapi_details!inner(chat_jid)")
+            .eq("instance_id", instance_id)
+            .eq("message_external_id", message_external_id)
+            .maybeSingle();
+          number = (msgRow as any)?.whatsapp_uazapi_details?.chat_jid
+            ?? (msgRow?.telefone ? `${msgRow.telefone}@s.whatsapp.net` : null);
+        }
+        if (!number) return bad("não foi possível resolver chat_jid da mensagem");
+        const r = await call("/message/react", {
+          number,
+          id: message_external_id,
+          text: emoji ?? "",
+        });
         return json({ success: r.ok, data: r.data }, r.ok ? 200 : 502);
       }
 
@@ -98,24 +114,20 @@ Deno.serve(async (req) => {
       }
 
       case "markread": {
-        const { chat_jid, telefone, message_external_id } = body;
-        const number = chat_jid || telefone;
-        if (!number) return bad("chat_jid ou telefone obrigatório");
-        const r = await call("/message/markread", {
-          number,
-          id: message_external_id,
-        });
+        const { message_external_id } = body;
+        if (!message_external_id) return bad("message_external_id obrigatório");
+        const r = await call("/message/markread", { id: message_external_id });
         return json({ success: r.ok, data: r.data }, r.ok ? 200 : 502);
       }
 
       case "find": {
-        const { chat_jid, telefone, query, limit } = body;
-        const number = chat_jid || telefone;
-        if (!number) return bad("chat_jid ou telefone obrigatório");
+        const { chat_jid, telefone, message_external_id, limit, offset } = body;
+        const chatid = chat_jid || (telefone ? `${telefone}@s.whatsapp.net` : null);
         const r = await call("/message/find", {
-          number,
-          query,
+          id: message_external_id,
+          chatid,
           limit: limit ?? 50,
+          offset: offset ?? 0,
         });
         return json({ success: r.ok, data: r.data }, r.ok ? 200 : 502);
       }

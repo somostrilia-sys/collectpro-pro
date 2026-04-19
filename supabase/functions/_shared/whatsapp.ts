@@ -106,10 +106,11 @@ export async function uazapiSend(
 }
 
 // Admin API uazapi — cria/inicia instância, pega QR, status
+// Endpoint /instance/create (o /instance/init é legacy e foi removido)
 export async function uazapiAdminCreateInstance(
   instanceName: string,
 ): Promise<{ ok: boolean; token?: string; data: any }> {
-  const res = await fetch(`${UAZAPI_SERVER}/instance/init`, {
+  const res = await fetch(`${UAZAPI_SERVER}/instance/create`, {
     method: "POST",
     headers: { "Content-Type": "application/json", "admintoken": uazapiAdminToken() },
     body: JSON.stringify({ name: instanceName }),
@@ -299,4 +300,98 @@ function timingSafeEqual(a: string, b: string): boolean {
   let r = 0;
   for (let i = 0; i < a.length; i++) r |= a.charCodeAt(i) ^ b.charCodeAt(i);
   return r === 0;
+}
+
+// ─── ASSINATURA UNIVERSAL DO ATENDENTE ─────────────────────────────────
+// Aplica prefixo "*Nome:*\n\n" em mensagens enviadas por colaborador.
+// Usada tanto por UAZAPI quanto por Meta no whatsapp-send.
+export async function resolveSignature(
+  supabase: any,
+  colaboradorId: string | null,
+  skip: boolean,
+): Promise<{ name: string | null; prefix: string }> {
+  if (skip || !colaboradorId) return { name: null, prefix: "" };
+  const { data } = await supabase
+    .from("profiles")
+    .select("full_name")
+    .eq("id", colaboradorId)
+    .maybeSingle();
+  if (!data?.full_name) return { name: null, prefix: "" };
+  return { name: data.full_name, prefix: `*${data.full_name}:*\n\n` };
+}
+
+export function applySignature(text: string | null | undefined, prefix: string): string {
+  if (!text) return "";
+  if (!prefix) return text;
+  return `${prefix}${text}`;
+}
+
+// ─── CHECK DE OPT-OUT / BLOCKS (universal Meta + UAZAPI) ──────────────
+// Retorna motivo se bloqueado; null se livre.
+export async function checkOptoutOrBlock(
+  supabase: any,
+  instanceId: string,
+  telefone: string,
+): Promise<{ blocked: boolean; reason?: string }> {
+  if (!telefone) return { blocked: false };
+  const [opt, blk] = await Promise.all([
+    supabase.from("whatsapp_optouts")
+      .select("palavra_detectada").eq("instance_id", instanceId)
+      .eq("telefone", telefone).is("revogado_em", null).maybeSingle(),
+    supabase.from("whatsapp_blocks")
+      .select("id").eq("instance_id", instanceId)
+      .eq("telefone", telefone).maybeSingle(),
+  ]);
+  if (opt.data) return { blocked: true, reason: `opt-out (${opt.data.palavra_detectada ?? "manual"})` };
+  if (blk.data) return { blocked: true, reason: "contato bloqueado" };
+  return { blocked: false };
+}
+
+// ─── LOCK DE ATENDIMENTO META (assignment check) ──────────────────────
+// Verifica se o colaborador está autorizado a enviar mensagens pela
+// instância Meta pra esse telefone. Admin/Gestora bypassa.
+export async function checkMetaAssignment(
+  supabase: any,
+  instanceId: string,
+  telefone: string,
+  colaboradorId: string | null,
+): Promise<{ allowed: boolean; reason?: string; current_owner?: string | null }> {
+  if (!telefone) return { allowed: true };
+
+  // Admin/Gestora bypass
+  if (colaboradorId) {
+    const { data: prof } = await supabase
+      .from("profiles").select("role").eq("id", colaboradorId).maybeSingle();
+    if (prof && ["admin", "gestora", "diretor"].includes(String(prof.role).toLowerCase())) {
+      return { allowed: true };
+    }
+  }
+
+  const { data: assignment } = await supabase
+    .from("whatsapp_chat_assignments")
+    .select("colaborador_id, expires_at")
+    .eq("instance_id", instanceId)
+    .eq("telefone", telefone)
+    .eq("provider_tipo", "meta")
+    .is("liberado_em", null)
+    .maybeSingle();
+
+  // Sem assignment: qualquer atendente pode enviar (primeira resposta)
+  if (!assignment) return { allowed: true, current_owner: null };
+
+  // Expirado: permitir (auto-release será aplicado)
+  if (assignment.expires_at && new Date(assignment.expires_at) < new Date()) {
+    return { allowed: true, current_owner: null };
+  }
+
+  // Dono diferente: bloqueado
+  if (assignment.colaborador_id !== colaboradorId) {
+    return {
+      allowed: false,
+      reason: "Conversa atribuída a outro atendente",
+      current_owner: assignment.colaborador_id,
+    };
+  }
+
+  return { allowed: true, current_owner: assignment.colaborador_id };
 }

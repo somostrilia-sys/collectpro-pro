@@ -850,5 +850,168 @@ export function useWebhookUrls() {
   };
 }
 
+// ═══════════════════════════════════════════════════════════════════════
+// META: conversations (CSW 24h) + assignments + templates
+// ═══════════════════════════════════════════════════════════════════════
+
+export function useMetaConversation(instanceId: string | null, telefone: string | null) {
+  return useQuery({
+    queryKey: ["meta_conv", instanceId, telefone],
+    queryFn: async () => {
+      if (!instanceId || !telefone) return null;
+      const { data } = await supabase
+        .from("whatsapp_meta_conversations")
+        .select("*")
+        .eq("instance_id", instanceId)
+        .eq("telefone", telefone)
+        .maybeSingle();
+      return data ?? null;
+    },
+    enabled: !!instanceId && !!telefone,
+    staleTime: 15_000,
+    refetchInterval: 30_000, // atualiza countdown CSW
+  });
+}
+
+export interface ChatAssignment {
+  id: string;
+  colaborador_id: string;
+  status: string;
+  atribuido_em: string;
+  expires_at: string | null;
+  liberado_em: string | null;
+  provider_tipo: string;
+  profiles?: { full_name: string | null } | null;
+}
+
+export function useChatAssignment(
+  instanceId: string | null,
+  target: string | null,
+  providerTipo: "uazapi" | "meta" = "uazapi",
+) {
+  return useQuery({
+    queryKey: ["chat_assignment", instanceId, target, providerTipo],
+    queryFn: async () => {
+      if (!instanceId || !target) return null;
+      const { data, error } = await supabase.functions.invoke("whatsapp-assignment", {
+        body: {
+          instance_id: instanceId,
+          provider_tipo: providerTipo,
+          action: "get_current",
+          ...(providerTipo === "meta" ? { telefone: target } : { chat_jid: target }),
+        },
+      });
+      if (error) throw error;
+      return (data?.assignment ?? null) as ChatAssignment | null;
+    },
+    enabled: !!instanceId && !!target,
+    staleTime: 10_000,
+  });
+}
+
+export function useAssumeChat() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: {
+      instance_id: string;
+      provider_tipo: "uazapi" | "meta";
+      chat_jid?: string;
+      telefone?: string;
+      colaborador_id: string;
+      atribuido_por?: string;
+      auto_release_minutes?: number;
+    }) => {
+      const { data, error } = await supabase.functions.invoke("whatsapp-assignment", {
+        body: { action: "assign", ...input },
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (_, vars) => {
+      qc.invalidateQueries({ queryKey: ["chat_assignment"] });
+      qc.invalidateQueries({ queryKey: ["meta_unassigned", vars.instance_id] });
+    },
+  });
+}
+
+export function useReleaseChat() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: {
+      instance_id: string;
+      provider_tipo: "uazapi" | "meta";
+      chat_jid?: string;
+      telefone?: string;
+    }) => {
+      const { data, error } = await supabase.functions.invoke("whatsapp-assignment", {
+        body: { action: "release", ...input },
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["chat_assignment"] });
+      qc.invalidateQueries({ queryKey: ["meta_unassigned"] });
+    },
+  });
+}
+
+export function useTransferChat() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: {
+      instance_id: string;
+      provider_tipo: "uazapi" | "meta";
+      chat_jid?: string;
+      telefone?: string;
+      from_colaborador_id?: string;
+      to_colaborador_id: string;
+      motivo?: string;
+    }) => {
+      const { data, error } = await supabase.functions.invoke("whatsapp-assignment", {
+        body: { action: "transfer", ...input },
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["chat_assignment"] });
+    },
+  });
+}
+
+export function useUnassignedMeta(instanceId: string | null) {
+  return useQuery({
+    queryKey: ["meta_unassigned", instanceId],
+    queryFn: async () => {
+      if (!instanceId) return [];
+      const { data, error } = await supabase.functions.invoke("whatsapp-assignment", {
+        body: { instance_id: instanceId, provider_tipo: "meta", action: "list_unassigned" },
+      });
+      if (error) throw error;
+      return data?.chats ?? [];
+    },
+    enabled: !!instanceId,
+    staleTime: 10_000,
+    refetchInterval: 20_000,
+  });
+}
+
+export function useMetaTemplatesLocal(instanceId: string | null, status?: string) {
+  return useQuery({
+    queryKey: ["meta_templates_local", instanceId, status],
+    queryFn: async () => {
+      if (!instanceId) return [];
+      const { data, error } = await supabase.functions.invoke("whatsapp-meta-templates", {
+        body: { instance_id: instanceId, action: "list_local", status: status ?? "APPROVED" },
+      });
+      if (error) throw error;
+      return data?.templates ?? [];
+    },
+    enabled: !!instanceId,
+    staleTime: 60_000,
+  });
+}
+
 // Re-exports pra compat com código existente
 export { useSendMessage as useSend };

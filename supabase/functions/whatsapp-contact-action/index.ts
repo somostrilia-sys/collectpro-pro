@@ -64,26 +64,28 @@ Deno.serve(async (req) => {
       }
 
       case "list_paginated": {
-        const { limit, offset, query } = body;
+        const { limit, offset, contact_scope } = body;
         const r = await callPost("/contacts/list", {
           limit: limit ?? 100,
           offset: offset ?? 0,
-          query: query ?? "",
+          contactScope: contact_scope ?? "all",
         });
         return json({ success: r.ok, data: r.data }, r.ok ? 200 : 502);
       }
 
       case "add": {
-        const { jid, name } = body;
-        if (!jid || !name) return bad("jid e name obrigatórios");
-        const r = await callPost("/contact/add", { jid, name });
+        const { jid, number, name } = body;
+        const phone = number ?? jid;
+        if (!phone || !name) return bad("number (ou jid) e name obrigatórios");
+        const r = await callPost("/contact/add", { number: phone, name });
         return json({ success: r.ok, data: r.data }, r.ok ? 200 : 502);
       }
 
       case "remove": {
-        const { jid } = body;
-        if (!jid) return bad("jid obrigatório");
-        const r = await callPost("/contact/remove", { jid });
+        const { jid, number } = body;
+        const phone = number ?? jid;
+        if (!phone) return bad("number (ou jid) obrigatório");
+        const r = await callPost("/contact/remove", { number: phone });
         return json({ success: r.ok, data: r.data }, r.ok ? 200 : 502);
       }
 
@@ -170,7 +172,7 @@ Deno.serve(async (req) => {
         const limit = 200;
         let total = 0;
         while (true) {
-          const r = await callPost("/contacts/list", { limit, offset });
+          const r = await callPost("/contacts/list", { limit, offset, contactScope: "all" });
           if (!r.ok) break;
           const contacts = r.data?.contacts ?? r.data?.data ?? [];
           if (!Array.isArray(contacts) || contacts.length === 0) break;

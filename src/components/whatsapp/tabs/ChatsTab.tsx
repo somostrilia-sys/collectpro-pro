@@ -20,12 +20,15 @@ export function ChatsTab() {
   const { role, user } = useAuth();
   const { data: instances = [], isLoading } = useWhatsAppInstances();
 
-  // Admin/Gestora veem todas; colaborador só a dele
+  // Admin/Gestora veem todas (Meta oficial + colaboradores);
+  // Atendente vê a instância Meta oficial (compartilhada) + a própria UAZAPI.
   const visibleInstances = useMemo(() => {
     if (role === "Admin" || role === "Gestora") {
-      return instances.filter((i) => i.tipo !== "meta_oficial");
+      return instances;
     }
-    return instances.filter((i) => i.colaborador_id === user?.id && i.tipo !== "meta_oficial");
+    return instances.filter(
+      (i) => i.tipo === "meta_oficial" || i.colaborador_id === user?.id,
+    );
   }, [instances, role, user]);
 
   const [selectedInstanceId, setSelectedInstanceId] = useState<string | null>(null);
@@ -81,7 +84,9 @@ export function ChatsTab() {
 
   const sortedInstances = useMemo(() => {
     return [...visibleInstances].sort((a, b) => {
-      const order = { central: 0, colaborador: 1, meta_oficial: 2 } as any;
+      // Meta oficial no topo (canal corporativo compartilhado),
+      // UAZAPI central depois, UAZAPI colaboradores por último.
+      const order = { meta_oficial: 0, central: 1, colaborador: 2 } as any;
       return (order[a.tipo] ?? 9) - (order[b.tipo] ?? 9);
     });
   }, [visibleInstances]);

@@ -91,15 +91,16 @@ Deno.serve(async (req) => {
       case "create": {
         const { nome, cor } = body;
         if (!nome) return bad("nome obrigatório");
+        // Spec /label/edit exige labelid — quando vazio, UAZAPI gera
         const r = await callPost("/label/edit", {
-          action: "create",
+          labelid: "",
           name: nome,
           color: cor ?? null,
         });
-        if (r.ok && r.data?.id) {
+        if (r.ok && (r.data?.labelid ?? r.data?.id)) {
           await supabase.from("whatsapp_labels").upsert({
             instance_id,
-            external_id: String(r.data.id),
+            external_id: String(r.data.labelid ?? r.data.id),
             nome,
             cor: cor ?? null,
             ativo: true,
@@ -113,8 +114,7 @@ Deno.serve(async (req) => {
         const labelExternalId = external_id ?? id;
         if (!labelExternalId) return bad("external_id obrigatório");
         const r = await callPost("/label/edit", {
-          action: "update",
-          id: labelExternalId,
+          labelid: String(labelExternalId),
           name: nome,
           color: cor,
         });
@@ -132,8 +132,8 @@ Deno.serve(async (req) => {
         const labelExternalId = external_id ?? id;
         if (!labelExternalId) return bad("external_id obrigatório");
         const r = await callPost("/label/edit", {
-          action: "delete",
-          id: labelExternalId,
+          labelid: String(labelExternalId),
+          delete: true,
         });
         if (r.ok) {
           await supabase.from("whatsapp_labels")
@@ -151,7 +151,7 @@ Deno.serve(async (req) => {
         }
         const r = await callPost("/chat/labels", {
           number: chat_jid,
-          labels: label_external_ids,
+          labelids: label_external_ids.map(String),
         });
         if (r.ok) {
           // Limpa labels antigos desse chat
@@ -182,19 +182,9 @@ Deno.serve(async (req) => {
         const { chat_jid, label_external_id } = body;
         if (!chat_jid || !label_external_id) return bad("chat_jid e label_external_id obrigatórios");
 
-        // Busca labels atuais do chat (remove um só)
-        const { data: currentLabels } = await supabase.from("whatsapp_chat_labels")
-          .select("label_id, whatsapp_labels!inner(external_id)")
-          .eq("instance_id", instance_id)
-          .eq("chat_jid", chat_jid);
-
-        const remaining = (currentLabels ?? [])
-          .filter((cl: any) => cl.whatsapp_labels?.external_id !== String(label_external_id))
-          .map((cl: any) => cl.whatsapp_labels?.external_id);
-
         const r = await callPost("/chat/labels", {
           number: chat_jid,
-          labels: remaining,
+          remove_labelid: String(label_external_id),
         });
 
         if (r.ok) {
@@ -219,8 +209,14 @@ Deno.serve(async (req) => {
       case "lead_edit": {
         const { chat_jid, lead_fields } = body;
         if (!chat_jid || !lead_fields) return bad("chat_jid e lead_fields obrigatórios");
+        // UAZAPI exige `id` (wa_fastid). Resolve via /chat/find antes.
+        const findRes = await callPost("/chat/find", { wa_chatid: chat_jid, limit: 1 });
+        const chatId = findRes.data?.chats?.[0]?.wa_fastid
+          ?? findRes.data?.chats?.[0]?.id
+          ?? findRes.data?.[0]?.id
+          ?? chat_jid; // fallback
         const r = await callPost("/chat/editLead", {
-          number: chat_jid,
+          id: chatId,
           ...lead_fields,
         });
         // Sincroniza local

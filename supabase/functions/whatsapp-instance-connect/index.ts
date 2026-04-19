@@ -1,7 +1,7 @@
 // whatsapp-instance-connect — cria/reconecta instância uazapi e retorna QR
 // Body: { instance_id: string }
 // Fluxo:
-//   1. Se instance_name vazio: gera e chama /instance/init (admin token) -> pega token
+//   1. Se instance_name vazio: gera e chama /instance/create (admin token) -> pega token
 //   2. Chama /instance/connect -> pega QR
 //   3. Persiste qr_code, qr_expires_at, status = 'qr_pending'
 //   4. Frontend polla whatsapp-instance-status até status = 'connected'

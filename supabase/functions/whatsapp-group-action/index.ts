@@ -110,14 +110,14 @@ Deno.serve(async (req) => {
       case "invite_info": {
         const { invite_code } = body;
         if (!invite_code) return bad("invite_code obrigatório");
-        const r = await callPost("/group/inviteInfo", { code: invite_code });
+        const r = await callPost("/group/inviteInfo", { invitecode: invite_code });
         return json({ success: r.ok, data: r.data }, r.ok ? 200 : 502);
       }
 
       case "join": {
         const { invite_code } = body;
         if (!invite_code) return bad("invite_code obrigatório");
-        const r = await callPost("/group/join", { code: invite_code });
+        const r = await callPost("/group/join", { invitecode: invite_code });
         if (r.ok && r.data?.JID) await refreshGroupCache(r.data.JID);
         return json({ success: r.ok, data: r.data }, r.ok ? 200 : 502);
       }
@@ -145,7 +145,7 @@ Deno.serve(async (req) => {
         const r = await callPost("/group/list", {
           limit: limit ?? 100,
           offset: offset ?? 0,
-          query: query ?? "",
+          search: query ?? "",
         });
         // Sincroniza cache
         if (r.ok && Array.isArray(r.data?.groups ?? r.data?.data ?? r.data)) {
@@ -251,9 +251,9 @@ Deno.serve(async (req) => {
 
       // ═══ COMUNIDADES ═══
       case "community_create": {
-        const { name, description } = body;
+        const { name } = body;
         if (!name) return bad("name obrigatório");
-        const r = await callPost("/community/create", { name, description: description ?? "" });
+        const r = await callPost("/community/create", { name });
         return json({ success: r.ok, data: r.data }, r.ok ? 200 : 502);
       }
 
@@ -263,8 +263,8 @@ Deno.serve(async (req) => {
           return bad("community_jid, groups e action obrigatórios");
         }
         const r = await callPost("/community/editgroups", {
-          communityJid: community_jid,
-          groups,
+          community: community_jid,
+          groupjids: groups,
           action: commAction, // add, remove
         });
         return json({ success: r.ok, data: r.data }, r.ok ? 200 : 502);

@@ -75,9 +75,14 @@ Deno.serve(async (req) => {
       case "mute": {
         const { chat_jid, duration_seconds } = body;
         if (!chat_jid) return bad("chat_jid obrigatório");
+        // UAZAPI espera muteEndTime como timestamp unix (segundos).
+        // 0 = desmutar; caso contrário agora + duration.
+        const muteEndTime = duration_seconds && duration_seconds > 0
+          ? Math.floor(Date.now() / 1000) + duration_seconds
+          : 0;
         const r = await call("/chat/mute", {
           number: chat_jid,
-          duration: duration_seconds ?? 0,
+          muteEndTime,
         });
         return json({ success: r.ok, data: r.data }, r.ok ? 200 : 502);
       }
@@ -99,7 +104,8 @@ Deno.serve(async (req) => {
       case "find": {
         const { query, filter, limit, offset } = body;
         const payload: any = { limit: limit ?? 50, offset: offset ?? 0 };
-        if (query) payload.query = query;
+        // spec usa wa_name/wa_contactName — mapear `query` como busca por nome
+        if (query) payload.wa_name = query;
         if (filter) Object.assign(payload, filter);
         const r = await call("/chat/find", payload);
         return json({ success: r.ok, data: r.data }, r.ok ? 200 : 502);

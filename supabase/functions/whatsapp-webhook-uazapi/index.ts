@@ -1,7 +1,12 @@
 // whatsapp-webhook-uazapi — recebe eventos da UAZAPI v2
 // Eventos suportados: messages, messages_update, chats, contacts, groups,
 // labels, presence, call, blocks, history, connection, sender
-// Endpoint público (sem JWT) — autenticação via token da instância no payload
+//
+// Autenticação:
+//   1. Se UAZAPI_WEBHOOK_SECRET estiver definido: valida `?key=` na URL
+//      OU header `x-uazapi-webhook-secret`. Rejeita 401 se não bater.
+//   2. Sempre exige que o `token` no payload corresponda a uma instância
+//      do banco — rejeita 401 se não encontrar.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import {
@@ -23,6 +28,21 @@ Deno.serve(async (req) => {
     Deno.env.get("SUPABASE_URL")!,
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
   );
+
+  // ─── Gate 1: secret na URL/header (opcional mas recomendado) ─────────
+  const secretExpected = Deno.env.get("UAZAPI_WEBHOOK_SECRET") ?? "";
+  if (secretExpected) {
+    const url = new URL(req.url);
+    const provided = url.searchParams.get("key")
+      ?? req.headers.get("x-uazapi-webhook-secret")
+      ?? "";
+    if (provided !== secretExpected) {
+      return new Response(JSON.stringify({ ok: false, error: "unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+  }
 
   let payload: any = {};
   try { payload = await req.json(); } catch { payload = {}; }
@@ -53,6 +73,19 @@ Deno.serve(async (req) => {
       const { data } = await supabase.from("whatsapp_instances")
         .select("*").eq("instance_name", instanceName).maybeSingle();
       instance = data;
+    }
+
+    // ─── Gate 2: token no payload DEVE mapear pra uma instância nossa ─
+    // Rejeita chamadas fake que não correspondem a nenhuma instância do banco.
+    if (!instance) {
+      if (raw?.id) {
+        await supabase.from("whatsapp_webhooks_raw")
+          .update({ erro: "instance_not_found" }).eq("id", raw.id);
+      }
+      return new Response(JSON.stringify({ ok: false, error: "instance_not_found" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     // Roteamento por tipo de evento
@@ -515,9 +548,20 @@ async function handleLabel(supabase: any, instance: any, payload: any) {
 }
 
 // ─── PRESENCE ─────────────────────────────────────────────────────────
-async function handlePresence(_supabase: any, _instance: any, _payload: any) {
-  // Placeholder: presença poderia ser armazenada em cache Redis (não DB)
-  // Por agora, só loggamos no webhooks_raw (já feito no handler principal)
+async function handlePresence(supabase: any, instance: any, payload: any) {
+  if (!instance) return;
+  const data = payload?.data ?? payload;
+  const jid = data?.jid ?? data?.chatid ?? data?.from;
+  if (!jid) return;
+  const presence = data?.presence ?? data?.state ?? null; // available, unavailable, composing, recording, paused
+  // Persistir último presence + timestamp em whatsapp_contacts (coluna raw.presence)
+  await supabase.from("whatsapp_contacts").upsert({
+    instance_id: instance.id,
+    jid,
+    telefone: jidToPhone(jid),
+    last_presence: presence,
+    last_presence_at: new Date().toISOString(),
+  }, { onConflict: "instance_id,jid" }).then(() => {}).catch(() => {});
 }
 
 // ─── CALL ─────────────────────────────────────────────────────────────

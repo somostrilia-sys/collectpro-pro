@@ -67,12 +67,14 @@ Deno.serve(async (req) => {
         if (r.ok && r.data) {
           const rawStatus = r.data?.instance?.status ?? r.data?.status ?? "connected";
           const newStatus = mapUazapiStatus(rawStatus);
-          const phone = r.data?.instance?.wid ?? r.data?.wid ?? r.data?.phone;
+          // UAZAPI retorna JID em `owner` ou no `jid` raiz
+          const rawJid = r.data?.instance?.owner ?? r.data?.jid ?? "";
+          const phone = String(rawJid).split("@")[0].replace(/\D/g, "");
           const update: any = {
             status: newStatus,
             last_sync_at: new Date().toISOString(),
           };
-          if (phone) update.telefone = String(phone).replace(/\D/g, "");
+          if (phone) update.telefone = phone;
           if (newStatus === "connected") update.qr_code = null;
           await supabase.from("whatsapp_instances").update(update).eq("id", instance_id);
         }
@@ -99,8 +101,8 @@ Deno.serve(async (req) => {
       case "delay_set": {
         const { delay_min, delay_max } = body;
         const r = await callPost("/instance/updateDelaySettings", {
-          min: delay_min ?? 3,
-          max: delay_max ?? 6,
+          msg_delay_min: delay_min ?? 3,
+          msg_delay_max: delay_max ?? 6,
         });
         return json({ success: r.ok, data: r.data }, r.ok ? 200 : 502);
       }

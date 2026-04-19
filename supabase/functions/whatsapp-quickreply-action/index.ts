@@ -115,11 +115,10 @@ Deno.serve(async (req) => {
           method: "POST",
           headers: { "Content-Type": "application/json", token: instance.token },
           body: JSON.stringify({
-            action: qr.external_id ? "update" : "create",
-            id: qr.external_id,
-            shortcut: qr.atalho,
-            message: qr.conteudo,
-            category: qr.categoria,
+            id: qr.external_id ?? undefined,
+            shortCut: qr.atalho,
+            type: "text",
+            text: qr.conteudo,
           }),
         });
         const data = await res.json().catch(() => ({}));

@@ -9,7 +9,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import {
   corsHeaders, json, bad,
-  uazapiAdminCreateInstance, uazapiConnect,
+  uazapiAdminCreateInstance, uazapiConnect, uazapiSetWebhook,
 } from "../_shared/whatsapp.ts";
 
 Deno.serve(async (req) => {
@@ -67,12 +67,28 @@ Deno.serve(async (req) => {
       last_sync_at: new Date().toISOString(),
     }).eq("id", inst.id);
 
+    // 3. Configurar webhook da instância (aponta pra nosso endpoint)
+    //    Fire-and-forget: não falha a conexão se webhook falhar
+    const supabaseUrl = Deno.env.get("SUPABASE_URL") || "https://ptmttmqprbullvgulyhb.supabase.co";
+    const webhookUrl = `${supabaseUrl}/functions/v1/whatsapp-webhook-uazapi`;
+    let webhookConfigured = false;
+    let webhookError: string | null = null;
+    try {
+      const wh = await uazapiSetWebhook(token, webhookUrl);
+      webhookConfigured = wh.ok;
+      if (!wh.ok) webhookError = JSON.stringify(wh.data).slice(0, 200);
+    } catch (e: any) {
+      webhookError = e.message;
+    }
+
     return json({
       success: true,
       qr_code: qr,
       qr_expires_at: qrExpires,
       instance_name: instanceName,
       status: qr ? "qr_pending" : "connected",
+      webhook_configured: webhookConfigured,
+      webhook_error: webhookError,
     });
   } catch (e: any) {
     return bad(e.message || "Erro interno", 500);

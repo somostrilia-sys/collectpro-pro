@@ -160,6 +160,40 @@ export function mapUazapiStatus(raw: string): string {
   return "error";
 }
 
+// ─── UAZAPI — Configurar webhook da instância (POST /webhook) ──────────
+export async function uazapiSetWebhook(
+  instanceToken: string,
+  webhookUrl: string,
+  events: string[] = [
+    "connection",
+    "messages",
+    "messages_update",
+    "chats",
+    "contacts",
+    "groups",
+    "labels",
+    "presence",
+    "call",
+    "blocks",
+    "history",
+  ],
+  serverUrl: string = UAZAPI_SERVER,
+): Promise<{ ok: boolean; data: any }> {
+  const res = await fetch(`${serverUrl}/webhook`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", token: instanceToken },
+    body: JSON.stringify({
+      enabled: true,
+      url: webhookUrl,
+      events,
+      addUrlEvents: false,
+      addUrlTypesMessages: false,
+    }),
+  });
+  const data = await res.json().catch(() => ({}));
+  return { ok: res.ok, data };
+}
+
 // ─── UAZAPI — Info de grupo (POST /group/info) ─────────────────────────
 export async function uazapiGroupInfo(
   instanceToken: string,

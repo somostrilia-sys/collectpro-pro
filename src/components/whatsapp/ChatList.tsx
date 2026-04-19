@@ -1,8 +1,8 @@
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Search, MessageSquare } from "lucide-react";
-import { useMemo, useState } from "react";
+import { Search, MessageSquare, Users, Pin, VolumeX } from "lucide-react";
+import { ContactAvatar } from "./ContactAvatar";
 import type { WhatsAppConversation } from "@/types/whatsapp";
 import { cn } from "@/lib/utils";
 
@@ -11,10 +11,8 @@ interface Props {
   selectedPhone: string | null;
   onSelect: (conv: WhatsAppConversation) => void;
   loading?: boolean;
-}
-
-function initials(name: string) {
-  return name.split(" ").filter(Boolean).slice(0, 2).map((s) => s[0]?.toUpperCase() ?? "").join("") || "??";
+  filter?: "all" | "unread" | "groups" | "contacts";
+  onFilterChange?: (filter: "all" | "unread" | "groups" | "contacts") => void;
 }
 
 function formatTel(t: string): string {
@@ -24,6 +22,7 @@ function formatTel(t: string): string {
 }
 
 function formatTime(iso: string): string {
+  if (!iso) return "";
   const d = new Date(iso);
   const now = new Date();
   const sameDay = d.toDateString() === now.toDateString();
@@ -33,19 +32,29 @@ function formatTime(iso: string): string {
   return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
 }
 
-export function ChatList({ conversations, selectedPhone, onSelect, loading }: Props) {
+export function ChatList({
+  conversations, selectedPhone, onSelect, loading, filter = "all", onFilterChange,
+}: Props) {
   const [q, setQ] = useState("");
+
   const filtered = useMemo(() => {
     const term = q.trim().toLowerCase();
-    if (!term) return conversations;
-    return conversations.filter((c) =>
-      (c.associado_nome || "").toLowerCase().includes(term) ||
-      c.telefone.includes(term.replace(/\D/g, "")),
-    );
-  }, [conversations, q]);
+    let list = conversations;
+    if (filter === "unread") list = list.filter((c) => c.nao_lidas > 0);
+    else if (filter === "groups") list = list.filter((c) => c.is_group);
+    else if (filter === "contacts") list = list.filter((c) => !c.is_group);
+    if (term) {
+      list = list.filter((c) =>
+        (c.chat_nome || c.associado_nome || "").toLowerCase().includes(term) ||
+        c.telefone.includes(term.replace(/\D/g, "")),
+      );
+    }
+    return list;
+  }, [conversations, q, filter]);
 
   return (
     <div className="flex flex-col h-full border-r bg-background">
+      {/* Busca */}
       <div className="p-3 border-b">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -58,18 +67,44 @@ export function ChatList({ conversations, selectedPhone, onSelect, loading }: Pr
         </div>
       </div>
 
+      {/* Filtros */}
+      {onFilterChange && (
+        <div className="flex gap-1 px-3 py-2 border-b overflow-x-auto">
+          {([
+            { key: "all", label: "Todas" },
+            { key: "unread", label: "Não lidas" },
+            { key: "groups", label: "Grupos" },
+            { key: "contacts", label: "Contatos" },
+          ] as const).map((f) => (
+            <button
+              key={f.key}
+              onClick={() => onFilterChange(f.key)}
+              className={cn(
+                "text-[11px] font-medium px-2.5 py-1 rounded-full border transition-colors whitespace-nowrap",
+                filter === f.key
+                  ? "bg-primary text-primary-foreground border-primary"
+                  : "bg-muted/30 text-muted-foreground border-transparent hover:bg-muted",
+              )}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Lista */}
       <div className="flex-1 overflow-y-auto">
         {loading ? (
           <div className="p-6 text-center text-sm text-muted-foreground">Carregando...</div>
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-muted-foreground gap-2">
             <MessageSquare className="h-10 w-10 opacity-40" />
-            <p className="text-sm">Nenhuma conversa ainda</p>
+            <p className="text-sm">Nenhuma conversa</p>
           </div>
         ) : (
           filtered.map((c) => {
             const selected = c.telefone === selectedPhone;
-            const name = c.associado_nome || formatTel(c.telefone);
+            const displayName = c.chat_nome || c.associado_nome || formatTel(c.telefone);
             return (
               <button
                 key={c.telefone}
@@ -79,21 +114,34 @@ export function ChatList({ conversations, selectedPhone, onSelect, loading }: Pr
                   selected && "bg-accent",
                 )}
               >
-                <Avatar className="h-11 w-11 shrink-0">
-                  <AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold">
-                    {initials(name)}
-                  </AvatarFallback>
-                </Avatar>
+                <ContactAvatar
+                  name={displayName}
+                  url={c.chat_avatar_url}
+                  isGroup={c.is_group}
+                  size="md"
+                />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="font-medium text-sm truncate">{name}</p>
-                    <span className="text-[10px] text-muted-foreground shrink-0">
-                      {formatTime(c.ultima_mensagem_em)}
-                    </span>
+                    <div className="flex items-center gap-1 min-w-0">
+                      {c.is_group && <Users className="h-3 w-3 shrink-0 text-muted-foreground" />}
+                      <p className="font-medium text-sm truncate">{displayName}</p>
+                    </div>
+                    <div className="flex items-center gap-1 shrink-0">
+                      {c.is_muted && <VolumeX className="h-3 w-3 text-muted-foreground/70" />}
+                      {c.is_pinned && <Pin className="h-3 w-3 text-muted-foreground/70" />}
+                      <span className="text-[10px] text-muted-foreground">
+                        {formatTime(c.ultima_mensagem_em)}
+                      </span>
+                    </div>
                   </div>
                   <div className="flex items-center justify-between gap-2 mt-0.5">
                     <p className="text-xs text-muted-foreground truncate">
-                      {c.ultima_direction === "out" && <span className="text-muted-foreground/70">Você: </span>}
+                      {c.ultima_direction === "out" && (
+                        <span className="text-muted-foreground/70">Você: </span>
+                      )}
+                      {c.is_group && c.ultima_direction === "in" && c.ultima_sender_name && (
+                        <span className="text-muted-foreground/80">{c.ultima_sender_name}: </span>
+                      )}
                       {c.ultima_mensagem || "(mídia)"}
                     </p>
                     {c.nao_lidas > 0 && (
@@ -102,6 +150,22 @@ export function ChatList({ conversations, selectedPhone, onSelect, loading }: Pr
                       </Badge>
                     )}
                   </div>
+                  {c.labels && c.labels.length > 0 && (
+                    <div className="flex gap-1 mt-1 flex-wrap">
+                      {c.labels.slice(0, 3).map((l) => (
+                        <span
+                          key={l.id}
+                          className="text-[9px] px-1.5 py-0.5 rounded-full font-medium"
+                          style={{
+                            backgroundColor: (l.cor || "#3b82f6") + "20",
+                            color: l.cor || "#3b82f6",
+                          }}
+                        >
+                          {l.nome}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </button>
             );

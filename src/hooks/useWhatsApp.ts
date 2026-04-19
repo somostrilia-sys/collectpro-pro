@@ -1,14 +1,27 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import type {
   WhatsAppInstance,
   WhatsAppTemplate,
   WhatsAppMessage,
   WhatsAppConversation,
+  WhatsAppContact,
+  WhatsAppGroup,
+  WhatsAppLabel,
+  WhatsAppQuickReply,
+  WhatsAppLead,
+  WhatsAppChatNote,
+  WhatsAppAutomation,
+  WhatsAppMedia,
+  WhatsAppUazapiDetails,
 } from "@/types/whatsapp";
 
-// ─── Instâncias ──────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════
+// INSTÂNCIAS
+// ═══════════════════════════════════════════════════════════════════════
+
 export function useWhatsAppInstances() {
   return useQuery<WhatsAppInstance[]>({
     queryKey: ["whatsapp-instances"],
@@ -32,8 +45,7 @@ export function useWhatsAppInstance(id: string | null) {
       if (!id) return null;
       const { data } = await (supabase as any)
         .from("whatsapp_instances")
-        .select("*")
-        .eq("id", id).maybeSingle();
+        .select("*").eq("id", id).maybeSingle();
       return data;
     },
     enabled: !!id,
@@ -74,7 +86,7 @@ export function useDeleteInstance() {
   });
 }
 
-// ─── Conexão (QR / status) ───────────────────────────────────────────
+// ─── Conexão ───────────────────────────────────────────────────────────
 export function useConnectInstance() {
   const qc = useQueryClient();
   return useMutation({
@@ -103,7 +115,10 @@ export function useRefreshStatus() {
   });
 }
 
-// ─── Templates ───────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════
+// TEMPLATES (compartilhado Meta/UAZAPI)
+// ═══════════════════════════════════════════════════════════════════════
+
 export function useWhatsAppTemplates(categoria?: string) {
   return useQuery<WhatsAppTemplate[]>({
     queryKey: ["whatsapp-templates", categoria],
@@ -135,7 +150,10 @@ export function useSaveTemplate() {
   });
 }
 
-// ─── Conversas ───────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════
+// CONVERSATIONS
+// ═══════════════════════════════════════════════════════════════════════
+
 export function useConversations(instanceId: string | null) {
   return useQuery<WhatsAppConversation[]>({
     queryKey: ["whatsapp-conversations", instanceId],
@@ -149,14 +167,49 @@ export function useConversations(instanceId: string | null) {
         .limit(200);
       if (error) throw error;
       const convs = (data || []) as WhatsAppConversation[];
-      // Enriquecer com nome do associado
+
+      // Enriquecer com associado, contato e grupo
       const ids = Array.from(new Set(convs.map((c) => c.associado_id).filter(Boolean))) as string[];
-      if (ids.length > 0) {
-        const { data: ass } = await (supabase as any).from("associados")
-          .select("id, nome").in("id", ids);
-        const map = new Map<string, string>((ass || []).map((a: any) => [a.id, a.nome]));
-        for (const c of convs) {
-          if (c.associado_id) c.associado_nome = map.get(c.associado_id) || null;
+      const phones = convs.map((c) => c.telefone);
+
+      const [{ data: ass }, { data: contacts }, { data: groups }] = await Promise.all([
+        ids.length > 0
+          ? (supabase as any).from("associados").select("id, nome").in("id", ids)
+          : Promise.resolve({ data: [] }),
+        (supabase as any).from("whatsapp_contacts")
+          .select("telefone, push_name, contact_name, avatar_url")
+          .eq("instance_id", instanceId)
+          .in("telefone", phones),
+        (supabase as any).from("whatsapp_groups")
+          .select("group_jid, nome, avatar_url, participants_count")
+          .eq("instance_id", instanceId),
+      ]);
+
+      const assocMap = new Map<string, string>((ass || []).map((a: any) => [a.id, a.nome]));
+      const contactMap = new Map<string, any>((contacts || []).map((c: any) => [c.telefone, c]));
+      const groupMap = new Map<string, any>((groups || []).map((g: any) => [g.group_jid, g]));
+
+      for (const c of convs) {
+        if (c.associado_id) c.associado_nome = assocMap.get(c.associado_id) || null;
+        // Detect group by phone (when phone is a group jid number)
+        const groupCandidate = (groups || []).find((g: any) =>
+          g.group_jid.replace(/\D/g, "") === c.telefone
+        );
+        if (groupCandidate) {
+          c.is_group = true;
+          c.chat_jid = groupCandidate.group_jid;
+          c.chat_nome = groupCandidate.nome;
+          c.chat_avatar_url = groupCandidate.avatar_url;
+        } else {
+          c.is_group = false;
+          c.chat_jid = `${c.telefone}@s.whatsapp.net`;
+          const contact = contactMap.get(c.telefone);
+          if (contact) {
+            c.chat_nome = c.associado_nome || contact.contact_name || contact.push_name;
+            c.chat_avatar_url = contact.avatar_url;
+          } else {
+            c.chat_nome = c.associado_nome;
+          }
         }
       }
       return convs;
@@ -166,7 +219,27 @@ export function useConversations(instanceId: string | null) {
   });
 }
 
-// ─── Mensagens de uma conversa ───────────────────────────────────────
+// Realtime de conversations
+export function useConversationsRealtime(instanceId: string | null) {
+  const qc = useQueryClient();
+  useEffect(() => {
+    if (!instanceId) return;
+    const channel = supabase
+      .channel(`wa-convs-${instanceId}`)
+      .on(
+        "postgres_changes" as any,
+        { event: "*", schema: "public", table: "whatsapp_messages", filter: `instance_id=eq.${instanceId}` },
+        () => qc.invalidateQueries({ queryKey: ["whatsapp-conversations", instanceId] }),
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [instanceId, qc]);
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// MENSAGENS
+// ═══════════════════════════════════════════════════════════════════════
+
 export function useMessages(instanceId: string | null, telefone: string | null) {
   const qc = useQueryClient();
   const query = useQuery<WhatsAppMessage[]>({
@@ -175,18 +248,28 @@ export function useMessages(instanceId: string | null, telefone: string | null) 
       if (!instanceId || !telefone) return [];
       const { data, error } = await (supabase as any)
         .from("whatsapp_messages")
-        .select("*")
+        .select(`
+          *,
+          uazapi_details:whatsapp_uazapi_details(*),
+          media:whatsapp_media(*)
+        `)
         .eq("instance_id", instanceId)
         .eq("telefone", telefone)
         .order("criado_em", { ascending: true })
         .limit(500);
       if (error) throw error;
-      return (data || []) as WhatsAppMessage[];
+      // Normalizar: uazapi_details/media vêm como array (1-element) do Supabase
+      return (data || []).map((m: any) => ({
+        ...m,
+        uazapi_details: Array.isArray(m.uazapi_details)
+          ? (m.uazapi_details[0] ?? null)
+          : (m.uazapi_details ?? null),
+        media: Array.isArray(m.media) ? (m.media[0] ?? null) : (m.media ?? null),
+      })) as WhatsAppMessage[];
     },
     enabled: !!instanceId && !!telefone,
   });
 
-  // Realtime subscribe
   useEffect(() => {
     if (!instanceId || !telefone) return;
     const channel = supabase
@@ -207,6 +290,16 @@ export function useMessages(instanceId: string | null, telefone: string | null) 
           }
         },
       )
+      .on(
+        "postgres_changes" as any,
+        { event: "*", schema: "public", table: "whatsapp_uazapi_details" },
+        () => qc.invalidateQueries({ queryKey: ["whatsapp-messages", instanceId, telefone] }),
+      )
+      .on(
+        "postgres_changes" as any,
+        { event: "*", schema: "public", table: "whatsapp_media" },
+        () => qc.invalidateQueries({ queryKey: ["whatsapp-messages", instanceId, telefone] }),
+      )
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [instanceId, telefone, qc]);
@@ -214,7 +307,7 @@ export function useMessages(instanceId: string | null, telefone: string | null) 
   return query;
 }
 
-// Realtime global de instâncias (atualiza status quando webhook chega)
+// Realtime global de instâncias
 export function useInstancesRealtime() {
   const qc = useQueryClient();
   useEffect(() => {
@@ -229,23 +322,39 @@ export function useInstancesRealtime() {
   }, [qc]);
 }
 
-// ─── Envio ───────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════
+// ENVIO
+// ═══════════════════════════════════════════════════════════════════════
+
 export interface SendPayload {
   telefone?: string;
+  chat_jid?: string;
   associado_id?: string;
   boleto_id?: string;
   instance_id?: string;
+  colaborador_id?: string;
   template_id?: string;
   texto?: string;
   variaveis?: Record<string, any>;
-  media?: { type: "image" | "audio" | "video" | "document"; url: string; caption?: string };
+  media?: { type: "image" | "audio" | "video" | "document" | "sticker"; url: string; caption?: string };
+  contact?: { name: string; phone: string; vcard?: string };
+  location?: { latitude: number; longitude: number; name?: string; address?: string };
+  menu?: Record<string, any>;
+  carousel?: Record<string, any>;
+  pix?: { chave: string; valor: number; nome: string; descricao?: string };
+  payment?: { valor: number; descricao: string; referencia?: string };
+  quoted?: { external_id: string };
+  reply_to_external_id?: string;
 }
 
 export function useSendMessage() {
   const qc = useQueryClient();
+  const { user } = useAuth();
   return useMutation({
     mutationFn: async (payload: SendPayload) => {
-      const { data, error } = await supabase.functions.invoke("whatsapp-send", { body: payload });
+      const { data, error } = await supabase.functions.invoke("whatsapp-send", {
+        body: { colaborador_id: user?.id, ...payload },
+      });
       if (error) throw error;
       return data;
     },
@@ -258,7 +367,347 @@ export function useSendMessage() {
   });
 }
 
-// ─── Util: URL do webhook ────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════
+// AÇÕES DE MENSAGEM
+// ═══════════════════════════════════════════════════════════════════════
+
+export function useMessageAction() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: { instance_id: string; action: string } & Record<string, any>) => {
+      const { data, error } = await supabase.functions.invoke("whatsapp-message-action", {
+        body: payload,
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (_, vars) => {
+      qc.invalidateQueries({ queryKey: ["whatsapp-messages"] });
+      qc.invalidateQueries({ queryKey: ["whatsapp-conversations", vars.instance_id] });
+    },
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// AÇÕES DE CHAT
+// ═══════════════════════════════════════════════════════════════════════
+
+export function useChatAction() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: { instance_id: string; action: string } & Record<string, any>) => {
+      const { data, error } = await supabase.functions.invoke("whatsapp-chat-action", {
+        body: payload,
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (_, vars) => {
+      qc.invalidateQueries({ queryKey: ["whatsapp-conversations", vars.instance_id] });
+      qc.invalidateQueries({ queryKey: ["whatsapp-chat-notes"] });
+    },
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// PRESENÇA
+// ═══════════════════════════════════════════════════════════════════════
+
+export function useSendPresence() {
+  return useMutation({
+    mutationFn: async (payload: {
+      instance_id: string;
+      chat_jid?: string;
+      telefone?: string;
+      presence: "composing" | "recording" | "paused" | "available" | "unavailable";
+    }) => {
+      const { data } = await supabase.functions.invoke("whatsapp-presence", { body: payload });
+      return data;
+    },
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// CONTATOS
+// ═══════════════════════════════════════════════════════════════════════
+
+export function useContacts(instanceId: string | null, search?: string) {
+  return useQuery<WhatsAppContact[]>({
+    queryKey: ["whatsapp-contacts", instanceId, search],
+    queryFn: async () => {
+      if (!instanceId) return [];
+      let q = (supabase as any).from("whatsapp_contacts")
+        .select("*")
+        .eq("instance_id", instanceId);
+      if (search) {
+        q = q.or(`push_name.ilike.%${search}%,contact_name.ilike.%${search}%,telefone.ilike.%${search}%`);
+      }
+      const { data } = await q.order("push_name", { ascending: true }).limit(500);
+      return (data || []) as WhatsAppContact[];
+    },
+    enabled: !!instanceId,
+    staleTime: 30_000,
+  });
+}
+
+export function useContactAction() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: { instance_id: string; action: string } & Record<string, any>) => {
+      const { data, error } = await supabase.functions.invoke("whatsapp-contact-action", {
+        body: payload,
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (_, vars) => {
+      qc.invalidateQueries({ queryKey: ["whatsapp-contacts", vars.instance_id] });
+      qc.invalidateQueries({ queryKey: ["whatsapp-blocks", vars.instance_id] });
+    },
+  });
+}
+
+export function useBlocks(instanceId: string | null) {
+  return useQuery({
+    queryKey: ["whatsapp-blocks", instanceId],
+    queryFn: async () => {
+      if (!instanceId) return [];
+      const { data } = await (supabase as any).from("whatsapp_blocks")
+        .select("*").eq("instance_id", instanceId);
+      return data || [];
+    },
+    enabled: !!instanceId,
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// GRUPOS
+// ═══════════════════════════════════════════════════════════════════════
+
+export function useGroups(instanceId: string | null, search?: string) {
+  return useQuery<WhatsAppGroup[]>({
+    queryKey: ["whatsapp-groups", instanceId, search],
+    queryFn: async () => {
+      if (!instanceId) return [];
+      let q = (supabase as any).from("whatsapp_groups")
+        .select("*")
+        .eq("instance_id", instanceId);
+      if (search) q = q.ilike("nome", `%${search}%`);
+      const { data } = await q.order("nome", { ascending: true });
+      return (data || []) as WhatsAppGroup[];
+    },
+    enabled: !!instanceId,
+    staleTime: 30_000,
+  });
+}
+
+export function useGroup(instanceId: string | null, groupJid: string | null) {
+  return useQuery<WhatsAppGroup | null>({
+    queryKey: ["whatsapp-group", instanceId, groupJid],
+    queryFn: async () => {
+      if (!instanceId || !groupJid) return null;
+      const { data } = await (supabase as any).from("whatsapp_groups")
+        .select("*")
+        .eq("instance_id", instanceId)
+        .eq("group_jid", groupJid)
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!instanceId && !!groupJid,
+  });
+}
+
+export function useGroupAction() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: { instance_id: string; action: string } & Record<string, any>) => {
+      const { data, error } = await supabase.functions.invoke("whatsapp-group-action", {
+        body: payload,
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (_, vars) => {
+      qc.invalidateQueries({ queryKey: ["whatsapp-groups", vars.instance_id] });
+      qc.invalidateQueries({ queryKey: ["whatsapp-group"] });
+    },
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// ETIQUETAS
+// ═══════════════════════════════════════════════════════════════════════
+
+export function useLabels(instanceId: string | null) {
+  return useQuery<WhatsAppLabel[]>({
+    queryKey: ["whatsapp-labels", instanceId],
+    queryFn: async () => {
+      if (!instanceId) return [];
+      const { data } = await (supabase as any).from("whatsapp_labels")
+        .select("*")
+        .eq("instance_id", instanceId)
+        .eq("ativo", true)
+        .order("nome", { ascending: true });
+      return (data || []) as WhatsAppLabel[];
+    },
+    enabled: !!instanceId,
+  });
+}
+
+export function useLabelAction() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: { instance_id: string; action: string } & Record<string, any>) => {
+      const { data, error } = await supabase.functions.invoke("whatsapp-label-action", {
+        body: payload,
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (_, vars) => {
+      qc.invalidateQueries({ queryKey: ["whatsapp-labels", vars.instance_id] });
+    },
+  });
+}
+
+export function useChatLabels(instanceId: string | null, chatJid: string | null) {
+  return useQuery({
+    queryKey: ["whatsapp-chat-labels", instanceId, chatJid],
+    queryFn: async () => {
+      if (!instanceId || !chatJid) return [];
+      const { data } = await (supabase as any)
+        .from("whatsapp_chat_labels")
+        .select("*, label:whatsapp_labels(*)")
+        .eq("instance_id", instanceId)
+        .eq("chat_jid", chatJid);
+      return data || [];
+    },
+    enabled: !!instanceId && !!chatJid,
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// RESPOSTAS RÁPIDAS
+// ═══════════════════════════════════════════════════════════════════════
+
+export function useQuickReplies(instanceId: string | null, colaboradorId?: string | null) {
+  return useQuery<WhatsAppQuickReply[]>({
+    queryKey: ["whatsapp-quickreplies", instanceId, colaboradorId],
+    queryFn: async () => {
+      if (!instanceId) return [];
+      let q = (supabase as any).from("whatsapp_quick_replies")
+        .select("*")
+        .eq("instance_id", instanceId)
+        .eq("ativo", true);
+      if (colaboradorId) {
+        q = q.or(`colaborador_id.eq.${colaboradorId},global.eq.true`);
+      } else {
+        q = q.eq("global", true);
+      }
+      const { data } = await q.order("atalho", { ascending: true });
+      return (data || []) as WhatsAppQuickReply[];
+    },
+    enabled: !!instanceId,
+  });
+}
+
+export function useQuickReplyAction() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: { instance_id: string; action: string } & Record<string, any>) => {
+      const { data, error } = await supabase.functions.invoke("whatsapp-quickreply-action", {
+        body: payload,
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (_, vars) => {
+      qc.invalidateQueries({ queryKey: ["whatsapp-quickreplies", vars.instance_id] });
+    },
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// LEADS (CRM)
+// ═══════════════════════════════════════════════════════════════════════
+
+export function useLead(instanceId: string | null, chatJid: string | null) {
+  return useQuery<WhatsAppLead | null>({
+    queryKey: ["whatsapp-lead", instanceId, chatJid],
+    queryFn: async () => {
+      if (!instanceId || !chatJid) return null;
+      const { data } = await (supabase as any).from("whatsapp_chat_leads")
+        .select("*")
+        .eq("instance_id", instanceId)
+        .eq("chat_jid", chatJid)
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!instanceId && !!chatJid,
+  });
+}
+
+export function useLeads(instanceId: string | null, filter?: { status?: string; attendant_id?: string }) {
+  return useQuery<WhatsAppLead[]>({
+    queryKey: ["whatsapp-leads", instanceId, filter],
+    queryFn: async () => {
+      if (!instanceId) return [];
+      let q = (supabase as any).from("whatsapp_chat_leads")
+        .select("*")
+        .eq("instance_id", instanceId);
+      if (filter?.status) q = q.eq("lead_status", filter.status);
+      if (filter?.attendant_id) q = q.eq("lead_assigned_attendant_id", filter.attendant_id);
+      const { data } = await q.order("lead_kanban_order", { ascending: true, nullsFirst: false });
+      return (data || []) as WhatsAppLead[];
+    },
+    enabled: !!instanceId,
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// NOTAS INTERNAS DO CHAT
+// ═══════════════════════════════════════════════════════════════════════
+
+export function useChatNotes(instanceId: string | null, chatJid: string | null) {
+  return useQuery<WhatsAppChatNote[]>({
+    queryKey: ["whatsapp-chat-notes", instanceId, chatJid],
+    queryFn: async () => {
+      if (!instanceId || !chatJid) return [];
+      const { data } = await (supabase as any).from("whatsapp_chat_notes")
+        .select("*")
+        .eq("instance_id", instanceId)
+        .eq("chat_jid", chatJid)
+        .order("criado_em", { ascending: false });
+      return (data || []) as WhatsAppChatNote[];
+    },
+    enabled: !!instanceId && !!chatJid,
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// CONFIGURAÇÃO DE INSTÂNCIA
+// ═══════════════════════════════════════════════════════════════════════
+
+export function useInstanceConfig() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: { instance_id: string; action: string } & Record<string, any>) => {
+      const { data, error } = await supabase.functions.invoke("whatsapp-instance-config", {
+        body: payload,
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["whatsapp-instances"] });
+    },
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// WEBHOOK URLS
+// ═══════════════════════════════════════════════════════════════════════
+
 export function useWebhookUrls() {
   const supabaseUrl = useMemo(
     () => (supabase as any)?.supabaseUrl || "https://ptmttmqprbullvgulyhb.supabase.co",
@@ -269,3 +718,6 @@ export function useWebhookUrls() {
     meta: `${supabaseUrl}/functions/v1/whatsapp-webhook-meta`,
   };
 }
+
+// Re-exports pra compat com código existente
+export { useSendMessage as useSend };

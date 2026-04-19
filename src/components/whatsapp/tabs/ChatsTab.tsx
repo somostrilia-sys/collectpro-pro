@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
+import { useDesktopNotifications } from "@/hooks/useDesktopNotifications";
 import {
   useWhatsAppInstances,
   useConversations,
@@ -6,6 +7,7 @@ import {
 } from "@/hooks/useWhatsApp";
 import { ChatList } from "@/components/whatsapp/ChatList";
 import { ChatWindow } from "@/components/whatsapp/ChatWindow";
+import { ChatInfoPanel } from "@/components/whatsapp/ChatInfoPanel";
 import { QRConnect } from "@/components/whatsapp/QRConnect";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -30,6 +32,7 @@ export function ChatsTab() {
   const [selected, setSelected] = useState<WhatsAppConversation | null>(null);
   const [qrInstance, setQrInstance] = useState<WhatsAppInstance | null>(null);
   const [filter, setFilter] = useState<"all" | "unread" | "groups" | "contacts">("all");
+  const [showInfo, setShowInfo] = useState(false);
 
   const activeInstanceId = selectedInstanceId
     ?? visibleInstances.find((i) => i.is_default_central)?.id
@@ -40,6 +43,41 @@ export function ChatsTab() {
 
   const { data: conversations = [], isLoading: loadingConv } = useConversations(activeInstanceId);
   useConversationsRealtime(activeInstanceId);
+
+  // Notificações desktop
+  const { permission, request: requestNotif, notify } = useDesktopNotifications();
+  const prevUnreadTotal = useRef<number | null>(null);
+  const prevLastMsgAt = useRef<string | null>(null);
+
+  useEffect(() => {
+    const unread = conversations.reduce((s, c) => s + (c.nao_lidas || 0), 0);
+    if (prevUnreadTotal.current !== null && unread > prevUnreadTotal.current) {
+      // Pega a conversa mais recente com não lidas
+      const recent = conversations
+        .filter((c) => c.nao_lidas > 0)
+        .sort((a, b) => (b.ultima_mensagem_em || "").localeCompare(a.ultima_mensagem_em || ""))[0];
+      if (recent && recent.ultima_mensagem_em !== prevLastMsgAt.current) {
+        const title = recent.chat_nome || recent.associado_nome || recent.telefone;
+        notify(`Nova mensagem de ${title}`, {
+          body: recent.ultima_mensagem || "(mídia)",
+          tag: `wa-${recent.telefone}`,
+        });
+        prevLastMsgAt.current = recent.ultima_mensagem_em;
+      }
+    }
+    prevUnreadTotal.current = unread;
+  }, [conversations, notify]);
+
+  // Pedir permissão na primeira carga
+  useEffect(() => {
+    if (permission === "default" && conversations.length > 0) {
+      const askedAlready = sessionStorage.getItem("wa_notif_asked");
+      if (!askedAlready) {
+        sessionStorage.setItem("wa_notif_asked", "1");
+        requestNotif();
+      }
+    }
+  }, [permission, conversations.length, requestNotif]);
 
   const sortedInstances = useMemo(() => {
     return [...visibleInstances].sort((a, b) => {
@@ -148,7 +186,22 @@ export function ChatsTab() {
         avatarUrl={selected?.chat_avatar_url}
         isGroup={selected?.is_group}
         associadoId={selected?.associado_id ?? null}
+        onOpenInfo={() => setShowInfo((v) => !v)}
       />
+
+      {/* Coluna 4: Info Panel (toggle) */}
+      {showInfo && selected && activeInstanceId && (
+        <ChatInfoPanel
+          instanceId={activeInstanceId}
+          chatJid={selected.chat_jid || `${selected.telefone}@s.whatsapp.net`}
+          telefone={selected.telefone}
+          nome={selected.chat_nome ?? selected.associado_nome}
+          avatarUrl={selected.chat_avatar_url}
+          isGroup={selected.is_group}
+          associadoId={selected.associado_id}
+          onClose={() => setShowInfo(false)}
+        />
+      )}
 
       <QRConnect
         instance={qrInstance}

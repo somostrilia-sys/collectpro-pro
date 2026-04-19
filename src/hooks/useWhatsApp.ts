@@ -705,6 +705,64 @@ export function useInstanceConfig() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════
+// ATRIBUIÇÃO DE CHATS
+// ═══════════════════════════════════════════════════════════════════════
+
+export function useChatAssignment(instanceId: string | null, chatJid: string | null) {
+  return useQuery({
+    queryKey: ["whatsapp-assignment", instanceId, chatJid],
+    queryFn: async () => {
+      if (!instanceId || !chatJid) return null;
+      const { data } = await supabase.functions.invoke("whatsapp-assignment", {
+        body: { instance_id: instanceId, action: "get_current", chat_jid: chatJid },
+      });
+      return data?.assignment ?? null;
+    },
+    enabled: !!instanceId && !!chatJid,
+    staleTime: 30_000,
+  });
+}
+
+export function useAssignmentAction() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: { instance_id: string; action: string } & Record<string, any>) => {
+      const { data, error } = await supabase.functions.invoke("whatsapp-assignment", {
+        body: payload,
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (_, vars) => {
+      qc.invalidateQueries({ queryKey: ["whatsapp-assignment"] });
+      if (vars.chat_jid) {
+        qc.invalidateQueries({ queryKey: ["whatsapp-assignment", vars.instance_id, vars.chat_jid] });
+      }
+    },
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// NOTAS INTERNAS
+// ═══════════════════════════════════════════════════════════════════════
+
+export function useChatNoteActions() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (payload: { instance_id: string; action: string } & Record<string, any>) => {
+      const { data, error } = await supabase.functions.invoke("whatsapp-chat-action", {
+        body: payload,
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (_, vars) => {
+      qc.invalidateQueries({ queryKey: ["whatsapp-chat-notes", vars.instance_id, vars.chat_jid] });
+    },
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════
 // DASHBOARD ADMIN (métricas/logs/alertas)
 // ═══════════════════════════════════════════════════════════════════════
 

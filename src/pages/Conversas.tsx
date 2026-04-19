@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MessageSquare, Users, Tag, Zap, Settings, BarChart3 } from "lucide-react";
+import { MessageSquare, Users, Tag, Zap, Settings, BarChart3, LayoutGrid } from "lucide-react";
 import { useWhatsAppInstances, useInstancesRealtime } from "@/hooks/useWhatsApp";
 import { ChatsTab } from "@/components/whatsapp/tabs/ChatsTab";
 import { GroupsTab } from "@/components/whatsapp/tabs/GroupsTab";
@@ -8,6 +8,7 @@ import { LabelsTab } from "@/components/whatsapp/tabs/LabelsTab";
 import { QuickRepliesTab } from "@/components/whatsapp/tabs/QuickRepliesTab";
 import { ConfigTab } from "@/components/whatsapp/tabs/ConfigTab";
 import { AdminDashboardTab } from "@/components/whatsapp/tabs/AdminDashboardTab";
+import { KanbanTab } from "@/components/whatsapp/tabs/KanbanTab";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function Conversas() {
@@ -31,10 +32,14 @@ export default function Conversas() {
   return (
     <div className="space-y-4">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className={isAdmin ? "grid grid-cols-6 w-full max-w-3xl" : "grid grid-cols-5 w-full max-w-2xl"}>
+        <TabsList className={isAdmin ? "grid grid-cols-7 w-full max-w-4xl" : "grid grid-cols-6 w-full max-w-3xl"}>
           <TabsTrigger value="chats" className="gap-1.5">
             <MessageSquare className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Chats</span>
+          </TabsTrigger>
+          <TabsTrigger value="kanban" className="gap-1.5">
+            <LayoutGrid className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Kanban</span>
           </TabsTrigger>
           <TabsTrigger value="groups" className="gap-1.5">
             <Users className="h-3.5 w-3.5" />
@@ -62,6 +67,12 @@ export default function Conversas() {
 
         <TabsContent value="chats" className="mt-4">
           <ChatsTab />
+        </TabsContent>
+
+        <TabsContent value="kanban" className="mt-4">
+          <div className="border rounded-lg overflow-hidden bg-background h-[calc(100vh-12rem)]">
+            <KanbanTab instanceId={myInstance?.id ?? null} />
+          </div>
         </TabsContent>
 
         <TabsContent value="groups" className="mt-4">
